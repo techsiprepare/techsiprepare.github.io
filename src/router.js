@@ -3,6 +3,15 @@ const PAGINAS_VALIDAS = new Set(['home', 'acervo', 'instrucoes']);
 export function navigate(pageId) {
     if (!PAGINAS_VALIDAS.has(pageId)) return;
 
+    const navLinksObj = document.getElementById('main-nav');
+    const overlayObj = document.getElementById('menu-overlay');
+    
+    if (navLinksObj && navLinksObj.classList.contains('open')) {
+        navLinksObj.classList.remove('open');
+        if (overlayObj) overlayObj.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
     document.querySelectorAll('.page.active, .nav-links a.active').forEach(elemento => {
         elemento.classList.remove('active');
     });

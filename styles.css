@@ -437,9 +437,31 @@ footer {
     font-size: 0.9rem;
 }
 
-/* --- Media Queries (Responsividade) --- */
+.menu-toggle, .menu-close {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100vh;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
 @media (max-width: 768px) {
-    .nav-links { display: none; }
     .hero { padding: 40px 0; }
     .hero h1 { font-size: 2.2rem; }
     .hero p { font-size: 1.1rem; }
@@ -450,4 +472,65 @@ footer {
     .grid-questoes { grid-template-columns: 1fr; }
     .step-box { flex-direction: column; gap: 16px; padding: 24px; }
     .modal-preview-close { top: 16px; right: 16px; background: rgba(0, 0, 0, 0.5); }
+    
+    /* 1. Ajuste e diminuição do Logo no Mobile */
+    .logo-area img {
+        height: 48px;
+    }
+    .brand-name {
+        font-size: 1rem;
+        padding-left: 12px;
+    }
+
+    /* 2. Menu Mobile (Aside Drawer) */
+    .menu-toggle { 
+        display: block; 
+        padding: 8px;
+    }
+    
+    .nav-links { 
+        position: fixed;
+        top: 0;
+        right: -280px;
+        width: 260px;
+        height: 100vh;
+        background: var(--surface-color);
+        flex-direction: column;
+        padding: 32px 24px;
+        gap: 24px;
+        box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 999;
+    }
+    
+    .nav-links.open { 
+        right: 0;
+    }
+    
+    .menu-close { 
+        display: block; 
+        align-self: flex-end; 
+        font-size: 2.2rem; 
+        padding: 0 8px; 
+        margin-bottom: 16px;
+    }
+    
+    .nav-links a {
+        font-size: 1.1rem;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .nav-links a.active::after {
+        display: none;
+    }
+    
+    .nav-links a.active {
+        color: var(--ifmg-green);
+        font-weight: 700;
+    }
+}
+
+html, body {
+    overflow-x: hidden;
 }

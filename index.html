@@ -16,13 +16,27 @@
     <header>
         <div class="nav-container">
             <div class="logo-area" onclick="navigate('home')">
-                <img src="img/institucional/logotipos/IFMG-OB.png" alt="Logotipo IFMG"
-                    onerror="this.style.display='none'">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="img/institucional/logotipos/IFMG-OB-vertical.png">
+                    <img src="img/institucional/logotipos/IFMG-OB.png" alt="Logotipo IFMG"
+                        onerror="this.style.display='none'">
+                </picture>
                 <div class="brand-name">TechSI Prepare<span>Projeto de Extensão</span></div>
             </div>
+
+            <button class="menu-toggle" id="mobile-menu-btn" aria-label="Abrir menu">
+                <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                </svg>
+            </button>
+
+            <div class="menu-overlay" id="menu-overlay"></div>
+
             <nav class="nav-links" id="main-nav">
+                <button class="menu-close" id="mobile-close-btn" aria-label="Fechar menu">&times;</button>
+
                 <a href="#home" class="active">Sobre o Projeto</a>
-                <a href="#acervo" class="active">Acervo de Resoluções</a>
+                <a href="#acervo">Acervo de Resoluções</a>
                 <a href="#instrucoes">Como Participar</a>
             </nav>
         </div>
@@ -82,21 +96,25 @@
         </div>
 
         <div class="filters" style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
-            <select id="filter-curso" onchange="renderAcervo(true)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
+            <select id="filter-curso" onchange="renderAcervo(true)"
+                style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
                 <option value="all">Todos os Cursos</option>
             </select>
 
-            <select id="filter-tipo" onchange="renderAcervo(true)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
+            <select id="filter-tipo" onchange="renderAcervo(true)"
+                style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
                 <option value="all">Todos os Tipos</option>
                 <option value="objetivas">Objetivas</option>
                 <option value="discursivas">Discursivas</option>
             </select>
 
-            <select id="filter-ano" onchange="renderAcervo(true)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
+            <select id="filter-ano" onchange="renderAcervo(true)"
+                style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
                 <option value="all">Todos os Anos</option>
             </select>
 
-            <select id="filter-status" onchange="renderAcervo(true)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
+            <select id="filter-status" onchange="renderAcervo(true)"
+                style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
                 <option value="all">Todos os Status</option>
                 <option value="done">Resolvido</option>
                 <option value="open">Em Aberto</option>

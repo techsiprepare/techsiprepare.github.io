@@ -7,8 +7,26 @@ let acervoDados = [];
 window.navigate = navigate;
 window.renderAcervo = (resetPage = false) => renderAcervoGrid(acervoDados, resetPage);
 
+function setupMobileMenu() {
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const closeBtn = document.getElementById('mobile-close-btn');
+    const navLinks = document.getElementById('main-nav');
+    const overlay = document.getElementById('menu-overlay');
+
+    const toggleMenu = () => {
+        navLinks.classList.toggle('open');
+        overlay.classList.toggle('active');
+        document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
+    };
+
+    if (menuBtn) menuBtn.addEventListener('click', toggleMenu);
+    if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
+    if (overlay) overlay.addEventListener('click', toggleMenu);
+}
+
 async function initApp() {
     initRouter();
+    setupMobileMenu();
     
     try {
         acervoDados = await buscarDadosPlanilha();
