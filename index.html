@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,12 +10,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
     <header>
         <div class="nav-container">
             <div class="logo-area" onclick="navigate('home')">
-                <img src="img/logotipo.png" alt="Logotipo IFMG" onerror="this.style.display='none'">
+                <img src="img/institucional/logotipos/IFMG-OB.png" alt="Logotipo IFMG"
+                    onerror="this.style.display='none'">
                 <div class="brand-name">TechSI Prepare<span>Projeto de Extensão</span></div>
             </div>
             <nav class="nav-links" id="main-nav">
@@ -28,22 +31,27 @@
     <main id="home" class="page active">
         <div class="hero">
             <h1>Colaboração que gera conhecimento.</h1>
-            <p>O TechSI Prepare é um ecossistema focado na resolução colaborativa das questões do ENADE para Sistemas de Informação. Desenvolva suas habilidades explicando, e estude pelo material dos seus colegas.</p>
+            <p>O TechSI Prepare é um ecossistema focado na resolução colaborativa das questões do ENADE para Sistemas de
+                Informação. Desenvolva suas habilidades explicando, e estude pelo material dos seus colegas.</p>
             <a href="#acervo" class="btn btn-primary" onclick="navigate('acervo')">Explorar o Acervo</a>
         </div>
 
         <div class="info-grid">
             <div class="info-card">
                 <h3>🎯 Foco e Objetivo</h3>
-                <p>Preparar os estudantes para o exame do ENADE através da técnica de aprendizado ativo. O objetivo é construir uma biblioteca de resoluções em vídeo, clara e acessível, mapeando todas as provas passadas.</p>
+                <p>Preparar os estudantes para o exame do ENADE através da técnica de aprendizado ativo. O objetivo é
+                    construir uma biblioteca de resoluções em vídeo, clara e acessível, mapeando todas as provas
+                    passadas.</p>
             </div>
             <div class="info-card">
                 <h3>👥 Público Alvo</h3>
-                <p>Estudantes do curso de Sistemas de Informação que desejam se preparar para as provas, e alunos que buscam horas de extensão contribuindo ativamente com a resolução de questões abertas.</p>
+                <p>Estudantes do curso de Sistemas de Informação que desejam se preparar para as provas, e alunos que
+                    buscam horas de extensão contribuindo ativamente com a resolução de questões abertas.</p>
             </div>
             <div class="info-card">
                 <h3>🚀 Quem pode participar?</h3>
-                <p>Qualquer estudante regularmente matriculado no IFMG. A submissão de vídeos passa por avaliação e, se aprovada, é publicada no nosso acervo oficial, contabilizando carga horária de extensão.</p>
+                <p>Qualquer estudante regularmente matriculado no IFMG. A submissão de vídeos passa por avaliação e, se
+                    aprovada, é publicada no nosso acervo oficial, contabilizando carga horária de extensão.</p>
             </div>
         </div>
 
@@ -61,22 +69,23 @@
         <div class="acervo-header">
             <div>
                 <h1>Acervo de Resoluções</h1>
-                <p style="color: var(--text-muted); margin-top: 8px;">Consulte as questões resolvidas ou encontre uma disponível para gravar seu vídeo.</p>
+                <p style="color: var(--text-muted); margin-top: 8px;">Consulte as questões resolvidas ou encontre uma
+                    disponível para gravar seu vídeo.</p>
             </div>
             <div class="update-badge">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/></svg>
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+                </svg>
                 Sincronizado via Google Sheets
             </div>
         </div>
 
         <div class="filters">
-            <select class="filter-select" id="filter-ano" onchange="renderAcervo()">
+            <select class="filter-select" id="filter-ano" onchange="renderAcervo(true)">
                 <option value="all">Todos os Anos</option>
-                <option value="2005">Prova 2005</option>
-                <option value="2008">Prova 2008</option>
-                <option value="2011">Prova 2011</option>
             </select>
-            <select class="filter-select" id="filter-status" onchange="renderAcervo()">
+            <select class="filter-select" id="filter-status" onchange="renderAcervo(true)">
                 <option value="all">Todos os Status</option>
                 <option value="done">Resolvidas (Assistir)</option>
                 <option value="open">Abertas (Para gravar)</option>
@@ -84,13 +93,21 @@
         </div>
 
         <div class="grid-questoes" id="grid-acervo">
-            </div>
+        </div>
+
+        <div id="pagination-controls"
+            style="display: flex; justify-content: center; gap: 12px; margin-top: 32px; padding-bottom: 32px; flex-wrap: wrap;">
+        </div>
+
+        <div class="grid-questoes" id="grid-acervo">
+        </div>
     </main>
 
     <main id="instrucoes" class="page">
         <div style="text-align: center; margin-bottom: 48px;">
             <h1>Como Participar</h1>
-            <p style="color: var(--text-muted); margin-top: 8px;">Siga o fluxo abaixo para gravar sua resolução e garantir suas horas de extensão.</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">Siga o fluxo abaixo para gravar sua resolução e
+                garantir suas horas de extensão.</p>
         </div>
 
         <div class="steps-container">
@@ -98,8 +115,11 @@
                 <div class="step-number">1</div>
                 <div class="step-content">
                     <h3>Já Consultou o Acervo?</h3>
-                    <p>Acesse a página <a href="#acervo" onclick="navigate('acervo')" style="color: var(--ifmg-green); font-weight: 600; text-decoration: underline;">Acervo de Resoluções</a> e filtre pelo status <strong>"Abertas"</strong>.</p>
-                    <p>Lá você verá imagens diretas (formato webp) dos enunciados das questões que ainda não possuem vídeos no sistema.</p>
+                    <p>Acesse a página <a href="#acervo" onclick="navigate('acervo')"
+                            style="color: var(--ifmg-green); font-weight: 600; text-decoration: underline;">Acervo de
+                            Resoluções</a> e filtre pelo status <strong>"Abertas"</strong>.</p>
+                    <p>Lá você verá imagens diretas (formato webp) dos enunciados das questões que ainda não possuem
+                        vídeos no sistema.</p>
                 </div>
             </div>
 
@@ -109,7 +129,9 @@
                     <h3>Escolha uma Questão</h3>
                     <p>Baixe a imagem da questão escolhida e prepare sua explicação.</p>
                     <div class="alert-box">
-                        <strong>Atenção:</strong> Não é possível "reservar" uma questão. O sistema funciona por ordem de chegada do formulário. Se duas pessoas gravarem a mesma questão, a que enviar o formulário primeiro com a resolução correta terá o vídeo validado. Fique atento(a)!
+                        <strong>Atenção:</strong> Não é possível "reservar" uma questão. O sistema funciona por ordem de
+                        chegada do formulário. Se duas pessoas gravarem a mesma questão, a que enviar o formulário
+                        primeiro com a resolução correta terá o vídeo validado. Fique atento(a)!
                     </div>
                 </div>
             </div>
@@ -118,7 +140,9 @@
                 <div class="step-number">3</div>
                 <div class="step-content">
                     <h3>Grave e Publique</h3>
-                    <p>Grave a tela do seu computador resolvendo a questão. Certifique-se de que o áudio esteja limpo e a explicação didática. Após gravar, publique o vídeo no <strong>YouTube</strong> (pode ser como 'Não Listado' ou 'Público', mas nunca 'Privado').</p>
+                    <p>Grave a tela do seu computador resolvendo a questão. Certifique-se de que o áudio esteja limpo e
+                        a explicação didática. Após gravar, publique o vídeo no <strong>YouTube</strong> (pode ser como
+                        'Não Listado' ou 'Público', mas nunca 'Privado').</p>
                 </div>
             </div>
 
@@ -126,12 +150,18 @@
                 <div class="step-number">4</div>
                 <div class="step-content">
                     <h3>Preencha o Formulário</h3>
-                    <p>Clique no botão abaixo para abrir o formulário institucional. Nele você enviará o link do seu vídeo e seus dados básicos para validação da carga horária.</p>
-                    
+                    <p>Clique no botão abaixo para abrir o formulário institucional. Nele você enviará o link do seu
+                        vídeo e seus dados básicos para validação da carga horária.</p>
+
                     <div style="margin-top: 20px;">
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe51HB2cNklrDfzdbCbcf6HbnMcpgHU6R4s5FGMgviNdCOGZA/viewform" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
-                            Preencher Formulário de Envio 
-                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0v-6z"/></svg>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe51HB2cNklrDfzdbCbcf6HbnMcpgHU6R4s5FGMgviNdCOGZA/viewform"
+                            target="_blank" class="btn btn-primary"
+                            style="display: inline-flex; align-items: center; gap: 8px;">
+                            Preencher Formulário de Envio
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0v-6z" />
+                            </svg>
                         </a>
                     </div>
                 </div>
@@ -148,4 +178,5 @@
 
     <script type="module" src="src/main.js"></script>
 </body>
+
 </html>

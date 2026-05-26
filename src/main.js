@@ -1,22 +1,23 @@
 import { buscarDadosPlanilha } from './api.js';
-import { renderAcervoGrid, renderErro } from './ui.js';
+import { renderAcervoGrid, renderErro, inicializarFiltrosDinamicos } from './ui.js';
 import { navigate, initRouter } from './router.js';
 
-let acervoCruze = [];
+let acervoDados = [];
 
 window.navigate = navigate;
-window.renderAcervo = () => renderAcervoGrid(acervoCruze);
+window.renderAcervo = (resetPage = false) => renderAcervoGrid(acervoDados, resetPage);
 
 async function initApp() {
     initRouter();
     
     try {
-        acervoCruze = await buscarDadosPlanilha();
-        
-        window.renderAcervo();
+        acervoDados = await buscarDadosPlanilha();
+        inicializarFiltrosDinamicos(acervoDados);
+        window.renderAcervo(true);
     } catch (error) {
+        console.error('Erro na inicialização da aplicação:', error);
         renderErro();
     }
 }
 
-window.onload = initApp;
+document.addEventListener('DOMContentLoaded', initApp);
