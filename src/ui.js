@@ -74,7 +74,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
                     <span class="badge ${statusClass}" style="padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${statusLabel}</span>
                 </div>
                 
-                <p class="card-subtitle-origem">Enade ${item.ano} — ${item.caderno}</p>
+                <p class="card-subtitle-origem">Enade ${item.ano} — ${item.caderno === 'UNICO' ? 'Caderno Único' : item.caderno}</p>
                 <h3 class="card-title-questao">Questão ${item.numero}</h3>
                 
                 <div class="card-actions" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
