@@ -87,11 +87,11 @@ Para evitar a inserção manual de novos cadernos no código, o projeto conta co
 
 ```mermaid
 graph TD
-    %% Definição de Estilos: Apenas Linhas e Texto (Sem Background)
-    classDef principal fill:none,stroke:#111111,stroke-width:1.5px,color:#111111;
-    classDef secundario fill:none,stroke:#666666,stroke-width:1px,stroke-dasharray: 3 3,color:#555555;
-    classDef dados fill:none,stroke:#111111,stroke-width:2.5px,color:#111111;
-    classDef Destaque fill:none,stroke:#111111,stroke-width:2px,font-weight:bold,color:#111111;
+    %% Definição de Estilos Minimalistas & Outlined (Compatíveis com Dark/Light Mode)
+    classDef principal fill:#ffffff,stroke:#24292f,stroke-width:2px,color:#24292f,rx:5px,ry:5px;
+    classDef secundario fill:#f6f8fa,stroke:#57606a,stroke-width:1px,color:#57606a,stroke-dasharray: 3 3,rx:4px,ry:4px;
+    classDef dados fill:#ffffff,stroke:#24292f,stroke-width:2px,color:#24292f,shape:cylinder;
+    classDef Destaque fill:#f6f8fa,stroke:#24292f,stroke-width:2.5px,color:#24292f,font-weight:bold,rx:5px,ry:5px;
 
     %% 1. NAVEGAÇÃO SPA
     subgraph SPA ["1. Navegação SPA (Rotas via Hash)"]
@@ -139,7 +139,7 @@ graph TD
 
     %% 4. AUTOMAÇÃO
     subgraph AUTOMATION ["4. Script de Automação (gerar-banco.js)"]
-        Folder["Diretório Base<br>img/banco-provas/"] --> Scan["Varredura Completa<br>Curso > Ano > Caderno > Tipo"]
+        Folder[("Diretório Base<br>img/banco-provas/")] --> Scan["Varredura Completa<br>Curso > Ano > Caderno > Tipo"]
         Scan --> Rules{"Regras de Arquivo"}
         
         Rules -->|Imagens| R1["Extensão .webp<br>Ex: 01.webp"]
@@ -159,6 +159,6 @@ graph TD
     A -.->|Alimenta o Componente| Grid
     Output -.->|Gera Arquivo Lido por| JSON
 
-    %% Ajuste de links para melhor visualização
-    linkStyle default stroke:#111111,stroke-width:1.5px;
+    %% Estilização das Linhas (Dark Mode Friendly)
+    linkStyle default stroke:#57606a,stroke-width:1.5px;
 ```
