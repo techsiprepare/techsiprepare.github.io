@@ -81,14 +81,25 @@
             </div>
         </div>
 
-        <div class="filters">
-            <select class="filter-select" id="filter-ano" onchange="renderAcervo(true)">
+        <div class="filters" style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+            <select id="filter-curso" onchange="renderAcervo(true)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
+                <option value="all">Todos os Cursos</option>
+            </select>
+
+            <select id="filter-tipo" onchange="renderAcervo(true)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
+                <option value="all">Todos os Tipos</option>
+                <option value="objetivas">Objetivas</option>
+                <option value="discursivas">Discursivas</option>
+            </select>
+
+            <select id="filter-ano" onchange="renderAcervo(true)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
                 <option value="all">Todos os Anos</option>
             </select>
-            <select class="filter-select" id="filter-status" onchange="renderAcervo(true)">
+
+            <select id="filter-status" onchange="renderAcervo(true)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e0;">
                 <option value="all">Todos os Status</option>
-                <option value="done">Resolvidas (Assistir)</option>
-                <option value="open">Abertas (Para gravar)</option>
+                <option value="done">Resolvido</option>
+                <option value="open">Em Aberto</option>
             </select>
         </div>
 

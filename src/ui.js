@@ -3,16 +3,31 @@ const ITEMS_PER_PAGE = 12;
 const ICON_PENCIL = `<svg width="1em" height="1em" fill="#bababa" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>`;
 
 export function inicializarFiltrosDinamicos(acervo) {
+    // 1. Inicializa o Filtro de Ano
     const selectAno = document.getElementById('filter-ano');
-    const anosUnicos = [...new Set(acervo.map(item => item.ano))].sort((a, b) => b - a);
-    
-    selectAno.innerHTML = '<option value="all">Todos os Anos</option>';
-    anosUnicos.forEach(ano => {
-        const option = document.createElement('option');
-        option.value = ano;
-        option.textContent = `Prova ${ano}`;
-        selectAno.appendChild(option);
-    });
+    if (selectAno) {
+        const anosUnicos = [...new Set(acervo.map(item => item.ano))].sort((a, b) => b - a);
+        selectAno.innerHTML = '<option value="all">Todos os Anos</option>';
+        anosUnicos.forEach(ano => {
+            const option = document.createElement('option');
+            option.value = ano;
+            option.textContent = `${ano}`;
+            selectAno.appendChild(option);
+        });
+    }
+
+    // 2. Inicializa o Filtro de Curso
+    const selectCurso = document.getElementById('filter-curso');
+    if (selectCurso) {
+        const cursosUnicos = [...new Set(acervo.map(item => item.curso))].sort((a, b) => a.localeCompare(b));
+        selectCurso.innerHTML = '<option value="all">Todos os Cursos</option>';
+        cursosUnicos.forEach(curso => {
+            const option = document.createElement('option');
+            option.value = curso;
+            option.textContent = curso;
+            selectCurso.appendChild(option);
+        });
+    }
 }
 
 export function renderAcervoGrid(acervoCruze, resetPage = false) {
@@ -20,16 +35,24 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
 
     const grid = document.getElementById('grid-acervo');
     const pagContainer = document.getElementById('pagination-controls');
-    const filtroAno = document.getElementById('filter-ano').value;
-    const filtroStatus = document.getElementById('filter-status').value;
+    
+    // Captura dos valores de todos os 4 filtros da tela
+    const filtroCurso = document.getElementById('filter-curso')?.value || 'all';
+    const filtroTipo = document.getElementById('filter-tipo')?.value || 'all';
+    const filtroAno = document.getElementById('filter-ano')?.value || 'all';
+    const filtroStatus = document.getElementById('filter-status')?.value || 'all';
     
     grid.innerHTML = '';
     if (pagContainer) pagContainer.innerHTML = '';
 
+    // Aplicação da regra de filtragem múltipla cruzada
     let filtrados = acervoCruze.filter(item => {
+        let matchCurso = (filtroCurso === 'all') || (item.curso === filtroCurso);
+        let matchTipo = (filtroTipo === 'all') || (item.tipo === filtroTipo);
         let matchAno = (filtroAno === 'all') || (String(item.ano) === filtroAno);
         let matchStatus = (filtroStatus === 'all') || (item.status === filtroStatus);
-        return matchAno && matchStatus;
+        
+        return matchCurso && matchTipo && matchAno && matchStatus;
     });
 
     if (filtrados.length === 0) {
@@ -162,7 +185,7 @@ function inicializarModalSeNecessario() {
         modal.innerHTML = `
             <div class="modal-preview-content">
                 <button class="modal-preview-close" onclick="document.getElementById('modal-preview-imagem').classList.remove('active')">&times;</button>
-                <img id=\"modal-preview-img-element\" src=\"\" alt=\"Enunciado Completo\" class=\"modal-preview-img\">
+                <img id="modal-preview-img-element" src="" alt="Enunciado Completo" class="modal-preview-img">
             </div>
         `;
         modal.addEventListener('click', (e) => {
