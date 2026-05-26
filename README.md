@@ -87,71 +87,78 @@ Para evitar a inserção manual de novos cadernos no código, o projeto conta co
 
 ```mermaid
 graph TD
-    %% Estilos Globais e Definições de Subgráficos
-    classDef spa fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
-    classDef data fill:#efebe9,stroke:#5d4037,stroke-width:2px;
-    classDef automation fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
-    classDef UI fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    %% Definição de Estilos: Apenas Linhas e Texto (Sem Background)
+    classDef principal fill:none,stroke:#111111,stroke-width:1.5px,color:#111111;
+    classDef secundario fill:none,stroke:#666666,stroke-width:1px,stroke-dasharray: 3 3,color:#555555;
+    classDef dados fill:none,stroke:#111111,stroke-width:2.5px,color:#111111;
+    classDef Destaque fill:none,stroke:#111111,stroke-width:2px,font-weight:bold,color:#111111;
 
-    %% 1. FLUXO UX/UI (SPA)
-    subgraph SPA ["1. Navegação SPA - Rotas via Hash"]
-        R["URL com Hash (#)"] -->|#home| H["Tela Inicial:<br>Proposta do Projeto"]
-        R -->|#instrucoes| I["Tela de Instruções:<br>Guia de Submissão & Link Externo"]
-        R -->|#acervo| A["Tela de Acervo:<br>Grid de Questões"]
+    %% 1. NAVEGAÇÃO SPA
+    subgraph SPA ["1. Navegação SPA (Rotas via Hash)"]
+        R["URL com Hash (#)"] -->|#home| H["Tela Inicial<br>• Proposta do Projeto"]
+        R -->|#instrucoes| I["Tela de Instruções<br>• Guia de Submissão<br>• Link Externo"]
+        R -->|#acervo| A["Tela de Acervo<br>• Grid de Questões"]
     end
-    class H,I,A,R spa;
+    class R Destaque;
+    class H,I,A principal;
 
     %% 2. GESTÃO E MERGE DE DADOS
-    subgraph DATA ["2. Gestão de Dados & Renderização Dinâmica"]
+    subgraph DATA ["2. Gestão de Dados & Renderização"]
         JSON[("data/questoes.json<br>Árvore Estática Local")] --> Merge{"Cruzamento de Dados<br>Chave: ano-numero"}
+        CSV[("Planilha Google (CSV)<br>Histórico na Nuvem")] --> Parser["parsearCSV()"]
         
-        CSV[("Planilha Google - CSV<br>Histórico na Nuvem")] --> Parser["parsearCSV()"]
-        Parser --> Clean["formatarUrlEmbed()<br>Higienização de Links YouTube"]
+        Parser --> Clean["formatarUrlEmbed()<br>Higienização de Links"]
         Clean --> Merge
         
         Merge -->|Filtragem e Paginação| Grid["Grid do Acervo<br>Máx: 12 itens por página"]
     end
-    class JSON,CSV,Parser,Clean,Merge,Grid data;
+    class JSON,CSV dados;
+    class Merge Destaque;
+    class Parser,Clean,Grid principal;
 
-    %% 3. COMPORTAMENTO DOS CARDS (INTERFACE)
+    %% 3. ESTADOS DOS CARDS
     subgraph CARDS ["3. Estados dos Cards no Grid"]
         Grid --> CardOpen{"Status da Questão"}
         
         %% Estado Open
         CardOpen -->|'open' / Em Aberto| CO["Card Aberto"]
-        CO --> CO1["Capa Borrada + Overlay de Lápis"]
-        CO --> CO2["Tags de Curso/Tipo"]
-        CO --> CO3["Botão 'Resolver Questão' <br> Redireciona para #instrucoes"]
+        CO --> CO_Detalhe["• Capa Borrada + Overlay de Lápis<br>• Tags de Curso/Tipo<br>• Botão 'Resolver Questão' (-> #instrucoes)"]
         
         %% Estado Done
         CardOpen -->|'done' / Resolvido| CD["Card Resolvido"]
-        CD --> CD1["Substitui capa por iframe do YouTube"]
-        CD --> CD2["Exibe Nome do Autor da Resolução"]
+        CD --> CD_Detalhe["• Substitui capa por iframe do YouTube<br>• Exibe Nome do Autor da Resolução"]
         
         %% Recursos Extras
-        Grid --> Extra1["Botão: Visualizar Caderno Completo<br>PDF em nova aba"]
-        Grid --> Extra2["Botão: Enunciado Original<br>Modal Interativo 'abrirModalImagem'"]
+        Grid --> Extra["Recursos Extras"]
+        Extra -->|PDF| E1["Visualizar Caderno Completo<br>(Nova aba)"]
+        Extra -->|Imagem| E2["Enunciado Original<br>(Modal Interativo)"]
     end
-    class CO,CO1,CO2,CO3,CD,CD1,CD2,Extra1,Extra2 UI;
+    class CardOpen Destaque;
+    class CO,CD,Extra principal;
+    class CO_Detalhe,CD_Detalhe,E1,E2 secundario;
 
-    %% 4. AUTOMAÇÃO (SCRIPT NODE.JS)
-    subgraph AUTOMATION ["4. Script de Automação: gerar-banco.js"]
-        Folder["Diretório Base:<br>img/banco-provas/"] --> Scan["Varredura Completa das Pastas<br>Curso > Ano > Caderno > Tipo"]
-        
+    %% 4. AUTOMAÇÃO
+    subgraph AUTOMATION ["4. Script de Automação (gerar-banco.js)"]
+        Folder["Diretório Base<br>img/banco-provas/"] --> Scan["Varredura Completa<br>Curso > Ano > Caderno > Tipo"]
         Scan --> Rules{"Regras de Arquivo"}
-        Rules -->|Imagens| R1["Extensão .webp<br>Nome Numérico: ex: 01.webp"]
-        Rules -->|Caderno| R2["Arquivo único: prova.pdf"]
-        Rules -->|Estrutura| R3["Pastas: objetivas / discursivas"]
+        
+        Rules -->|Imagens| R1["Extensão .webp<br>Ex: 01.webp"]
+        Rules -->|Caderno| R2["Arquivo único<br>prova.pdf"]
+        Rules -->|Estrutura| R3["Pastas<br>objetivas / discursivas"]
         
         Rules --> ID["Geração de ID Único"]
-        ID -->|Fórmula| IDF["Prefixo Curso 3 letras + Ano + ID Caderno + Sufixo OBJ/DIS + Num Questão"]
-        ID -->|Exemplo| IDE["COM-2021-1801-OBJ09"]
+        ID --> IDF["Fórmula: Prefixo Curso (3 letras) + Ano + ID Caderno + Sufixo OBJ/DIS + Num Questão<br>Exemplo: COM-2021-1801-OBJ09"]
         
-        IDF --> Output[("Criação/Atualização de:<br>data/questoes.json")]
-        Output -.->|Consumido pelo| JSON
+        IDF --> Output[("data/questoes.json<br>Atualização do Banco")]
     end
-    class Folder,Scan,Rules,R1,R2,R3,ID,IDF,IDE,Output automation;
+    class Folder,Output dados;
+    class Rules,ID Destaque;
+    class Scan,R1,R2,R3,IDF principal;
 
     %% Conexões entre blocos principais
-    A -.-> Grid
+    A -.->|Alimenta o Componente| Grid
+    Output -.->|Gera Arquivo Lido por| JSON
+
+    %% Ajuste de links para melhor visualização
+    linkStyle default stroke:#111111,stroke-width:1.5px;
 ```
