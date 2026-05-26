@@ -27,6 +27,21 @@ O sistema opera como uma *Single Page Application* (SPA) com rotas geridas via h
 
 * **Objetivo:** Guiar o aluno no processo de gravação e submissão através de um formulário externo.
 
+```mermaid
+graph TD
+    classDef main fill:#fff,stroke:#24292f,stroke-width:2px,color:#24292f;
+    classDef router fill:#f6f8fa,stroke:#57606a,stroke-width:1px,color:#24292f,font-weight:bold;
+
+    Hash["Navegação via URL (#hash)"] --> Router{"router.js<br>Valida Rota"}
+    
+    Router -->|#home| Home["Tela Inicial<br>• Proposta do Projeto"]
+    Router -->|#instrucoes| Inst["Tela de Instruções<br>• Guia de Gravação<br>• Link do Formulário"]
+    Router -->|#acervo| Acervo["Tela de Acervo<br>• Grid de Questões<br>• Filtros por Ano/Status"]
+
+    class Router router;
+    class Hash,Home,Inst,Acervo main;
+```
+
 ---
 
 ## 2. Gestão de Dados (API e Repositórios)
@@ -43,6 +58,27 @@ O sistema baseia-se na mescla simultânea de dois repositórios de dados para fo
 * O sistema cruza as informações utilizando a chave única `${ano}-${numero}` para verificar se uma questão estática já possui resolução no CSV dinâmico.
 * O CSV passa por um *parser* (`parsearCSV`) que varre as colunas e espera extrair os seguintes campos por linha: `ano`, `numero`, `assunto`, `autor` e `video_url`.
 * As URLs do YouTube inseridas no CSV são higienizadas automaticamente (`formatarUrlEmbed`), convertendo links padrão (`watch?v=`) ou curtos (`youtu.be/`) em links de incorporação (`embed/`).
+
+```mermaid
+graph LR
+    classDef fonte fill:#ffffff,stroke:#24292f,stroke-width:2px,color:#24292f,shape:cylinder;
+    classDef processo fill:#fff,stroke:#24292f,stroke-width:1.5px,color:#24292f;
+    classDef merge fill:#f6f8fa,stroke:#24292f,stroke-width:2px,color:#24292f,font-weight:bold;
+
+    JSON[("questoes.json<br>(Estrutura Local)")] --> Flat["api.js<br>Mapeia caminhos de<br>Imagens e PDFs"]
+    
+    CSV[("Planilha Google<br>(Formulário CSV)")] --> Parse["utils.js<br>parsearCSV() &<br>formatarUrlEmbed()"]
+
+    Flat --> Merge{"Merge de Dados<br>Chave: ano-numero"}
+    Parse --> Merge
+
+    Merge -->|Se houver match| D["Status: 'done'<br>Injeta Vídeo e Autor"]
+    Merge -->|Se não houver| O["Status: 'open'<br>Injeta link #instrucoes"]
+
+    class JSON,CSV fonte;
+    class Flat,Parse,D,O processo;
+    class Merge merge;
+```
 
 ---
 
@@ -87,78 +123,22 @@ Para evitar a inserção manual de novos cadernos no código, o projeto conta co
 
 ```mermaid
 graph TD
-    %% Definição de Estilos Minimalistas & Outlined (Compatíveis com Dark/Light Mode)
-    classDef principal fill:#ffffff,stroke:#24292f,stroke-width:2px,color:#24292f,rx:5px,ry:5px;
-    classDef secundario fill:#f6f8fa,stroke:#57606a,stroke-width:1px,color:#57606a,stroke-dasharray: 3 3,rx:4px,ry:4px;
-    classDef dados fill:#ffffff,stroke:#24292f,stroke-width:2px,color:#24292f,shape:cylinder;
-    classDef Destaque fill:#f6f8fa,stroke:#24292f,stroke-width:2.5px,color:#24292f,font-weight:bold,rx:5px,ry:5px;
+    classDef pasta fill:#fff,stroke:#24292f,stroke-width:1.5px,color:#24292f;
+    classDef script fill:#f6f8fa,stroke:#24292f,stroke-width:2px,color:#24292f,font-weight:bold;
+    classDef output fill:#ffffff,stroke:#24292f,stroke-width:2px,color:#24292f,shape:cylinder;
 
-    %% 1. NAVEGAÇÃO SPA
-    subgraph SPA ["1. Navegação SPA (Rotas via Hash)"]
-        R["URL com Hash (#)"] -->|#home| H["Tela Inicial<br>• Proposta do Projeto"]
-        R -->|#instrucoes| I["Tela de Instruções<br>• Guia de Submissão<br>• Link Externo"]
-        R -->|#acervo| A["Tela de Acervo<br>• Grid de Questões"]
+    Dir["Diretório Local<br>img/banco-provas/"] -->|Varredura física| Script["gerar-banco.js<br>(Script Node.js)"]
+    
+    subgraph Regras ["Regras de Estrutura"]
+        Script --> R1["Curso / Ano / Caderno"]
+        Script --> R2["Pastas: objetivas / discursivas"]
+        Script --> R3["Arquivos: .webp e prova.pdf"]
     end
-    class R Destaque;
-    class H,I,A principal;
 
-    %% 2. GESTÃO E MERGE DE DADOS
-    subgraph DATA ["2. Gestão de Dados & Renderização"]
-        JSON[("data/questoes.json<br>Árvore Estática Local")] --> Merge{"Cruzamento de Dados<br>Chave: ano-numero"}
-        CSV[("Planilha Google (CSV)<br>Histórico na Nuvem")] --> Parser["parsearCSV()"]
-        
-        Parser --> Clean["formatarUrlEmbed()<br>Higienização de Links"]
-        Clean --> Merge
-        
-        Merge -->|Filtragem e Paginação| Grid["Grid do Acervo<br>Máx: 12 itens por página"]
-    end
-    class JSON,CSV dados;
-    class Merge Destaque;
-    class Parser,Clean,Grid principal;
+    Script --> ID["Cálculo de ID Único<br>Ex: COM-2021-1801-OBJ09"]
+    ID --> Out[("data/questoes.json")]
 
-    %% 3. ESTADOS DOS CARDS
-    subgraph CARDS ["3. Estados dos Cards no Grid"]
-        Grid --> CardOpen{"Status da Questão"}
-        
-        %% Estado Open
-        CardOpen -->|'open' / Em Aberto| CO["Card Aberto"]
-        CO --> CO_Detalhe["• Capa Borrada + Overlay de Lápis<br>• Tags de Curso/Tipo<br>• Botão 'Resolver Questão' (-> #instrucoes)"]
-        
-        %% Estado Done
-        CardOpen -->|'done' / Resolvido| CD["Card Resolvido"]
-        CD --> CD_Detalhe["• Substitui capa por iframe do YouTube<br>• Exibe Nome do Autor da Resolução"]
-        
-        %% Recursos Extras
-        Grid --> Extra["Recursos Extras"]
-        Extra -->|PDF| E1["Visualizar Caderno Completo<br>(Nova aba)"]
-        Extra -->|Imagem| E2["Enunciado Original<br>(Modal Interativo)"]
-    end
-    class CardOpen Destaque;
-    class CO,CD,Extra principal;
-    class CO_Detalhe,CD_Detalhe,E1,E2 secundario;
-
-    %% 4. AUTOMAÇÃO
-    subgraph AUTOMATION ["4. Script de Automação (gerar-banco.js)"]
-        Folder[("Diretório Base<br>img/banco-provas/")] --> Scan["Varredura Completa<br>Curso > Ano > Caderno > Tipo"]
-        Scan --> Rules{"Regras de Arquivo"}
-        
-        Rules -->|Imagens| R1["Extensão .webp<br>Ex: 01.webp"]
-        Rules -->|Caderno| R2["Arquivo único<br>prova.pdf"]
-        Rules -->|Estrutura| R3["Pastas<br>objetivas / discursivas"]
-        
-        Rules --> ID["Geração de ID Único"]
-        ID --> IDF["Fórmula: Prefixo Curso (3 letras) + Ano + ID Caderno + Sufixo OBJ/DIS + Num Questão<br>Exemplo: COM-2021-1801-OBJ09"]
-        
-        IDF --> Output[("data/questoes.json<br>Atualização do Banco")]
-    end
-    class Folder,Output dados;
-    class Rules,ID Destaque;
-    class Scan,R1,R2,R3,IDF principal;
-
-    %% Conexões entre blocos principais
-    A -.->|Alimenta o Componente| Grid
-    Output -.->|Gera Arquivo Lido por| JSON
-
-    %% Estilização das Linhas (Dark Mode Friendly)
-    linkStyle default stroke:#57606a,stroke-width:1.5px;
+    class Dir,R1,R2,R3 pasta;
+    class Script,ID script;
+    class Out output;
 ```
