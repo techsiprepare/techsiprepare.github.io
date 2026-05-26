@@ -18,8 +18,13 @@ function gerarBancoQuestoes() {
 
         cursos.forEach(curso => {
             const caminhoCurso = path.join(baseDir, curso);
-            const prefixoCurso = curso.slice(0, 3).toUpperCase();
-            
+            const prefixoCurso = curso
+                .toUpperCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^A-Z]/g, "")
+                .slice(0, 3);
+
             const cursoNode = { curso: curso, anos: [] };
 
             // 2. Varre os Anos
@@ -29,35 +34,34 @@ function gerarBancoQuestoes() {
                 const caminhoAno = path.join(caminhoCurso, ano);
                 const anoNode = { ano: parseInt(ano, 10), cadernos: [] };
 
-                // 3. Varre os Cadernos
+                // 3. Varre os Cadernos (Ex: "UNICO" ou "1801")
                 const codigosCaderno = fs.readdirSync(caminhoAno).filter(f => fs.statSync(path.join(caminhoAno, f)).isDirectory());
 
                 codigosCaderno.forEach(codigoCaderno => {
                     const caminhoCaderno = path.join(caminhoAno, codigoCaderno);
-                    const idCaderno = codigoCaderno === 'caderno-unico' ? 'UNI' : codigoCaderno;
-                    
-                    // Nó do Caderno inicializando as chaves garantidamente vazias
+
                     const cadernoNode = {
-                        codigo: codigoCaderno,
+                        codigo: codigoCaderno, 
                         pdf_arquivo: 'prova.pdf',
                         objetivas: [],
                         discursivas: []
                     };
 
-                    // 4. Varre os arquivos segregando por chave com segurança
+                    // 4. Varre os Tipos de Questões (objetivas / discursivas)
                     ['objetivas', 'discursivas'].forEach(tipo => {
-                        const caminhoPastaQuestoes = path.join(caminhoCaderno, 'questoes', tipo);
-                        
-                        if (fs.existsSync(caminhoPastaQuestoes)) {
-                            const arquivos = fs.readdirSync(caminhoPastaQuestoes).filter(arq => arq.endsWith('.webp'));
-                            
-                            arquivos.forEach(arq => {
+                        const caminhoTipo = path.join(caminhoCaderno, 'questoes', tipo);
+
+                        if (fs.existsSync(caminhoTipo)) {
+                            const arquivosQuestao = fs.readdirSync(caminhoTipo).filter(arq => arq.endsWith('.webp'));
+
+                            arquivosQuestao.forEach(arq => {
                                 const numeroStr = path.basename(arq, '.webp');
                                 const numeroPadrao = numeroStr.replace(/\D/g, '').padStart(2, '0');
                                 const sufixoTipo = tipo === 'objetivas' ? 'OBJ' : 'DIS';
-                                
-                                const idUnico = `${prefixoCurso}-${ano}-${idCaderno}-${sufixoTipo}${numeroPadrao}`;
-                                
+
+                                // Gera o ID utilizando diretamente o nome da pasta (codigoCaderno)
+                                const idUnico = `${prefixoCurso}-${ano}-${codigoCaderno}-${sufixoTipo}${numeroPadrao}`;
+
                                 cadernoNode[tipo].push({
                                     id: idUnico,
                                     numero: parseInt(numeroPadrao, 10),
@@ -80,7 +84,7 @@ function gerarBancoQuestoes() {
         if (!fs.existsSync(dirOutput)) fs.mkdirSync(dirOutput, { recursive: true });
 
         fs.writeFileSync(outputPath, JSON.stringify(arvoreBanco, null, 2), 'utf-8');
-        console.log(`\n✅ Sucesso! O arquivo "${outputPath}" foi gerado e agora suporta cadernos vazios/incompletos.`);
+        console.log(`\n✅ Sucesso! O arquivo "${outputPath}" foi gerado utilizando o padrão UNICO.`);
 
     } catch (erro) {
         console.error("❌ Erro ao gerar o arquivo de dados local:", erro);

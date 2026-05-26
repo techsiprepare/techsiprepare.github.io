@@ -11,13 +11,15 @@ export function parsearCSV(texto) {
 
         const colunas = linha.split(new RegExp(`\\s*${separador}\\s*(?=(?:[^\\"]*\\"[^\\"]*\\")*[^\\"]*$)`));
 
-        if (colunas.length >= 5) {
+        if (colunas.length >= 4) {
+            const statusVal = colunas[4] ? colunas[4].replace(/"/g, "").trim().toLowerCase() : "";
+
             resultados.push({
-                ano: colunas[0].replace(/"/g, "").trim(),
-                numero: colunas[1].replace(/"/g, "").trim(),
-                assunto: colunas[2].replace(/"/g, "").trim(),
-                autor: colunas[3].replace(/"/g, "").trim(),
-                video_url: colunas[4].replace(/"/g, "").trim()
+                idUnico: colunas[0].replace(/"/g, "").trim(),   // Coluna A
+                autor: colunas[1].replace(/"/g, "").trim(),     // Coluna B
+                assunto: colunas[2].replace(/"/g, "").trim(),   // Coluna C
+                video_url: colunas[3].replace(/"/g, "").trim(), // Coluna D
+                statusValidacao: statusVal                      // Coluna E
             });
         }
     }
@@ -25,11 +27,13 @@ export function parsearCSV(texto) {
 }
 
 export function formatarUrlEmbed(url) {
-    if (url.includes("watch?v=")) {
-        return url.replace("watch?v=", "embed/");
-    }
+    if (!url) return "";
+    if (url.includes("youtube.com/embed/")) return url;
+    if (url.includes("watch?v=")) return url.replace("watch?v=", "embed/");
     if (url.includes("youtu.be/")) {
-        return url.replace("youtu.be/", "youtube.com/embed/");
+        const urlSemQuery = url.split('?')[0];
+        const idVideo = urlSemQuery.substring(urlSemQuery.lastIndexOf('/') + 1);
+        return `https://www.youtube.com/embed/${idVideo}`;
     }
     return url;
 }

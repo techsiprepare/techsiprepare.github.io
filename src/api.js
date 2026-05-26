@@ -37,14 +37,20 @@ export async function buscarDadosPlanilha() {
             )
         );
 
-        const resolucoesAprovadas = parsearCSV(textoCsv);
+        // 1. Faz o parse de todas as linhas do CSV vindas da planilha
+        const resolucoesBrutas = parsearCSV(textoCsv);
 
+        // 2. FILTRO: Retém apenas os registros que foram marcados estritamente como 'aprovado'
+        const resolucoesAprovadas = resolucoesBrutas.filter(res => res.statusValidacao === 'aprovado');
+
+        // 3. Monta o mapa de busca rápida usando apenas as resoluções aprovadas
         const mapaResolucoes = new Map(
-            resolucoesAprovadas.map(res => [`${res.ano}-${res.numero}`, res])
+            resolucoesAprovadas.map(res => [res.idUnico, res])
         );
 
+        // 4. Executa o cruzamento de dados com a árvore local de questões
         return db_todas_questoes.map(questao => {
-            const correspondencia = mapaResolucoes.get(`${questao.ano}-${questao.numero}`);
+            const correspondencia = mapaResolucoes.get(questao.id);
 
             return correspondencia ? {
                 ...questao,
