@@ -61,12 +61,11 @@ export async function buscarDadosPlanilha() {
             } else if (tipoLower.includes('percepcao') || tipoLower.includes('questionario')) {
                 tipoFormatado = 'percepcao';
             }
+            
             let pdfPathMontado = provaInfo.link;
             if (pagPDF && pdfPathMontado.includes('.pdf')) {
                 pdfPathMontado = `${pdfPathMontado}#page=${pagPDF}`;
             }
-
-            const imgPathMontado = `img/banco-provas/${provaInfo.area}/${provaInfo.ano}/${provaInfo.caderno}/questoes/${tipoFormatado}/questao_${numQuestao}.png`;
 
             bancoDadosFormatado.push({
                 id: idQuestao,
@@ -75,7 +74,6 @@ export async function buscarDadosPlanilha() {
                 curso: provaInfo.area,
                 ano: provaInfo.ano,
                 caderno: provaInfo.caderno,
-                img_path: imgPathMontado,
                 pdf_path: pdfPathMontado,
                 pagina_pdf: pagPDF,
                 status: respostaInfo ? 'done' : 'open',

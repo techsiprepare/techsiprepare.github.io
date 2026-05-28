@@ -33,12 +33,12 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
 
     const grid = document.getElementById('grid-acervo');
     const pagContainer = document.getElementById('pagination-controls');
-    
+
     const filtroCurso = document.getElementById('filter-curso')?.value || 'all';
     const filtroTipo = document.getElementById('filter-tipo')?.value || 'all';
     const filtroAno = document.getElementById('filter-ano')?.value || 'all';
     const filtroStatus = document.getElementById('filter-status')?.value || 'all';
-    
+
     grid.innerHTML = '';
     if (pagContainer) pagContainer.innerHTML = '';
 
@@ -47,7 +47,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         let matchTipo = (filtroTipo === 'all') || (item.tipo === filtroTipo);
         let matchAno = (filtroAno === 'all') || (String(item.ano) === filtroAno);
         let matchStatus = (filtroStatus === 'all') || (item.status === filtroStatus);
-        
+
         return matchCurso && matchTipo && matchAno && matchStatus;
     });
 
@@ -62,7 +62,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
 
     pageItems.forEach(item => {
         const isDone = item.status === 'done';
-        
+
         let midiaVisual = '';
         if (isDone) {
             midiaVisual = `<div class="card-media-wrapper"><iframe src="${item.video_url}" frameborder="0" allowfullscreen></iframe></div>`;
@@ -77,28 +77,32 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
 
         const statusLabel = isDone ? 'Resolvido' : 'Em Aberto';
         const statusClass = isDone ? 'badge-status-done' : 'badge-status-open';
-        
-let tipoLabel = 'Objetiva';
-let tipoColor = '#b1b1b1';
 
-if (item.tipo === 'discursivas') {
-    tipoLabel = 'Discursiva';
-    tipoColor = '#d69e2e';
-} else if (item.tipo === 'percepcao') {
-    tipoLabel = 'Percepção';
-    tipoColor = '#319795';
-}
+        let tipoLabel = 'Objetiva';
+        let tipoColor = '#b1b1b1';
 
-const card = document.createElement('div');
-card.className = 'card-questao';
-card.innerHTML = `
-    ${midiaVisual}
-    <div class="card-content" style="padding: 18px;">
-        
-        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
-            <span class="badge" style="background: #b1b1b1; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.curso}</span>
-            <span class="badge" style="background: ${tipoColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${tipoLabel}</span>                    
-            <span class="badge ${statusClass}" style="padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${statusLabel}</span>
+        if (item.tipo === 'discursivas') {
+            tipoLabel = 'Discursiva';
+            tipoColor = '#d69e2e';
+        } else if (item.tipo === 'percepcao') {
+            tipoLabel = 'Percepção';
+            tipoColor = '#319795';
+        }
+
+        const textoBotaoPdf = item.pagina_pdf 
+            ? `Ver questão na página ${item.pagina_pdf} do PDF` 
+            : 'Visualizar questão no caderno';
+
+        const card = document.createElement('div');
+        card.className = 'card-questao';
+        card.innerHTML = `
+            ${midiaVisual}
+            <div class="card-content" style="padding: 18px;">
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+                    <span class="badge" style="background: #b1b1b1; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.curso}</span>
+                    <span class="badge" style="background: ${tipoColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${tipoLabel}</span>                    
+                    <span class="badge ${statusClass}" style="padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${statusLabel}</span>
                 </div>
                 
                 <p class="card-subtitle-origem">Enade ${item.ano} — ${item.caderno === 'UNICO' ? 'Caderno Único' : item.caderno}</p>
@@ -111,7 +115,7 @@ card.innerHTML = `
                     }
                     
                     <a href="${item.pdf_path}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
-                        Visualizar questão no caderno
+                        ${textoBotaoPdf}
                     </a>
                 </div>
             </div>
@@ -179,31 +183,3 @@ export function renderErro() {
             ⚠️ Erro ao carregar o acervo em tempo real. Verifique a conexão ou a publicação da planilha.
         </p>`;
 }
-
-function inicializarModalSeNecessario() {
-    if (!document.getElementById('modal-preview-imagem')) {
-        const modal = document.createElement('div');
-        modal.id = 'modal-preview-imagem';
-        modal.className = 'modal-preview';
-        modal.innerHTML = `
-            <div class="modal-preview-content">
-                <button class="modal-preview-close" onclick="document.getElementById('modal-preview-imagem').classList.remove('active')">&times;</button>
-                <img id="modal-preview-img-element" src="" alt="Enunciado Completo" class="modal-preview-img">
-            </div>
-        `;
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.classList.remove('active');
-        });
-        document.body.appendChild(modal);
-    }
-}
-
-window.abrirModalImagem = (src) => {
-    inicializarModalSeNecessario();
-    const modal = document.getElementById('modal-preview-imagem');
-    const img = document.getElementById('modal-preview-img-element');
-    if (modal && img) {
-        img.src = src;
-        modal.classList.add('active');
-    }
-};
