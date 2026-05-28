@@ -28,7 +28,6 @@ export function inicializarFiltrosDinamicos(acervo) {
         });
     }
 
-    // NOVO: Inicialização do Filtro de Modalidade
     const selectModalidade = document.getElementById('filter-modalidade');
     if (selectModalidade) {
         const modalidadesUnicas = [...new Set(acervo.map(item => item.modalidade))].filter(Boolean).sort((a, b) => a.localeCompare(b));
@@ -41,7 +40,6 @@ export function inicializarFiltrosDinamicos(acervo) {
         });
     }
 
-    // Configuração do comportamento expansível no Mobile
     setupMobileFiltersToggle();
 }
 
@@ -50,7 +48,6 @@ function setupMobileFiltersToggle() {
     const container = document.getElementById('filters-selectors-container');
     
     if (toggleBtn && container) {
-        // Remove listeners antigos para evitar duplicação
         const clone = toggleBtn.cloneNode(true);
         toggleBtn.parentNode.replaceChild(clone, toggleBtn);
 
@@ -69,12 +66,13 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
 
     const grid = document.getElementById('grid-acervo');
     const pagContainer = document.getElementById('pagination-controls');
+    const contadorContainer = document.getElementById('acervo-contador'); // NOVO CONTAINER
 
     const filtroCurso = document.getElementById('filter-curso')?.value || 'all';
     const filtroTipo = document.getElementById('filter-tipo')?.value || 'all';
     const filtroAno = document.getElementById('filter-ano')?.value || 'all';
     const filtroStatus = document.getElementById('filter-status')?.value || 'all';
-    const filtroModalidade = document.getElementById('filter-modalidade')?.value || 'all'; // NOVO
+    const filtroModalidade = document.getElementById('filter-modalidade')?.value || 'all';
 
     grid.innerHTML = '';
     if (pagContainer) pagContainer.innerHTML = '';
@@ -84,15 +82,38 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         let matchTipo = (filtroTipo === 'all') || (item.tipo === filtroTipo);
         let matchAno = (filtroAno === 'all') || (String(item.ano) === filtroAno);
         let matchStatus = (filtroStatus === 'all') || (item.status === filtroStatus);
-        let matchModalidade = (filtroModalidade === 'all') || (item.modalidade === filtroModalidade); // NOVO
+        let matchModalidade = (filtroModalidade === 'all') || (item.modalidade === filtroModalidade);
 
         return matchCurso && matchTipo && matchAno && matchStatus && matchModalidade;
     });
+
+    // NOVO: Atualiza o contador textual de resultados com feedback visual de ativação
+    if (contadorContainer) {
+        const temFiltroAtivo = filtroCurso !== 'all' || filtroTipo !== 'all' || filtroAno !== 'all' || filtroStatus !== 'all' || filtroModalidade !== 'all';
+        
+        if (filtrados.length === 0) {
+            contadorContainer.innerHTML = `Nenhuma questão encontrada.`;
+        } else {
+            contadorContainer.innerHTML = `Identificamos <strong>${filtrados.length}</strong> ${filtrados.length === 1 ? 'questão' : 'questões'}${temFiltroAtivo ? ' para os filtros aplicados' : ''}.`;
+        }
+    }
 
     if (filtrados.length === 0) {
         grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Nenhuma questão encontrada com esses filtros.</p>';
         return;
     }
+
+    // NOVO: Aplica efeito de transição/piscar na Grid para indicar atualização
+    grid.style.opacity = '0';
+    grid.style.transform = 'translateY(8px)';
+    grid.style.transition = 'none';
+    
+    // Força o navegador a computar o estado inicial antes de rodar a animação
+    setTimeout(() => {
+        grid.style.transition = 'opacity 0.25s ease-out, transform 0.25s ease-out';
+        grid.style.opacity = '1';
+        grid.style.transform = 'translateY(0)';
+    }, 30);
 
     const totalPages = Math.ceil(filtrados.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;

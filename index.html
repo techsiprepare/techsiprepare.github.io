@@ -86,61 +86,60 @@
                 <p style="color: var(--text-muted); margin-top: 8px;">Consulte as questões resolvidas ou encontre uma
                     disponível para gravar seu vídeo.</p>
             </div>
-            <div class="update-badge">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
-                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+        </div>
+
+        <div class="filters-wrapper">
+            <!-- Botão visível apenas no Mobile -->
+            <button id="toggle-filters-btn" class="filters-toggle-btn" aria-expanded="false">
+                <svg width="1.1em" height="1.1em" fill="currentColor" viewBox="0 0 16 16"
+                    style="margin-right: 6px; vertical-align: middle;">
+                    <path
+                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.316L10.33 8.56a1.5 1.5 0 0 0-.43 1.052v4.26a.5.5 0 0 1-.754.434l-2.435-1.39A.5.5 0 0 1 6 12.43v-2.82a1.5 1.5 0 0 0-.43-1.052L1.628 3.816A.5.5 0 0 1 1.5 3.5v-2z" />
                 </svg>
-                Sincronizado via Google Sheets
+                Filtrar Questões
+            </button>
+
+            <!-- Container dos selects (Flexbox no desktop, Sanfona/Dropdown no mobile) -->
+            <div id="filters-selectors-container" class="filters-selectors">
+                <div class="filter-group">
+                    <select id="filter-curso" onchange="renderAcervo(true)">
+                        <option value="all">Todos os Cursos</option>
+                    </select>
+                </div>
+
+                <!-- NOVO FILTRO -->
+                <div class="filter-group">
+                    <select id="filter-modalidade" onchange="renderAcervo(true)">
+                        <option value="all">Todas as Modalidades</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <select id="filter-tipo" onchange="renderAcervo(true)">
+                        <option value="all">Todos os Tipos</option>
+                        <option value="objetivas">Objetivas</option>
+                        <option value="discursivas">Discursivas</option>
+                        <option value="percepcao">Percepção</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <select id="filter-ano" onchange="renderAcervo(true)">
+                        <option value="all">Todos os Anos</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <select id="filter-status" onchange="renderAcervo(true)">
+                        <option value="all">Todos os Status</option>
+                        <option value="open">Em Aberto</option>
+                        <option value="done">Resolvido</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-<div class="filters-wrapper">
-    <!-- Botão visível apenas no Mobile -->
-    <button id="toggle-filters-btn" class="filters-toggle-btn" aria-expanded="false">
-        <svg width="1.1em" height="1.1em" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 6px; vertical-align: middle;"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.316L10.33 8.56a1.5 1.5 0 0 0-.43 1.052v4.26a.5.5 0 0 1-.754.434l-2.435-1.39A.5.5 0 0 1 6 12.43v-2.82a1.5 1.5 0 0 0-.43-1.052L1.628 3.816A.5.5 0 0 1 1.5 3.5v-2z"/></svg>
-        Filtrar Questões
-    </button>
-
-    <!-- Container dos selects (Flexbox no desktop, Sanfona/Dropdown no mobile) -->
-    <div id="filters-selectors-container" class="filters-selectors">
-        <div class="filter-group">
-            <select id="filter-curso" onchange="renderAcervo(true)">
-                <option value="all">Todos os Cursos</option>
-            </select>
-        </div>
-
-        <!-- NOVO FILTRO -->
-        <div class="filter-group">
-            <select id="filter-modalidade" onchange="renderAcervo(true)">
-                <option value="all">Todas as Modalidades</option>
-            </select>
-        </div>
-
-        <div class="filter-group">
-            <select id="filter-tipo" onchange="renderAcervo(true)">
-                <option value="all">Todos os Tipos</option>
-                <option value="objetivas">Objetivas</option>
-                <option value="discursivas">Discursivas</option>
-                <option value="percepcao">Percepção</option>
-            </select>
-        </div>
-
-        <div class="filter-group">
-            <select id="filter-ano" onchange="renderAcervo(true)">
-                <option value="all">Todos os Anos</option>
-            </select>
-        </div>
-
-        <div class="filter-group">
-            <select id="filter-status" onchange="renderAcervo(true)">
-                <option value="all">Todos os Status</option>
-                <option value="open">Em Aberto</option>
-                <option value="done">Resolvido</option>
-            </select>
-        </div>
-    </div>
-</div>
+        <div id="acervo-contador" class="acervo-contador-text">Carregando questões...</div>
 
         <div class="grid-questoes" id="grid-acervo">
         </div>
