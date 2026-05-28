@@ -93,6 +93,10 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
             ? `Ver questão na página ${item.pagina_pdf} do PDF` 
             : 'Visualizar questão no caderno';
 
+        const avisoMobile = item.pagina_pdf 
+        ? `if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){ alert('Nota: Em celulares, o PDF pode abrir na primeira página. Desça manualmente até a página ${item.pagina_pdf}.'); }`
+        : '';
+
         const card = document.createElement('div');
         card.className = 'card-questao';
         card.innerHTML = `
@@ -113,8 +117,8 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
                         ? `<p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Resolvida por: <strong>${item.autor}</strong></p>` 
                         : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary" style="text-align: center; padding: 10px; font-weight: 500;">Quero resolver essa questão</a>`
                     }
-                    
-                    <a href="${item.pdf_path}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
+
+                    <a href="${item.pdf_path}" onclick="${avisoMobile}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
                         ${textoBotaoPdf}
                     </a>
                 </div>
