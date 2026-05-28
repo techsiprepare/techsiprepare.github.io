@@ -62,8 +62,7 @@ Cria a chave de conexão com o banco de questões, agora incorporando o tipo da 
 
 *Fórmula na célula B2:*
 ```excel
-=ARRAYFORMULA(IF(Form_Responses!A2:A=""; ""; Form_Responses!G2:G & "_" & UPPER(Form_Responses!F2:F) & "_" & UPPER(Form_Responses!H2:H) & "_" & UPPER(Form_Responses!J2:J) & "_Q" & Form_Responses!I2:I))
-
+=ARRAYFORMULA(REGEXREPLACE(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SE(Form_Responses!A2:A = ""; ""; Form_Responses!G2:G & "_" & SUBSTITUIR(MAIÚSCULA(Form_Responses!F2:F);" ";"_") & "_" & SE(Form_Responses!H2:H="Caderno Único"; "UNICO"; "OUTROVALOR") & "_" & MAIÚSCULA(Form_Responses!J2:J) & "_Q" & Form_Responses!I2:I); "Ç"; "C"); "ç"; "c"); "Á"; "A"); "À"; "A"); "Â"; "A"); "Ã"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ì"; "I"); "Î"; "I"); "Ó"; "O"); "Ò"; "O"); "Ô"; "O"); "Õ"; "O"); "Ú"; "U"); "Ù"; "U"); "Û"; "U"); "Ç"; "C"); "ç"; "c"); "á"; "a"); "[^A-Za-z0-9_]"; ""))
 ```
 
 * **C: `Nome Completo`**
