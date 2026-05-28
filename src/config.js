@@ -1,2 +1,3 @@
-export const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe9qog3npJFLqkQeNUeB6b8uFrvEngE9FXFIehgq5BTdM1U1zC9o2DFs9sCjQPmI0O9S_EMlleTqdC/pub?gid=1885638684&single=true&output=csv";
-export const URL_QUESTOES_JSON = "./data/questoes.json";
+export const URL_PROVAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaTq7EG-K4TnondJXIwah1hwyBqpD63O9H8QI_Lgj3NA_OMZQRoTq7k6hOnk4zwO787TwujJYk5GJR/pub?gid=211459484&single=true&output=csv";
+export const URL_QUESTOES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaTq7EG-K4TnondJXIwah1hwyBqpD63O9H8QI_Lgj3NA_OMZQRoTq7k6hOnk4zwO787TwujJYk5GJR/pub?gid=930950504&single=true&output=csv";
+export const URL_RESPOSTAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaTq7EG-K4TnondJXIwah1hwyBqpD63O9H8QI_Lgj3NA_OMZQRoTq7k6hOnk4zwO787TwujJYk5GJR/pub?gid=1682886178&single=true&output=csv";

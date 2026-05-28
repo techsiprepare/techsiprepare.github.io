@@ -3,7 +3,6 @@ const ITEMS_PER_PAGE = 12;
 const ICON_PENCIL = `<svg width="1em" height="1em" fill="#bababa" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>`;
 
 export function inicializarFiltrosDinamicos(acervo) {
-    // 1. Inicializa o Filtro de Ano
     const selectAno = document.getElementById('filter-ano');
     if (selectAno) {
         const anosUnicos = [...new Set(acervo.map(item => item.ano))].sort((a, b) => b - a);
@@ -16,7 +15,6 @@ export function inicializarFiltrosDinamicos(acervo) {
         });
     }
 
-    // 2. Inicializa o Filtro de Curso
     const selectCurso = document.getElementById('filter-curso');
     if (selectCurso) {
         const cursosUnicos = [...new Set(acervo.map(item => item.curso))].sort((a, b) => a.localeCompare(b));
@@ -36,7 +34,6 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
     const grid = document.getElementById('grid-acervo');
     const pagContainer = document.getElementById('pagination-controls');
     
-    // Captura dos valores de todos os 4 filtros da tela
     const filtroCurso = document.getElementById('filter-curso')?.value || 'all';
     const filtroTipo = document.getElementById('filter-tipo')?.value || 'all';
     const filtroAno = document.getElementById('filter-ano')?.value || 'all';
@@ -45,7 +42,6 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
     grid.innerHTML = '';
     if (pagContainer) pagContainer.innerHTML = '';
 
-    // Aplicação da regra de filtragem múltipla cruzada
     let filtrados = acervoCruze.filter(item => {
         let matchCurso = (filtroCurso === 'all') || (item.curso === filtroCurso);
         let matchTipo = (filtroTipo === 'all') || (item.tipo === filtroTipo);
@@ -73,7 +69,6 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         } else {
             midiaVisual = `
                 <div class="card-media-wrapper">
-                    <img src="${item.img_path}" alt="Thumb" class="thumb-background-blur">
                     <div class="thumb-status-overlay" style="color: var(--status-open, #ED8936);">
                         ${ICON_PENCIL}
                     </div>
@@ -83,18 +78,27 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         const statusLabel = isDone ? 'Resolvido' : 'Em Aberto';
         const statusClass = isDone ? 'badge-status-done' : 'badge-status-open';
         
-        const tipoLabel = item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1);
+let tipoLabel = 'Objetiva';
+let tipoColor = '#b1b1b1';
 
-        const card = document.createElement('div');
-        card.className = 'card-questao';
-        card.innerHTML = `
-            ${midiaVisual}
-            <div class="card-content" style="padding: 18px;">
-                
-                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
-                    <span class="badge" style="background: #b1b1b1; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.curso}</span>
-                    <span class="badge" style="background: ${item.tipo === 'objetivas' ? '#b1b1b1' : '#d69e2e'}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${tipoLabel}</span>
-                    <span class="badge ${statusClass}" style="padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${statusLabel}</span>
+if (item.tipo === 'discursivas') {
+    tipoLabel = 'Discursiva';
+    tipoColor = '#d69e2e';
+} else if (item.tipo === 'percepcao') {
+    tipoLabel = 'Percepção';
+    tipoColor = '#319795';
+}
+
+const card = document.createElement('div');
+card.className = 'card-questao';
+card.innerHTML = `
+    ${midiaVisual}
+    <div class="card-content" style="padding: 18px;">
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+            <span class="badge" style="background: #b1b1b1; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.curso}</span>
+            <span class="badge" style="background: ${tipoColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${tipoLabel}</span>                    
+            <span class="badge ${statusClass}" style="padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${statusLabel}</span>
                 </div>
                 
                 <p class="card-subtitle-origem">Enade ${item.ano} — ${item.caderno === 'UNICO' ? 'Caderno Único' : item.caderno}</p>
@@ -103,13 +107,12 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
                 <div class="card-actions" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
                     ${isDone 
                         ? `<p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Resolvida por: <strong>${item.autor}</strong></p>` 
-                        : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary" style="text-align: center; padding: 10px; font-weight: 500;">Resolver Questão</a>`
+                        : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary" style="text-align: center; padding: 10px; font-weight: 500;">Quero resolver essa questão</a>`
                     }
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <button onclick="window.abrirModalImagem('${item.img_path}')" class="btn btn-secondary" style="font-size: 0.78rem; padding: 9px;">Enunciado</button>
-                        <a href="${item.pdf_path}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.78rem; padding: 9px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568;">Caderno</a>
-                    </div>
+                    <a href="${item.pdf_path}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
+                        Visualizar questão no caderno
+                    </a>
                 </div>
             </div>
         `;

@@ -1,228 +1,43 @@
-# Documentação Técnica e Fluxo de Informações: TechSI Prepare
+# TechSI Prepare | IFMG
 
-Este documento mapeia o fluxo de experiência do usuário (UX/UI), a arquitetura de dados (integração entre CSV e JSON) e a organização do sistema de arquivos do projeto.
+O TechSI Prepare é um ecossistema focado na resolução colaborativa de questões do ENADE para estudantes de Sistemas de Informação. O objetivo do projeto é construir uma biblioteca de resoluções em vídeo, permitindo aos alunos do IFMG o aprendizado ativo e o cômputo de horas de extensão.
 
----
+## Arquitetura do Frontend e Fluxo (UX/UI)
 
-## 1. Fluxo de Experiência do Usuário (UX/UI)
+A interface da plataforma foi desenhada como uma *Single Page Application* (SPA). O roteamento de páginas é capturado e gerenciado diretamente pela hash da URL.
 
-O sistema opera como uma *Single Page Application* (SPA) com rotas geridas via hash na URL. As páginas válidas de navegação são `home`, `acervo` e `instrucoes`.
+A navegação é dividida em três telas principais:
 
-### 1.1. Tela Inicial (`#home`)
+* **Tela Inicial (`#home`):** Apresenta o foco, o objetivo e o público-alvo do projeto para estudantes matriculados.
 
-* **Objetivo:** Apresentar a proposta do projeto de extensão e converter visitantes em participantes.
+* **Tela de Acervo (`#acervo`):** Responsável por processar dinamicamente os grids de resolução. Permite aplicar filtros cruzados de curso, tipo (objetiva/discursiva), ano da prova e status atual (resolvido ou em aberto). A listagem possui recursos de paginação exibindo 12 itens por página. Questões já avaliadas e resolvidas exibem o player em *iframe* com a resolução no YouTube, e indicam o nome do autor do vídeo. Questões em aberto exibem a capa da questão borrada e um botão direcionando à etapa de gravação.
 
-### 1.2. Tela de Acervo (`#acervo`)
+* **Tela de Instruções (`#instrucoes`):** Rota que apresenta o passo a passo para o estudante submeter um material ao acervo. Contém alertas sobre o funcionamento por ordem de chegada e dispõe do botão oficial que encaminha o usuário ao formulário de envio de dados.
 
-* **Objetivo:** Permitir a busca de questões para estudo ou captação de novas resoluções.
-* **Filtros e Paginação:** O acervo possui filtros dinâmicos extraídos dos dados reais da planilha (como ano e status). A exibição em grid é controlada por uma paginação que limita a renderização a 12 itens por página (`ITEMS_PER_PAGE`).
-* **Cards Dinâmicos:**
-* **Em Aberto (`open`):** Exibe a imagem de capa (borrada), um ícone de lápis em overlay, tags indicando curso/tipo e um botão com a chamada "Resolver Questão", que direciona para a página de instruções.
-* **Resolvido (`done`):** Substitui a capa da imagem por um `iframe` do vídeo do YouTube embutido, exibindo o nome do autor da resolução.
+## Backend e Banco de Dados Relacional (Google Sheets)
 
+O sistema atua sem um backend clássico, utilizando o consumo estruturado de 3 URLs do formato CSV fornecidas pelo Google Sheets (`URL_PROVAS`, `URL_QUESTOES` e `URL_RESPOSTAS`).
 
-* **Recursos Extras:** O grid oferece botões para visualizar o caderno completo (PDF em nova aba) e abrir o enunciado original da questão em um Modal interativo nativo da página (`abrirModalImagem`).
+A arquitetura oficial de tratamento e armazenamento opera através de 5 abas relacionais na planilha principal:
 
-### 1.3. Tela de Instruções (`#instrucoes`)
+* **`Form_Responses`:** *Data Lake* primário com os dados brutos e carimbos de envio gerados pelo formulário de inscrições dos alunos.
 
-* **Objetivo:** Guiar o aluno no processo de gravação e submissão através de um formulário externo.
+* **`Gerenciamento_Respostas`:** Hub de curadoria técnica do projeto. Esta aba gera a *Chave Primária* da resposta automaticamente utilizando Regex, além de compor uma chave estrangeira padronizada para vincular o metadado do acervo ao aluno. Esta é a área para analisar se o envio foi rejeitado ou "Aprovado" e para fornecer o link oficial validado.
 
-```mermaid
-graph TD
-    classDef main fill:#fff,stroke:#24292f,stroke-width:2px,color:#24292f;
-    classDef router fill:#f6f8fa,stroke:#57606a,stroke-width:1px,color:#24292f,font-weight:bold;
+* **`Provas_Enade`:** Catálogo contendo as chaves primárias das avaliações e metadados, como link do Inep, área e ano de publicação.
 
-    Hash["Navegação via URL (#hash)"] --> Router{"router.js<br>Valida Rota"}
-    
-    Router -->|#home| Home["Tela Inicial<br>• Proposta do Projeto"]
-    Router -->|#instrucoes| Inst["Tela de Instruções<br>• Guia de Gravação<br>• Link do Formulário"]
-    Router -->|#acervo| Acervo["Tela de Acervo<br>• Grid de Questões<br>• Filtros por Ano/Status"]
+* **`Questoes_Enade`:** Repositório relacionando o detalhamento técnico e a numeração das questões aos cadernos do repositório de provas.
 
-    class Router router;
-    class Hash,Home,Inst,Acervo main;
-```
+* **`Respostas_Aprovadas`:** View gerada por meio da linguagem de Query nativa do Google (`QUERY SELECT`). Esta aba contém um filtro restritivo de publicidade, renderizando unicamente os 4 dados requeridos das submissões marcadas como 'Aprovadas', garantindo a segurança como a única aba extraída publicamente pela API.
 
----
+> Para melhor detalhamento da estrutura do forms e da planilha, conferir em [docs/sheets-guidelines.md](docs/sheets-guidelines.md)
 
-## 2. Gestão de Dados (API e Cruzamento de IDs)
+## Processamento e Componentes Dinâmicos
 
-O sistema baseia-se na mescla simultânea de dois repositórios de dados para formar o Acervo: a árvore estática local e o histórico dinâmico na nuvem.
+Durante o disparo inicial da aplicação, as fontes de CSV passam por rotinas utilitárias para preencher o sistema:
 
-### 2.1. Fontes de Dados
+* **Leitor de PDF Inteligente:** Se constar na base o número da página no caderno para determinada questão, a ancoragem original em PDF concatenará automaticamente uma instrução de visualização do navegador para abrir diretamente na página requerida (parâmetro `#page=`).
 
-* **Planilha Google (CSV):** Obtida via `URL_CSV`, atua como o banco de dados dinâmico das resoluções aprovadas.
-* **Arquivo Local (JSON):** Obtido via `URL_QUESTOES_JSON` (`data/questoes.json`), atua como o mapa oficial da estrutura de pastas físicas locais.
+* **URL YouTube Sanitizer:** Tratamento nativo por Regex das *URLs* enviadas na base de respostas. Links em padrão longo (com a variável de rotação `v=`) ou atalhos mobile (`youtu.be/` e `/shorts/`) são automaticamente formatados para links passivos de `embed/` para os modais em visualização na grade do site.
 
-### 2.2. O Mecanismo de Conferência de IDs
-
-O coração do sistema é o cruzamento direto de chaves utilizando um Identificador Único (`idUnico`). Em vez de checar múltiplos parâmetros, o frontend e a automação geram uma string padronizada, em maiúsculas, livre de acentos e espaços.
-
-**A anatomia do ID segue o padrão:** `[PREFIXO DO CURSO]-[ANO]-[CADERNO]-[TIPO][NÚMERO]`
-* Exemplo para Caderno Geral: `ANA-2021-UNICO-OBJ15`
-* Exemplo para Caderno Específico: `ANA-2018-1801-DIS02`
-
-O frontend faz o mapeamento criando uma coleção do tipo `Map` em memória com o ID do CSV. Ao percorrer a árvore do arquivo JSON, ele confere instantaneamente se o ID do banco local dá "match" com alguma chave registrada na planilha, injetando o vídeo correspondente e alterando o status da questão para resolvido (`done`).
-
-```mermaid
-graph LR
-    classDef fonte fill:#ffffff,stroke:#24292f,stroke-width:2px,color:#24292f,shape:cylinder;
-    classDef processo fill:#fff,stroke:#24292f,stroke-width:1.5px,color:#24292f;
-    classDef merge fill:#f6f8fa,stroke:#24292f,stroke-width:2px,color:#24292f,font-weight:bold;
-
-    JSON[("questoes.json<br>(Banco Local)")] --> Flat["api.js<br>Extrai dados físicos<br>ID: ANA-2021-UNICO-OBJ15"]
-    CSV[("Planilha Google<br>(Dados Processados)")] --> Parse["utils.js<br>Mapeia linhas do CSV<br>ID: ANA-2021-UNICO-OBJ15"]
-
-    Flat --> Merge{"Conferência Exata<br>de Match de IDs"}
-    Parse --> Merge
-
-    Merge -->|Match Confirmado| D["Status: 'done'<br>Injeta Vídeo e Autor"]
-    Merge -->|ID não encontrado| O["Status: 'open'<br>Injeta Link de Instruções"]
-
-    class JSON,CSV fonte;
-    class Flat,Parse,D,O processo;
-    class Merge merge;
-
-```
-
-### 2.3. Estruturação e Fórmulas da Planilha (Google Sheets)
-
-A planilha do Google Sheets atua como a esteira de higienização de dados e deve ser separada em duas abas:
-
-1. **`Form_Responses`:** Guarda as respostas puras enviadas pelos alunos através do Google Forms.
-2. **`Dados_Processados`:** É a aba oficial publicada como `.csv` para o sistema. Ela deve conter exatamente as seguintes 4 colunas:
-
-| Coluna | Cabeçalho | Expressão / Fórmula (Aplicar na linha 2 e arrastar para baixo) |
-| --- | --- | --- |
-| **A** | `ID Questão` | `=IF(Form_Responses!A2=""; ""; LEFT(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(UPPER(Form_Responses!F2); "Á"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Í"; "I"); "Ó"; "O"); " "; ""); 3) & "-" & Form_Responses!G2 & "-" & Form_Responses!H2 & "-OBJ" & TEXT(Form_Responses!I2; "00"))` |
-| **B** | `Nome Completo` | `=IF(Form_Responses!A2=""; ""; Form_Responses!C2)` |
-| **C** | `Assunto Principal` | `=IF(Form_Responses!A2=""; ""; Form_Responses!J2)` |
-| **D** | `URL do Vídeo` | `=IF(Form_Responses!A2=""; ""; Form_Responses!K2)` |
-
----
-
-## 3. Gestão de Dados (API e Repositórios)
-
-O sistema baseia-se na mescla simultânea de dois repositórios de dados para formar o Acervo: a árvore estática local e o histórico dinâmico na nuvem.
-
-### 3.1. Fontes de Dados
-
-* **Planilha Google (CSV):** Obtida via `URL_CSV`, contém os dados aprovados das resoluções (formulários validados).
-* **Arquivo Local (JSON):** Obtido via `URL_QUESTOES_JSON` (`data/questoes.json`), atua como o banco de dados oficial que lista a existência de todos os cadernos e questões mapeadas no repositório.
-
-### 3.2. Tratamento e Merge
-
-* O sistema cruza as informações utilizando o Identificador Único da questão, realizando uma busca exata entre o `id` gerado localmente na árvore de questões e o `idUnico` extraído do banco de dados na nuvem.
-* O CSV passa por um *parser* (`parsearCSV`) preparado para processar uma estrutura de exatamente 4 colunas por linha, extraindo os campos: `idUnico` (Coluna A), `autor` (Coluna B), `assunto` (Coluna C) e `video_url` (Coluna D).
-* As URLs do YouTube inseridas no CSV são higienizadas e padronizadas no frontend pela função `formatarUrlEmbed`, que converte links padrão de navegador (`watch?v=`) ou links curtos de compartilhamento (`youtu.be/`) em links de incorporação seguros (`embed/`).
-
-```mermaid
-graph LR
-    classDef fonte fill:#ffffff,stroke:#24292f,stroke-width:2px,color:#24292f,shape:cylinder;
-    classDef processo fill:#fff,stroke:#24292f,stroke-width:1.5px,color:#24292f;
-    classDef merge fill:#f6f8fa,stroke:#24292f,stroke-width:2px,color:#24292f,font-weight:bold;
-
-    JSON[("questoes.json<br>(Estrutura Local)")] --> Flat["api.js<br>Mapeia caminhos de<br>Imagens e PDFs"]
-    
-    CSV[("Planilha Google<br>(Formulário CSV)")] --> Parse["utils.js<br>parsearCSV()<br>(4 colunas)"]
-
-    Flat --> Merge{"Merge de Dados<br>Chave: id / idUnico"}
-    Parse --> Merge
-
-    Merge -->|Se houver match| D["Status: 'done'<br>Injeta Vídeo (formatarUrlEmbed) e Autor"]
-    Merge -->|Se não houver| O["Status: 'open'<br>Injeta link #instrucoes"]
-
-    class JSON,CSV fonte;
-    class Flat,Parse,D,O processo;
-    class Merge merge;
-
-```
-
-> Exemplo de objeto JSON:
-
-```json
-[
-  {
-    "curso": "computacao",
-    "anos": [
-      {
-        "ano": 2005,
-        "cadernos": [
-          {
-            "codigo": "UNICO",
-            "pdf_arquivo": "prova.pdf",
-            "objetivas": [
-              {
-                "id": "COM-2005-UNICO-OBJ41",
-                "numero": 41,
-                "arquivo": "41.webp"
-              }
-            ],
-            "discursivas": []
-          }
-        ]
-      }
-    ]
-  }
-]
-
-```
-
----
-
-## 4. Estrutura de Pastas e Banco de Imagens
-
-O repositório local de cadernos e recortes de questões deve seguir um padrão rígido de encapsulamento para garantir a automação.
-
-> O diretório base para todo o armazenamento local é `./img/banco-provas/`.
-
-```text
-img/banco-provas/
-└── [CURSO]/                                    # Ex: computacao, analise-e-desenv
-    └── [ANO]/                                  # Ex: 2017, 2021
-        └── [CODIGO_CADERNO]/                   # Ex: 1801, ou UNICO
-            ├── prova.pdf                       # O arquivo PDF inteiro do caderno
-            └── questoes/                       # Pasta pai dos enunciados recortados
-                ├── discursivas/                # Imagens de questões dissertativas
-                └── objetivas/                  # Imagens de múltipla escolha
-                    ├── 09.webp
-                    └── 10.webp
-
-```
-
-### 4.1. Regras de Arquivos
-
-* **Padrão de Nomenclatura:** As imagens das questões devem ter extensão `.webp`. O nome do arquivo deve ser preferencialmente numérico (ex: `01.webp`), pois o script extrairá os dígitos para ordenação e formatação.
-* **Nome do PDF:** O arquivo com o caderno inteiro da prova deve se chamar `prova.pdf`.
-* **Segregação de Tipos:** A pasta de questões ramifica obrigatoriamente entre `objetivas` e `discursivas`.
-
----
-
-## 5. Automação: Geração do Banco Local (JSON)
-
-Para evitar a inserção manual de novos cadernos no código, o projeto conta com um script Node.js (`gerar-banco.js`).
-
-* **Funcionamento:** O script faz uma varredura completa nas pastas dentro de `img/banco-provas/`.
-* **Normalização Anti-Erros:** Ao ler o nome das pastas de Cursos (Ex: `analise-e-desenvolvimento`), o script converte para maiúsculo, desmembra caracteres acentuados (`normalize('NFD')`), remove acentos gráficos e limpa espaços/hifens, garantindo um prefixo de 3 letras puro (Ex: `ANA`).
-* **Montagem da Árvore e ID:** Ele injeta em cada questão o identificador único resultante, herdando diretamente o nome da pasta do caderno (`idCaderno`). O número da questão ganha padding de zeros (Ex: 05).
-* **Resultado:** O output final é o arquivo `data/questoes.json`, que atua como o banco de espelhos a ser cruzado com o Google Sheets.
-
-```mermaid
-graph TD
-    classDef pasta fill:#fff,stroke:#24292f,stroke-width:1.5px,color:#24292f;
-    classDef script fill:#f6f8fa,stroke:#24292f,stroke-width:2px,color:#24292f,font-weight:bold;
-    classDef output fill:#ffffff,stroke:#24292f,stroke-width:2px,color:#24292f,shape:cylinder;
-
-    Dir["Diretório Local<br>img/banco-provas/"] -->|Varredura física| Script["gerar-banco.js<br>(Script Node.js)"]
-    
-    subgraph Processo de Normalização
-        Script --> N1["Remove acentos e espaços"]
-        N1 --> ID["Gera ID Único Padronizado<br>Ex: ANA-2021-UNICO-OBJ09"]
-    end
-
-    ID --> Out[("data/questoes.json")]
-
-    class Dir,N1 pasta;
-    class Script,ID script;
-    class Out output;
-
-```
+* **Tags e Distinções Visuais:** Os inputs são limpos em minúsculas e comparados a termos parciais de String. Discursivas ou Questionário de percepção ganham tags estéticas separadas dentro da classe CSS do Acervo.

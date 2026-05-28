@@ -1,39 +1,42 @@
 export function parsearCSV(texto) {
     const linhas = texto.split(/\r?\n/);
-    if (linhas.length <= 1) return [];
+    if (linhas.length === 0) return [];
 
     const separador = linhas[0].includes(';') ? ';' : ',';
-    const resultados = [];
-
-    for (let i = 1; i < linhas.length; i++) {
-        const linha = linhas[i].trim();
-        if (!linha) continue;
-
-        const colunas = linha.split(new RegExp(`\\s*${separador}\\s*(?=(?:[^\\"]*\\"[^\\"]*\\")*[^\\"]*$)`));
-
-        if (colunas.length >= 4) {
-            const statusVal = colunas[4] ? colunas[4].replace(/"/g, "").trim().toLowerCase() : "";
-
-            resultados.push({
-                idUnico: colunas[0].replace(/"/g, "").trim(),   // Coluna A
-                autor: colunas[1].replace(/"/g, "").trim(),     // Coluna B
-                assunto: colunas[2].replace(/"/g, "").trim(),   // Coluna C
-                video_url: colunas[3].replace(/"/g, "").trim(), // Coluna D
-                statusValidacao: statusVal                      // Coluna E
-            });
-        }
-    }
-    return resultados;
+    
+    return linhas
+        .filter(linha => linha.trim() !== "")
+        .map(linha => {
+            const colunas = linha.split(new RegExp(`\\s*${separador}\\s*(?=(?:[^\\"]*\\"[^\\"]*\\")*[^\\"]*$)`));
+            return colunas.map(val => val.replace(/^"|"$/g, '').trim());
+        });
 }
 
 export function formatarUrlEmbed(url) {
     if (!url) return "";
+    
     if (url.includes("youtube.com/embed/")) return url;
-    if (url.includes("watch?v=")) return url.replace("watch?v=", "embed/");
-    if (url.includes("youtu.be/")) {
-        const urlSemQuery = url.split('?')[0];
-        const idVideo = urlSemQuery.substring(urlSemQuery.lastIndexOf('/') + 1);
-        return `https://www.youtube.com/embed/${idVideo}`;
+
+    try {
+        let idVideo = "";
+
+        if (url.includes("youtu.be/")) {
+            const parteAposDominio = url.split("youtu.be/")[1];
+            idVideo = parteAposDominio.split(/[?#]/)[0];
+        } else if (url.includes("shorts/")) {
+            const parteAposShorts = url.split("shorts/")[1];
+            idVideo = parteAposShorts.split(/[?#]/)[0];
+        } else if (url.includes("v=")) {
+            const urlObj = new URL(url);
+            idVideo = urlObj.searchParams.get("v");
+        }
+
+        if (idVideo) {
+            return `https://www.youtube.com/embed/${idVideo}`;
+        }
+    } catch (erro) {
+        console.error("Erro ao converter URL do YouTube:", erro);
     }
+
     return url;
 }

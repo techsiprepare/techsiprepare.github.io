@@ -1,71 +1,93 @@
-import { URL_CSV, URL_QUESTOES_JSON } from './config.js';
+import { URL_PROVAS, URL_QUESTOES, URL_RESPOSTAS } from './config.js';
 import { parsearCSV, formatarUrlEmbed } from './utils.js';
 
 export async function buscarDadosPlanilha() {
     try {
-        const [respostaPlanilha, respostaJson] = await Promise.all([
-            fetch(URL_CSV),
-            fetch(URL_QUESTOES_JSON)
+        const [resProvas, resQuestoes, resRespostas] = await Promise.all([
+            fetch(URL_PROVAS).then(r => r.text()),
+            fetch(URL_QUESTOES).then(r => r.text()),
+            fetch(URL_RESPOSTAS).then(r => r.text())
         ]);
 
-        if (!respostaPlanilha.ok) throw new Error('Falha ao buscar dados da planilha.');
-        if (!respostaJson.ok) throw new Error('Falha ao buscar o arquivo local de questões.');
+        const dadosProvas = parsearCSV(resProvas);
+        const dadosQuestoes = parsearCSV(resQuestoes);
+        const dadosRespostas = parsearCSV(resRespostas);
 
-        const [textoCsv, arvoreQuestoes] = await Promise.all([
-            respostaPlanilha.text(),
-            respostaJson.json()
-        ]);
+        const provasMap = new Map();
+        for (let i = 1; i < dadosProvas.length; i++) {
+            const row = dadosProvas[i];
+            if (row.length >= 4) {
+                provasMap.set(row[0], {
+                    ano: row[1],
+                    area: row[2],
+                    caderno: row[3],
+                    link: row[4] || '#'
+                });
+            }
+        }
 
-        const db_todas_questoes = arvoreQuestoes.flatMap(({ curso, anos }) =>
-            anos.flatMap(({ ano, cadernos }) =>
-                cadernos.flatMap(({ codigo: caderno, pdf_arquivo, objetivas, discursivas }) => {
-                    const pdfPathMontado = `img/banco-provas/${curso}/${ano}/${caderno}/${pdf_arquivo}`;
+        const respostasMap = new Map();
+        for (let i = 1; i < dadosRespostas.length; i++) {
+            const row = dadosRespostas[i];
+            if (row.length >= 4) {
+                respostasMap.set(row[0], {
+                    aluno: row[1],
+                    assunto: row[2],
+                    urlVideo: row[3]
+                });
+            }
+        }
 
-                    return ['objetivas', 'discursivas'].flatMap(tipo => 
-                        (tipo === 'objetivas' ? objetivas : discursivas).map(questao => ({
-                            id: questao.id,
-                            numero: questao.numero,
-                            tipo,
-                            curso,
-                            ano,
-                            caderno,
-                            img_path: `img/banco-provas/${curso}/${ano}/${caderno}/questoes/${tipo}/${questao.arquivo}`,
-                            pdf_path: pdfPathMontado
-                        }))
-                    );
-                })
-            )
-        );
+        const bancoDadosFormatado = [];
 
-        // 1. Faz o parse de todas as linhas do CSV vindas da planilha
-        const resolucoesBrutas = parsearCSV(textoCsv);
+        for (let i = 1; i < dadosQuestoes.length; i++) {
+            const row = dadosQuestoes[i];
+            if (row.length < 4) continue;
 
-        // 2. FILTRO: Retém apenas os registros que foram marcados estritamente como 'aprovado'
-        const resolucoesAprovadas = resolucoesBrutas.filter(res => res.statusValidacao === 'aprovado');
+            const idQuestao = row[0];
+            const idProva = row[1];
+            const numQuestao = row[2];
+            const tipoBruto = row[3];
+            const pagPDF = row[4] || "";
 
-        // 3. Monta o mapa de busca rápida usando apenas as resoluções aprovadas
-        const mapaResolucoes = new Map(
-            resolucoesAprovadas.map(res => [res.idUnico, res])
-        );
+            const provaInfo = provasMap.get(idProva) || { ano: '', area: 'Desconhecida', caderno: 'UNICO', link: '#' };
+            const respostaInfo = respostasMap.get(idQuestao) || null;
 
-        // 4. Executa o cruzamento de dados com a árvore local de questões
-        return db_todas_questoes.map(questao => {
-            const correspondencia = mapaResolucoes.get(questao.id);
+            let tipoFormatado = 'objetivas';
+            const tipoLower = tipoBruto.toLowerCase();
 
-            return correspondencia ? {
-                ...questao,
-                status: 'done',
-                autor: correspondencia.autor,
-                video_url: formatarUrlEmbed(correspondencia.video_url)
-            } : {
-                ...questao,
-                status: 'open',
-                autor: null,
-                video_url: null
-            };
-        });
+            if (tipoLower.includes('discursiva')) {
+                tipoFormatado = 'discursivas';
+            } else if (tipoLower.includes('percepcao') || tipoLower.includes('questionario')) {
+                tipoFormatado = 'percepcao';
+            }
+            let pdfPathMontado = provaInfo.link;
+            if (pagPDF && pdfPathMontado.includes('.pdf')) {
+                pdfPathMontado = `${pdfPathMontado}#page=${pagPDF}`;
+            }
+
+            const imgPathMontado = `img/banco-provas/${provaInfo.area}/${provaInfo.ano}/${provaInfo.caderno}/questoes/${tipoFormatado}/questao_${numQuestao}.png`;
+
+            bancoDadosFormatado.push({
+                id: idQuestao,
+                numero: numQuestao,
+                tipo: tipoFormatado,
+                curso: provaInfo.area,
+                ano: provaInfo.ano,
+                caderno: provaInfo.caderno,
+                img_path: imgPathMontado,
+                pdf_path: pdfPathMontado,
+                pagina_pdf: pagPDF,
+                status: respostaInfo ? 'done' : 'open',
+                autor: respostaInfo ? respostaInfo.aluno : null,
+                video_url: respostaInfo ? formatarUrlEmbed(respostaInfo.urlVideo) : null
+            });
+        }
+
+        return bancoDadosFormatado;
+
     } catch (erro) {
-        console.error("Erro técnico capturado:", erro);
+        console.error("Erro técnico ao processar banco de dados das planilhas:", erro);
         throw erro;
     }
 }
