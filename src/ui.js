@@ -1,6 +1,7 @@
 let currentPage = 1;
 const ITEMS_PER_PAGE = 12;
 const ICON_PENCIL = `<svg width="1em" height="1em" fill="#bababa" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>`;
+const ICON_FILTER = `<svg width="1.1em" height="1.1em" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 6px; vertical-align: middle;"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.316L10.33 8.56a1.5 1.5 0 0 0-.43 1.052v4.26a.5.5 0 0 1-.754.434l-2.435-1.39A.5.5 0 0 1 6 12.43v-2.82a1.5 1.5 0 0 0-.43-1.052L1.628 3.816A.5.5 0 0 1 1.5 3.5v-2z"/></svg>`;
 
 export function inicializarFiltrosDinamicos(acervo) {
     const selectAno = document.getElementById('filter-ano');
@@ -26,6 +27,41 @@ export function inicializarFiltrosDinamicos(acervo) {
             selectCurso.appendChild(option);
         });
     }
+
+    // NOVO: Inicialização do Filtro de Modalidade
+    const selectModalidade = document.getElementById('filter-modalidade');
+    if (selectModalidade) {
+        const modalidadesUnicas = [...new Set(acervo.map(item => item.modalidade))].filter(Boolean).sort((a, b) => a.localeCompare(b));
+        selectModalidade.innerHTML = '<option value="all">Todas as Modalidades</option>';
+        modalidadesUnicas.forEach(mod => {
+            const option = document.createElement('option');
+            option.value = mod;
+            option.textContent = mod;
+            selectModalidade.appendChild(option);
+        });
+    }
+
+    // Configuração do comportamento expansível no Mobile
+    setupMobileFiltersToggle();
+}
+
+function setupMobileFiltersToggle() {
+    const toggleBtn = document.getElementById('toggle-filters-btn');
+    const container = document.getElementById('filters-selectors-container');
+    
+    if (toggleBtn && container) {
+        // Remove listeners antigos para evitar duplicação
+        const clone = toggleBtn.cloneNode(true);
+        toggleBtn.parentNode.replaceChild(clone, toggleBtn);
+
+        clone.addEventListener('click', () => {
+            const isExpanded = container.classList.toggle('visible');
+            clone.setAttribute('aria-expanded', isExpanded);
+            clone.innerHTML = isExpanded 
+                ? `${ICON_FILTER} Ocultar Filtros` 
+                : `${ICON_FILTER} Filtrar Questões`;
+        });
+    }
 }
 
 export function renderAcervoGrid(acervoCruze, resetPage = false) {
@@ -38,6 +74,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
     const filtroTipo = document.getElementById('filter-tipo')?.value || 'all';
     const filtroAno = document.getElementById('filter-ano')?.value || 'all';
     const filtroStatus = document.getElementById('filter-status')?.value || 'all';
+    const filtroModalidade = document.getElementById('filter-modalidade')?.value || 'all'; // NOVO
 
     grid.innerHTML = '';
     if (pagContainer) pagContainer.innerHTML = '';
@@ -47,8 +84,9 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         let matchTipo = (filtroTipo === 'all') || (item.tipo === filtroTipo);
         let matchAno = (filtroAno === 'all') || (String(item.ano) === filtroAno);
         let matchStatus = (filtroStatus === 'all') || (item.status === filtroStatus);
+        let matchModalidade = (filtroModalidade === 'all') || (item.modalidade === filtroModalidade); // NOVO
 
-        return matchCurso && matchTipo && matchAno && matchStatus;
+        return matchCurso && matchTipo && matchAno && matchStatus && matchModalidade;
     });
 
     if (filtrados.length === 0) {
@@ -137,7 +175,7 @@ function renderPaginationControls(totalPages, container) {
     if (totalPages <= 1) return;
 
     const scrollToGrid = () => {
-        const filtersElement = document.querySelector('.filters');
+        const filtersElement = document.querySelector('.filters-wrapper');
         if (filtersElement) {
             window.scrollTo({ top: filtersElement.offsetTop - 20, behavior: 'smooth' });
         }
@@ -190,7 +228,6 @@ export function renderErro() {
 }
 
 export function mostrarToast(mensagem, urlParaAbrir = null) {
-    // 1. Cria ou reaproveita o container dos toasts
     let container = document.getElementById('toast-container');
     if (!container) {
         container = document.createElement('div');
@@ -211,7 +248,6 @@ export function mostrarToast(mensagem, urlParaAbrir = null) {
         document.body.appendChild(container);
     }
 
-    // 2. Cria o elemento do Toast usando a identidade do app
     const toast = document.createElement('div');
     toast.style.cssText = `
         background: #2d3748;
@@ -234,7 +270,6 @@ export function mostrarToast(mensagem, urlParaAbrir = null) {
         align-items: flex-start;
     `;
 
-    // Ícone de alerta e estrutura com flexbox para comportar os botões se necessário
     toast.innerHTML = `
         <svg width="18" height="18" fill="var(--status-open, #ED8936)" viewBox="0 0 16 16" style="flex-shrink: 0;">
             <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
@@ -252,20 +287,17 @@ export function mostrarToast(mensagem, urlParaAbrir = null) {
 
     container.appendChild(toast);
 
-    // Força o reflow para rodar a animação de entrada
     setTimeout(() => {
         toast.style.opacity = '1';
         toast.style.transform = 'translateY(0)';
     }, 10);
 
-    // Função interna para remover o toast com animação de saída
     const fecharToast = () => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateY(-10px)';
         setTimeout(() => toast.remove(), 300);
     };
 
-    // 3. Controle de ações baseados no tipo do Toast
     if (urlParaAbrir) {
         const btnConfirm = toast.querySelector('.btn-toast-confirm');
         const btnCancel = toast.querySelector('.btn-toast-cancel');
@@ -280,10 +312,8 @@ export function mostrarToast(mensagem, urlParaAbrir = null) {
             btnCancel.addEventListener('click', fecharToast);
         }
     } else {
-        // Se for apenas um toast informativo (sem link), remove automaticamente após 5s
         setTimeout(fecharToast, 5000);
     }
 }
 
-// Torna a função acessível globalmente para os atributos onclick dos cards
 window.mostrarToast = mostrarToast;

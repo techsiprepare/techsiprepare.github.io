@@ -535,3 +535,91 @@ footer {
 html, body {
     overflow-x: hidden;
 }
+
+/* Container Geral de Filtros */
+.filters-wrapper {
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+/* Botão de abrir/fechar filtros no Mobile */
+.filters-toggle-btn {
+    display: none; /* Escondido por padrão no Desktop */
+    width: 100%;
+    padding: 12px;
+    background-color: #2d3748;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.2s;
+}
+
+.filters-toggle-btn:hover {
+    background-color: #4a5568;
+}
+
+/* Container de Selects - Modo Desktop Horizontal */
+.filters-selectors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #f7fafc;
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 160px; /* Impede que fiquem esmagados */
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.875rem;
+    color: #4a5568;
+    background-color: white;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-group select:focus {
+    border-color: #4a5568;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+/* Regras de Responsividade (Mobile) */
+@media (max-width: 768px) {
+    .filters-toggle-btn {
+        display: block; /* Revela o botão no mobile */
+    }
+
+    .filters-selectors {
+        display: none; /* Oculta a lista crua de filtros por padrão */
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 8px;
+        padding: 12px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    /* Classe injetada pelo JS ao clicar no botão */
+    .filters-selectors.visible {
+        display: flex; 
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+}
