@@ -89,45 +89,43 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
             tipoColor = '#319795';
         }
 
-// Localize este trecho dentro de renderAcervoGrid em ui.js:
+        const textoBotaoPdf = item.pagina_pdf 
+            ? `Ver questão na página ${item.pagina_pdf} do PDF` 
+            : 'Visualizar questão no caderno';
 
-const textoBotaoPdf = item.pagina_pdf 
-    ? `Ver questão na página ${item.pagina_pdf} do PDF` 
-    : 'Visualizar questão no caderno';
+        const cliquePdfAction = item.pagina_pdf 
+            ? `if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){ event.preventDefault(); window.mostrarToast('Nota: Em celulares, o arquivo pode abrir no início. Role manualmente até a <strong>página ${item.pagina_pdf}</strong>.', this.href); }`
+            : '';
 
-const cliquePdfAction = item.pagina_pdf 
-    ? `if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){ event.preventDefault(); window.mostrarToast('Nota: Em celulares, o arquivo pode abrir no início. Role manualmente até a <strong>página ${item.pagina_pdf}</strong>.', this.href); }`
-    : '';
-
-const card = document.createElement('div');
-card.className = 'card-questao';
-card.innerHTML = `
-    ${midiaVisual}
+        const card = document.createElement('div');
+        card.className = 'card-questao';
+        card.innerHTML = `
+            ${midiaVisual}
             <div class="card-content" style="padding: 18px;">
                 
                 <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
                     <span class="badge" style="background: #b1b1b1; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.curso}</span>
+                    <span class="badge" style="background: #4a5568; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.modalidade}</span>
                     <span class="badge" style="background: ${tipoColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${tipoLabel}</span>                    
                     <span class="badge ${statusClass}" style="padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${statusLabel}</span>
                 </div>
                 
-                <p class="card-subtitle-origem">Enade ${item.ano} — ${item.caderno === 'UNICO' ? 'Caderno Único' : item.caderno}</p>
+                <p class="card-subtitle-origem">Enade ${item.ano} — Caderno ${item.caderno}</p>
                 <h3 class="card-title-questao">Questão ${item.numero}</h3>
     
-        <div class="card-actions" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
-            ${isDone 
-                ? `<p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Resolvida por: <strong>${item.autor}</strong></p>`
-                : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary" style="text-align: center; padding: 10px; font-weight: 500;">Quero resolver essa questão</a>`
-            }
-            
-            <!-- Injetado o atributo onclick com a nossa nova validação e toast -->
-            <a href="${item.pdf_path}" onclick="${cliquePdfAction}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
-                ${textoBotaoPdf}
-            </a>
-        </div>
-    </div>
-`;
-grid.appendChild(card);
+                <div class="card-actions" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
+                    ${isDone 
+                        ? `<p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Resolvida por: <strong>${item.autor}</strong></p>`
+                        : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary" style="text-align: center; padding: 10px; font-weight: 500;">Quero resolver essa questão</a>`
+                    }
+                    
+                    <a href="${item.pdf_path}" onclick="${cliquePdfAction}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
+                        ${textoBotaoPdf}
+                    </a>
+                </div>
+            </div>
+        `;
+        grid.appendChild(card);
     });
 
     if (pagContainer) {

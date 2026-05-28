@@ -13,52 +13,74 @@ export async function buscarDadosPlanilha() {
         const dadosQuestoes = parsearCSV(resQuestoes);
         const dadosRespostas = parsearCSV(resRespostas);
 
+        // Mapeamento de Provas_Enade: ID_Prova | Ano | Area_Prova | Modalidade | Numero_Caderno | Link_Prova
         const provasMap = new Map();
         for (let i = 1; i < dadosProvas.length; i++) {
             const row = dadosProvas[i];
-            if (row.length >= 4) {
+            if (row.length >= 5) {
                 provasMap.set(row[0], {
                     ano: row[1],
                     area: row[2],
-                    caderno: row[3],
-                    link: row[4] || '#'
+                    modalidade: row[3],
+                    caderno: row[4],
+                    link: row[5] || '#'
                 });
             }
         }
 
+        // Mapeamento de Respostas_Aprovadas: ID_Prova | Questao_Num | Tipo | Nome_Aluno | Assunto | URL_Video_Oficial
+        // Usando chave composta baseada em "IDProva_NumeroQuestao"
         const respostasMap = new Map();
         for (let i = 1; i < dadosRespostas.length; i++) {
             const row = dadosRespostas[i];
-            if (row.length >= 4) {
-                respostasMap.set(row[0], {
-                    aluno: row[1],
-                    assunto: row[2],
-                    urlVideo: row[3]
+            if (row.length >= 6) {
+                const idProva = row[0];
+                const numQuestao = row[1];
+                respostasMap.set(`${idProva}_${numQuestao}`, {
+                    tipo: row[2],
+                    aluno: row[3],
+                    assunto: row[4],
+                    urlVideo: row[5]
                 });
             }
         }
 
         const bancoDadosFormatado = [];
 
+        // Processamento de Questoes_Enade: ID_Prova | Questao_Num | TipoPagina_PDF
         for (let i = 1; i < dadosQuestoes.length; i++) {
             const row = dadosQuestoes[i];
-            if (row.length < 4) continue;
+            if (row.length < 2) continue;
 
-            const idQuestao = row[0];
-            const idProva = row[1];
-            const numQuestao = row[2];
-            const tipoBruto = row[3];
-            const pagPDF = row[4] || "";
+            const idProva = row[0];
+            const numQuestao = row[1];
 
-            const provaInfo = provasMap.get(idProva) || { ano: '', area: 'Desconhecida', caderno: 'UNICO', link: '#' };
-            const respostaInfo = respostasMap.get(idQuestao) || null;
+            // Tratamento inteligente caso 'Tipo' e 'Pagina_PDF' venham separados ou juntos
+            let tipoBruto = "";
+            let pagPDF = "";
+
+            if (row.length >= 4) {
+                tipoBruto = row[2];
+                pagPDF = row[3];
+            } else if (row.length === 3) {
+                pagPDF = row[2];
+            }
+
+            const idQuestaoComposite = `${idProva}_${numQuestao}`;
+            const provaInfo = provasMap.get(idProva) || { ano: '', area: 'Desconhecida', modalidade: 'N/A', caderno: 'UNICO', link: '#' };
+            const respostaInfo = respostasMap.get(idQuestaoComposite) || null;
+
+            // Se o tipo não foi especificado na planilha de questões, herda o tipo da resposta aprovada
+            if (!tipoBruto && respostaInfo) {
+                tipoBruto = respostaInfo.tipo;
+            }
 
             let tipoFormatado = 'objetivas';
-            const tipoLower = tipoBruto.toLowerCase();
+            const tipoLower = (tipoBruto || '').toLowerCase();
 
             if (tipoLower.includes('discursiva')) {
                 tipoFormatado = 'discursivas';
-            } else if (tipoLower.includes('percepcao') || tipoLower.includes('questionario')) {
+            } else if (tipoLower.includes('percepcao') || tipoLower.includes('questionario') || tipoLower.includes('percepção')) {
                 tipoFormatado = 'percepcao';
             }
             
@@ -68,10 +90,11 @@ export async function buscarDadosPlanilha() {
             }
 
             bancoDadosFormatado.push({
-                id: idQuestao,
+                id: idQuestaoComposite,
                 numero: numQuestao,
                 tipo: tipoFormatado,
                 curso: provaInfo.area,
+                modalidade: provaInfo.modalidade,
                 ano: provaInfo.ano,
                 caderno: provaInfo.caderno,
                 pdf_path: pdfPathMontado,
