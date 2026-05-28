@@ -867,3 +867,81 @@ body {
     color: #2d3748;
     /* Destaca o número final em cinza escuro */
 }
+
+/* Container que abriga as abas */
+.status-tabs-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+}
+
+/* Estilo padrão de cada Aba */
+.status-tab {
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #718096;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+/* Efeito ao passar o mouse */
+.status-tab:hover {
+    color: #2d3748;
+    background-color: #f7fafc;
+}
+
+/* Estado ativo (Aba Selecionada) */
+.status-tab.active {
+    color: #1a202c;
+    background-color: #edf2f7;
+}
+
+/* Linha indicadora inferior para dar peso visual à aba ativa */
+.status-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; /* Alinha exatamente em cima da borda inferior do container */
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #4a5568; /* Use a cor primária da sua identidade visual aqui */
+}
+
+/* Indicadores circulares opcionais de status nas abas (pontinho verde/laranja) */
+.tab-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.tab-dot.dot-open {
+    background-color: #ED8936; /* Laranja (Em Aberto) */
+}
+.tab-dot.dot-done {
+    background-color: #48BB78; /* Verde (Resolvida) */
+}
+
+/* Ajuste responsivo para telas pequenas */
+@media (max-width: 480px) {
+    .status-tabs-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        text-align: center;
+    }
+    .status-tab {
+        font-size: 0.85rem;
+        padding: 8px 4px;
+        justify-content: center;
+    }
+}

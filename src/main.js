@@ -31,6 +31,16 @@ async function initApp() {
     try {
         acervoDados = await buscarDadosPlanilha();
         inicializarFiltrosDinamicos(acervoDados);
+        
+        const abas = document.querySelectorAll('.status-tab');
+        abas.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                abas.forEach(t => t.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                window.renderAcervo(true);
+            });
+        });
+
         window.renderAcervo(true);
     } catch (error) {
         console.error('Erro na inicialização da aplicação:', error);

@@ -89,6 +89,19 @@
         </div>
 
         <div class="filters-wrapper">
+
+            <div class="status-tabs-container">
+                <button class="status-tab active" data-status="all">
+                    Todas as Questões
+                </button>
+                <button class="status-tab" data-status="open">
+                    <span class="tab-dot dot-open"></span> Em Aberto
+                </button>
+                <button class="status-tab" data-status="done">
+                    <span class="tab-dot dot-done"></span> Resolvidas
+                </button>
+            </div>
+
             <!-- Botão visível apenas no Mobile -->
             <button id="toggle-filters-btn" class="filters-toggle-btn" aria-expanded="false">
                 <svg width="1.1em" height="1.1em" fill="currentColor" viewBox="0 0 16 16"
@@ -126,14 +139,6 @@
                 <div class="filter-group">
                     <select id="filter-ano" onchange="renderAcervo(true)">
                         <option value="all">Todos os Anos</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <select id="filter-status" onchange="renderAcervo(true)">
-                        <option value="all">Todos os Status</option>
-                        <option value="open">Em Aberto</option>
-                        <option value="done">Resolvido</option>
                     </select>
                 </div>
             </div>

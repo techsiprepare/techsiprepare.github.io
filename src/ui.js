@@ -66,13 +66,17 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
 
     const grid = document.getElementById('grid-acervo');
     const pagContainer = document.getElementById('pagination-controls');
-    const contadorContainer = document.getElementById('acervo-contador'); // NOVO CONTAINER
+    const contadorContainer = document.getElementById('acervo-contador');
 
+    // Seletores normais
     const filtroCurso = document.getElementById('filter-curso')?.value || 'all';
     const filtroTipo = document.getElementById('filter-tipo')?.value || 'all';
     const filtroAno = document.getElementById('filter-ano')?.value || 'all';
-    const filtroStatus = document.getElementById('filter-status')?.value || 'all';
     const filtroModalidade = document.getElementById('filter-modalidade')?.value || 'all';
+    
+    // NOVO: Captura o valor da aba de status ativa (procura pelo elemento com a classe 'active')
+    const abaStatusAtiva = document.querySelector('.status-tab.active');
+    const filtroStatus = abaStatusAtiva ? abaStatusAtiva.getAttribute('data-status') : 'all';
 
     grid.innerHTML = '';
     if (pagContainer) pagContainer.innerHTML = '';
@@ -87,7 +91,6 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         return matchCurso && matchTipo && matchAno && matchStatus && matchModalidade;
     });
 
-    // NOVO: Atualiza o contador textual de resultados com feedback visual de ativação
     if (contadorContainer) {
         const temFiltroAtivo = filtroCurso !== 'all' || filtroTipo !== 'all' || filtroAno !== 'all' || filtroStatus !== 'all' || filtroModalidade !== 'all';
         
@@ -103,12 +106,11 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         return;
     }
 
-    // NOVO: Aplica efeito de transição/piscar na Grid para indicar atualização
+    // Aplica efeito de transição/piscar na Grid para indicar atualização
     grid.style.opacity = '0';
     grid.style.transform = 'translateY(8px)';
     grid.style.transition = 'none';
     
-    // Força o navegador a computar o estado inicial antes de rodar a animação
     setTimeout(() => {
         grid.style.transition = 'opacity 0.25s ease-out, transform 0.25s ease-out';
         grid.style.opacity = '1';
@@ -119,6 +121,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const pageItems = filtrados.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
+    // ... (todo o restante do laço pageItems.forEach(item => { ... }) permanece exatamente igual)
     pageItems.forEach(item => {
         const isDone = item.status === 'done';
 
@@ -161,23 +164,19 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         card.innerHTML = `
             ${midiaVisual}
             <div class="card-content" style="padding: 18px;">
-                
                 <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
                     <span class="badge" style="background: #b1b1b1; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.curso}</span>
                     <span class="badge" style="background: #4a5568; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.modalidade}</span>
                     <span class="badge" style="background: ${tipoColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${tipoLabel}</span>                    
                     <span class="badge ${statusClass}" style="padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${statusLabel}</span>
                 </div>
-                
                 <p class="card-subtitle-origem">Enade ${item.ano} — Caderno ${item.caderno}</p>
                 <h3 class="card-title-questao">Questão ${item.numero}</h3>
-    
                 <div class="card-actions" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
                     ${isDone 
                         ? `<p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Resolvida por: <strong>${item.autor}</strong></p>`
                         : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary" style="text-align: center; padding: 10px; font-weight: 500;">Quero resolver essa questão</a>`
                     }
-                    
                     <a href="${item.pdf_path}" onclick="${cliquePdfAction}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
                         ${textoBotaoPdf}
                     </a>
