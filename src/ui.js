@@ -89,18 +89,20 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
             tipoColor = '#319795';
         }
 
-        const textoBotaoPdf = item.pagina_pdf 
-            ? `Ver questão na página ${item.pagina_pdf} do PDF` 
-            : 'Visualizar questão no caderno';
+// Localize este trecho dentro de renderAcervoGrid em ui.js:
 
-        const avisoMobile = item.pagina_pdf 
-        ? `if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){ alert('Nota: Em celulares, o PDF pode abrir na primeira página. Desça manualmente até a página ${item.pagina_pdf}.'); }`
-        : '';
+const textoBotaoPdf = item.pagina_pdf 
+    ? `Ver questão na página ${item.pagina_pdf} do PDF` 
+    : 'Visualizar questão no caderno';
 
-        const card = document.createElement('div');
-        card.className = 'card-questao';
-        card.innerHTML = `
-            ${midiaVisual}
+const cliquePdfAction = item.pagina_pdf 
+    ? `if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){ event.preventDefault(); window.mostrarToast('Nota: Em celulares, o arquivo pode abrir no início. Role manualmente até a <strong>página ${item.pagina_pdf}</strong>.', this.href); }`
+    : '';
+
+const card = document.createElement('div');
+card.className = 'card-questao';
+card.innerHTML = `
+    ${midiaVisual}
             <div class="card-content" style="padding: 18px;">
                 
                 <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
@@ -111,20 +113,21 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
                 
                 <p class="card-subtitle-origem">Enade ${item.ano} — ${item.caderno === 'UNICO' ? 'Caderno Único' : item.caderno}</p>
                 <h3 class="card-title-questao">Questão ${item.numero}</h3>
-                
-                <div class="card-actions" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
-                    ${isDone 
-                        ? `<p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Resolvida por: <strong>${item.autor}</strong></p>` 
-                        : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary" style="text-align: center; padding: 10px; font-weight: 500;">Quero resolver essa questão</a>`
-                    }
-
-                    <a href="${item.pdf_path}" onclick="${avisoMobile}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
-                        ${textoBotaoPdf}
-                    </a>
-                </div>
-            </div>
-        `;
-        grid.appendChild(card);
+    
+        <div class="card-actions" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
+            ${isDone 
+                ? `<p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Resolvida por: <strong>${item.autor}</strong></p>`
+                : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary" style="text-align: center; padding: 10px; font-weight: 500;">Quero resolver essa questão</a>`
+            }
+            
+            <!-- Injetado o atributo onclick com a nossa nova validação e toast -->
+            <a href="${item.pdf_path}" onclick="${cliquePdfAction}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
+                ${textoBotaoPdf}
+            </a>
+        </div>
+    </div>
+`;
+grid.appendChild(card);
     });
 
     if (pagContainer) {
@@ -187,3 +190,102 @@ export function renderErro() {
             ⚠️ Erro ao carregar o acervo em tempo real. Verifique a conexão ou a publicação da planilha.
         </p>`;
 }
+
+export function mostrarToast(mensagem, urlParaAbrir = null) {
+    // 1. Cria ou reaproveita o container dos toasts
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.style.cssText = `
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        `;
+        document.body.appendChild(container);
+    }
+
+    // 2. Cria o elemento do Toast usando a identidade do app
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        background: #2d3748;
+        color: #ffffff;
+        padding: 14px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        line-height: 1.4;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        pointer-events: auto;
+        border-left: 4px solid var(--status-open, #ED8936);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: flex-start;
+    `;
+
+    // Ícone de alerta e estrutura com flexbox para comportar os botões se necessário
+    toast.innerHTML = `
+        <svg width="18" height="18" fill="var(--status-open, #ED8936)" viewBox="0 0 16 16" style="flex-shrink: 0;">
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+        </svg>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
+            <span>${mensagem}</span>
+            ${urlParaAbrir ? `
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button class="btn-toast-cancel" style="background: transparent; color: #cbd5e0; border: none; padding: 6px 12px; font-weight: 500; font-size: 0.8rem; cursor: pointer;">Cancelar</button>
+                    <button class="btn-toast-confirm" style="background: var(--status-open, #ED8936); color: white; border: none; padding: 6px 14px; border-radius: 4px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">Abrir PDF</button>
+                </div>
+            ` : ''}
+        </div>
+    `;
+
+    container.appendChild(toast);
+
+    // Força o reflow para rodar a animação de entrada
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+    }, 10);
+
+    // Função interna para remover o toast com animação de saída
+    const fecharToast = () => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        setTimeout(() => toast.remove(), 300);
+    };
+
+    // 3. Controle de ações baseados no tipo do Toast
+    if (urlParaAbrir) {
+        const btnConfirm = toast.querySelector('.btn-toast-confirm');
+        const btnCancel = toast.querySelector('.btn-toast-cancel');
+
+        if (btnConfirm) {
+            btnConfirm.addEventListener('click', () => {
+                window.open(urlParaAbrir, '_blank');
+                fecharToast();
+            });
+        }
+        if (btnCancel) {
+            btnCancel.addEventListener('click', fecharToast);
+        }
+    } else {
+        // Se for apenas um toast informativo (sem link), remove automaticamente após 5s
+        setTimeout(fecharToast, 5000);
+    }
+}
+
+// Torna a função acessível globalmente para os atributos onclick dos cards
+window.mostrarToast = mostrarToast;
