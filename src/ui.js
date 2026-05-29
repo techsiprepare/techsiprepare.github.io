@@ -46,7 +46,7 @@ export function inicializarFiltrosDinamicos(acervo) {
 function setupMobileFiltersToggle() {
     const toggleBtn = document.getElementById('toggle-filters-btn');
     const container = document.getElementById('filters-selectors-container');
-    
+
     if (toggleBtn && container) {
         const clone = toggleBtn.cloneNode(true);
         toggleBtn.parentNode.replaceChild(clone, toggleBtn);
@@ -54,8 +54,8 @@ function setupMobileFiltersToggle() {
         clone.addEventListener('click', () => {
             const isExpanded = container.classList.toggle('visible');
             clone.setAttribute('aria-expanded', isExpanded);
-            clone.innerHTML = isExpanded 
-                ? `${ICON_FILTER} Ocultar Filtros` 
+            clone.innerHTML = isExpanded
+                ? `${ICON_FILTER} Ocultar Filtros`
                 : `${ICON_FILTER} Filtrar Questões`;
         });
     }
@@ -73,7 +73,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
     const filtroTipo = document.getElementById('filter-tipo')?.value || 'all';
     const filtroAno = document.getElementById('filter-ano')?.value || 'all';
     const filtroModalidade = document.getElementById('filter-modalidade')?.value || 'all';
-    
+
     // NOVO: Captura o valor da aba de status ativa (procura pelo elemento com a classe 'active')
     const abaStatusAtiva = document.querySelector('.status-tab.active');
     const filtroStatus = abaStatusAtiva ? abaStatusAtiva.getAttribute('data-status') : 'all';
@@ -93,7 +93,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
 
     if (contadorContainer) {
         const temFiltroAtivo = filtroCurso !== 'all' || filtroTipo !== 'all' || filtroAno !== 'all' || filtroStatus !== 'all' || filtroModalidade !== 'all';
-        
+
         if (filtrados.length === 0) {
             contadorContainer.innerHTML = `Nenhuma questão encontrada.`;
         } else {
@@ -111,7 +111,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
     grid.style.opacity = '0';
     grid.style.transform = 'translateY(8px)';
     grid.style.transition = 'none';
-    
+
     setTimeout(() => {
         grid.style.transition = 'opacity 0.25s ease-out, transform 0.25s ease-out';
         grid.style.opacity = '1';
@@ -143,11 +143,11 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         const statusLabel = isDone ? 'RESOLVIDO' : 'EM ABERTO';
         const badgeClass = isDone ? 'badge-done' : 'badge-open';
 
-        const textoBotaoPdf = item.pagina_pdf 
-            ? `Ver questão na página ${item.pagina_pdf} do PDF` 
+        const textoBotaoPdf = item.pagina_pdf
+            ? `Ver questão na página ${item.pagina_pdf} do PDF`
             : 'Visualizar questão no caderno';
 
-        const cliquePdfAction = item.pagina_pdf 
+        const cliquePdfAction = item.pagina_pdf
             ? `if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){ event.preventDefault(); window.mostrarToast('Nota: Em celulares, o arquivo pode abrir no início. Role manualmente até a <strong>página ${item.pagina_pdf}</strong>.', this.href); }`
             : '';
 
@@ -155,9 +155,18 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         const numeroFormatado = String(item.numero).padStart(2, '0');
         const modalidadeFormatada = item.modalidade ? ` (${item.modalidade})` : '';
 
+        // Tratamento da string do tipo para exibição (ex: 'objetivas' -> 'Objetiva')
+        let tipoExibicao = item.tipo ? item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1) : 'Objetiva';
+        if (tipoExibicao.endsWith('s')) {
+            tipoExibicao = tipoExibicao.slice(0, -1);
+        }
+        if (tipoExibicao.toLowerCase().includes('percepcao')) {
+            tipoExibicao = 'Percepção';
+        }
+
         const card = document.createElement('div');
         card.className = 'card-questao';
-        
+
         card.innerHTML = `
             ${midiaVisual}
             
@@ -176,13 +185,13 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
                     Caderno ${item.caderno}
                 </div>
 
-                <h3 class="card-title">Questão ${numeroFormatado}</h3>
+                <h3 class="card-title">Q. ${numeroFormatado} - ${tipoExibicao}</h3>
 
                 <div class="card-actions">
-                    ${isDone 
-                        ? `<p class="card-author">Resolvida por: <strong>${item.autor}</strong></p>`
-                        : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary btn-resolver">Quero resolver essa questão</a>`
-                    }
+                    ${isDone
+                ? `<p class="card-author">Resolvida por: <strong>${item.autor}</strong></p>`
+                : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary btn-resolver">Quero resolver essa questão</a>`
+            }
                     <a href="${item.pdf_path}" onclick="${cliquePdfAction}" target="_blank" class="btn btn-outline btn-pdf">
                         ${textoBotaoPdf}
                     </a>
