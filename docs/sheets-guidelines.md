@@ -6,57 +6,22 @@
 
 ---
 
-### **Seção 1**
+### **Estrutura do Formulário (Google Forms)**
 
-* **Email Institucional:** Resposta curta. (com validação de email)
-* **Nome Completo:** Resposta curta.
-* **RA (Registro Acadêmico):** Resposta curta (com validação de dados para aceitar apenas números).
-* **Período:** Resposta curta (com validação de dados para aceitar apenas números).
-
----
-
-### **Seção 2**
-
-* **Curso da Prova:** Lista suspensa.
-
-| Nome do Curso para a Lista Suspensa |
-| --- |
-| Ciência da Computação |
-| Computação |
-| Tecnologia em Analise e Desenvolvimento de Sistemas |
-| Tecnologia em Redes de Computadores |
-| Engenharia de Computação |
-| Engenharia de Controle e Automação |
-| Sistemas de Informação |
-| Tecnologia em Gestão da Tecnologia da Informação |
-
-* **Modalidade:** Multipla escolha:
-
-| Opções para múltipla escolha |
-| --- |
-| Bacharelado |
-| Licenciatura |
-| Tecnólogo |
-
-* **Ano da Prova:** Número (ex: 2021, com validação de dados para aceitar apenas números).
-* **Caderno da Prova:** Múltipla escolha:
-
-| Opções para múltipla escolha |
-| --- |
-| Caderno Único |
-| Outro: (texto) |
-
-* **Número da Questão:** Resposta curta (com validação de dados para aceitar apenas números).
-* **Tipo de Questão:** Múltipla escolha:
-
-| Opções para múltipla escolha |
-| --- |
-| Objetiva |
-| Discursiva |
-
-* **Assunto Principal:** Resposta curta (ex: Programação Orientada a Objetos).
-* **URL do Vídeo:** Resposta curta (com validação para URL).
-* **Termo de Consentimento:** Caixa de seleção (obrigatória).
+| Campo | Tipo de Entrada | Regras / Opções Disponíveis |
+| :--- | :--- | :--- |
+| **Email Institucional** | Resposta curta | Validação de e-mail ativa. |
+| **Nome Completo** | Resposta curta | Sem validações. |
+| **RA (Registro Acadêmico)** | Resposta curta | Validação: Apenas números. |
+| **Período** | Resposta curta | Validação: Apenas números. |
+| **Curso da Prova** | Lista suspensa | • Ciência da Computação<br>• Computação<br>• Tecnologia em Análise e Desenvolvimento de Sistemas<br>• Tecnologia em Redes de Computadores<br>• Engenharia de Computação<br>• Engenharia de Controle e Automação<br>• Sistemas de Informação<br>• Tecnologia em Gestão da TI |
+| **Modalidade** | Múltipla escolha | Bacharelado, Licenciatura ou Tecnólogo. |
+| **Ano da Prova** | Número | Ex: `2021` (Validação: Apenas números). |
+| **Caderno da Prova** | Múltipla escolha | Caderno Único ou Outro (texto livre). |
+| **Número da Questão** | Resposta curta | Validação: Apenas números. |
+| **Tipo de Questão** | Múltipla escolha | Objetiva ou Discursiva. |
+| **Assunto Principal** | Resposta curta | Texto livre (ex: *Programação Orientada a Objetos*). |
+| **URL do Vídeo** | Resposta curta | Validação: Deve ser uma URL válida. |
 
 ---
 
@@ -81,7 +46,6 @@ Esta aba é muito importante e servirá estritamente como *Data Lake*. Ela é ge
 * **K:** Tipo de Questão
 * **L:** Assunto Principal
 * **M:** URL do Vídeo
-* **N:** Termo de Consentimento
 
 ---
 
@@ -104,7 +68,7 @@ Gera um ID único e imutável para a prova da questão, combinando o `Ano da Pro
 *Fórmula na célula B2:*
 
 ```excel
-=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!H2:H & "_" & SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(MAIÚSCULA(Form_Responses!F2:F); "Á"; "A"); "À"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ó"; "O"); "Ô"; "O"); "Ú"; "U"); "Ç"; "C"); " "; "") & "_" & SUBSTITUIR(MAIÚSCULA(Form_Responses!G2:G); " "; "_") & "_" & SE(Form_Responses!I2:I="Caderno Único"; "UNICO"; MAIÚSCULA(Form_Responses!I2:I))))
+=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!H2:H & "_" & SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(MAIÚSCULA(Form_Responses!F2:F); "Á"; "A"); "À"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ó"; "O"); "Ô"; "O"); "Ú"; "U"); "Ç"; "C"); " "; "") & "_" & SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(MAIÚSCULA(Form_Responses!G2:G); "Á"; "A"); "À"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ó"; "O"); "Ô"; "O"); "Ú"; "U"); "Ç"; "C"); " "; ""); "𝖢𝖧𝖤𝖢𝖪"; "") & "_" & SE(Form_Responses!I2:I="Caderno Único"; "UNICO"; MAIÚSCULA(Form_Responses!I2:I))))
 ```
 
 * **C: `Questao_Num`**
@@ -147,6 +111,18 @@ Coluna vazia para você preencher com regras de validação de dados: "Aprovado"
 
 * **I: `URL do Vídeo Oficial` (Input Manual)**
 Coluna vazia onde você irá colar o link do vídeo final (pós-edição/revisão/publicação).
+
+* **J: `Pré-Curadoria`**
+Coluna com a única responsabilidade de conferir se a Prova e a Questão informadas pelo aluno existe na planilha. Serve também para a ajudar a identificar possíveis erros de digitação.
+
+*Fórmula na célula J2:*
+```excel
+=ARRAYFORMULA(SE(A2:A=""; ""; 
+  SE(ÉERROS(CORRESP(ARRUMAR(B2:B); ARRUMAR(Provas_Enade!A:A); 0)); "❌ Prova não existe: [" & B2:B & "]";
+    SE(CONT.SE(ARRUMAR(Questoes_Enade!A:A) & "_" & ARRUMAR(Questoes_Enade!B:B) & "_" & MAIÚSCULA(ARRUMAR(Questoes_Enade!C:C)); ARRUMAR(B2:B) & "_" & ARRUMAR(C2:C) & "_" & MAIÚSCULA(ARRUMAR(D2:D))) = 0; "⚠️ Qst não existe: [" & B2:B & "_" & C2:C & "_" & D2:D & "]"; "✅ Válido (Prova e Questão existem)")
+  )
+))
+```
 
 ---
 
