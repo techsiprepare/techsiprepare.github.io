@@ -295,14 +295,108 @@ header {
 .team-section {
     margin-top: 100px;
     text-align: center;
+    padding: 0 12px;
+}
+
+.team-section h2 {
+    font-size: 2rem;
+    color: var(--text-dark);
+    margin-bottom: 40px;
+    letter-spacing: -0.02em;
 }
 
 .team-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 16px;
+    gap: 24px;
     margin-top: 32px;
+}
+
+.team-card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 320px;
+    max-width: 400px;
+    flex: 1 1 320px;
+    text-align: left;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* --- Redes Sociais da Equipe --- */
+.team-socials {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.social-link {
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+    padding: 4px;
+}
+
+/* Efeito de destaque individual baseado na cor padrão de cada rede */
+.social-link[aria-label="LinkedIn"]:hover {
+    color: #0077B5;
+    transform: translateY(-2px);
+}
+
+.social-link[aria-label="GitHub"]:hover {
+    color: #24292F;
+    transform: translateY(-2px);
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.team-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.team-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.team-role {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ifmg-green);
+    letter-spacing: 0.05em;
+}
+
+.team-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1.2;
 }
 
 .team-member {
@@ -958,6 +1052,11 @@ footer {
         padding: 8px 4px;
         justify-content: center;
     }
+
+    .team-card {
+        min-width: 100%;
+    }
+
 }
 
 /* Fallback do Logotipo */
