@@ -1,43 +1,82 @@
-# TechSI Prepare | IFMG
+# TechSI Prepare
 
-O TechSI Prepare é um ecossistema focado na resolução colaborativa de questões do ENADE para estudantes de Sistemas de Informação. O objetivo do projeto é construir uma biblioteca de resoluções em vídeo, permitindo aos alunos do IFMG o aprendizado ativo e o cômputo de horas de extensão.
+O **TechSI Prepare** é um ecossistema e projeto de extensão do IFMG focado na resolução colaborativa das questões do ENADE para o curso de Sistemas de Informação. Baseando-se em metodologias de aprendizado ativo (*active learning*), o projeto incentiva estudantes a fixarem o conhecimento gravando explicações em vídeo, criando simultaneamente um acervo dinâmico, público e filtrável de resoluções para toda a comunidade acadêmica.
 
-## Arquitetura do Frontend e Fluxo (UX/UI)
+---
 
-A interface da plataforma foi desenhada como uma *Single Page Application* (SPA). O roteamento de páginas é capturado e gerenciado diretamente pela hash da URL.
+## 🛠️ Arquitetura e Funcionamento
 
-A navegação é dividida em três telas principais:
+O projeto foi construído seguindo uma filosofia *frontend-only* moderna, performática e **local-first baseada em arquivos**, eliminando a dependência de bancos de dados relacionais tradicionais ou APIs proprietárias no servidor.
 
-* **Tela Inicial (`#home`):** Apresenta o foco, o objetivo e o público-alvo do projeto para estudantes matriculados.
+### Fluxo de Dados (Google Sheets as a Database)
+A aplicação consome dados em tempo real estruturados em três tabelas públicas via exportação CSV do Google Planilhas:
+1. **Caderno de Provas:** Contém informações gerais (`ID_Prova`, `Ano`, `Área`, `Modalidade`, `Link do Caderno`).
+2. **Mapeamento de Questões:** Guarda a relação das questões (`ID_Prova`, `Número`, `Página do PDF`).
+3. **Respostas Aprovadas:** Centraliza as submissões validadas (`ID_Prova`, `Número`, `Tipo`, `Autor`, `URL do Vídeo`).
 
-* **Tela de Acervo (`#acervo`):** Responsável por processar dinamicamente os grids de resolução. Permite aplicar filtros cruzados de curso, tipo (objetiva/discursiva), ano da prova e status atual (resolvido ou em aberto). A listagem possui recursos de paginação exibindo 12 itens por página. Questões já avaliadas e resolvidas exibem o player em *iframe* com a resolução no YouTube, e indicam o nome do autor do vídeo. Questões em aberto exibem a capa da questão borrada e um botão direcionando à etapa de gravação.
+O motor de processamento no frontend unifica esses dados através de chaves compostas (`ID_Prova_NumeroQuestao`) em tempo de execução para renderizar a interface de forma reativa.
 
-* **Tela de Instruções (`#instrucoes`):** Rota que apresenta o passo a passo para o estudante submeter um material ao acervo. Contém alertas sobre o funcionamento por ordem de chegada e dispõe do botão oficial que encaminha o usuário ao formulário de envio de dados.
+---
 
-## Backend e Banco de Dados Relacional (Google Sheets)
+## 📂 Estrutura de Arquivos
 
-O sistema atua sem um backend clássico, utilizando o consumo estruturado de 3 URLs do formato CSV fornecidas pelo Google Sheets (`URL_PROVAS`, `URL_QUESTOES` e `URL_RESPOSTAS`).
+A organização do código-fonte adota separação estrita de responsabilidades:
 
-A arquitetura oficial de tratamento e armazenamento opera através de 5 abas relacionais na planilha principal:
+```text
+├── index.html          # Estrutura semântica e containers das páginas (SPA)
+├── styles.css          # Identidade visual, Grid System e responsividade mobile
+└── src/
+    ├── main.js         # Ponto de entrada, inicialização do App e manipulação do Menu Mobile
+    ├── config.js       # URLs de publicação das planilhas Google (CSVs)
+    ├── api.js          # Fetching e centralização do modelo de dados unificado
+    ├── ui.js           # Renderização da Grid de questões, filtros dinâmicos e paginação
+    ├── router.js       # Gerenciador de rotas baseado no histórico de Hash (#)
+    └── utils.js        # Utilitários de parsing de CSV e manipulação de embeds do YouTube
 
-* **`Form_Responses`:** *Data Lake* primário com os dados brutos e carimbos de envio gerados pelo formulário de inscrições dos alunos.
+```
 
-* **`Gerenciamento_Respostas`:** Hub de curadoria técnica do projeto. Esta aba gera a *Chave Primária* da resposta automaticamente utilizando Regex, além de compor uma chave estrangeira padronizada para vincular o metadado do acervo ao aluno. Esta é a área para analisar se o envio foi rejeitado ou "Aprovado" e para fornecer o link oficial validado.
+---
 
-* **`Provas_Enade`:** Catálogo contendo as chaves primárias das avaliações e metadados, como link do Inep, área e ano de publicação.
+## 🎛️ Recursos Implementados
 
-* **`Questoes_Enade`:** Repositório relacionando o detalhamento técnico e a numeração das questões aos cadernos do repositório de provas.
+* **Arquitetura SPA Nativa:** Roteamento baseado em escuta de eventos `hashchange` com manipulação assíncrona do DOM, garantindo navegação instantânea.
+* **Filtros Combinatórios Dinâmicos:** Filtragem simultânea por Curso, Modalidade, Ano, Tipo de questão e Status (*Em Aberto* / *Resolvida*).
+* **Geração Inteligente de Links:** Acoplamento direto do PDF com âncoras de visualização de páginas (`#page=X`), otimizado para navegadores desktop e com tratamento UX (*Toast warning*) para dispositivos móveis.
+* **Parser Robusto de CSV:** Manipulação manual de delimitadores de strings com suporte nativo a aspas e quebras de linha integradas na célula.
 
-* **`Respostas_Aprovadas`:** View gerada por meio da linguagem de Query nativa do Google (`QUERY SELECT`). Esta aba contém um filtro restritivo de publicidade, renderizando unicamente os 4 dados requeridos das submissões marcadas como 'Aprovadas', garantindo a segurança como a única aba extraída publicamente pela API.
+---
 
-> Para melhor detalhamento da estrutura do forms e da planilha, conferir em [docs/sheets-guidelines.md](docs/sheets-guidelines.md)
+## 🚀 Como Executar o Projeto Localmente
 
-## Processamento e Componentes Dinâmicos
+Como a aplicação é estruturada através de Módulos ES6 nativos do JavaScript, é obrigatório o uso de um servidor local para evitar bloqueios de políticas de CORS (`file://`).
 
-Durante o disparo inicial da aplicação, as fontes de CSV passam por rotinas utilitárias para preencher o sistema:
+1. Clone o repositório em sua máquina:
 
-* **Leitor de PDF Inteligente:** Se constar na base o número da página no caderno para determinada questão, a ancoragem original em PDF concatenará automaticamente uma instrução de visualização do navegador para abrir diretamente na página requerida (parâmetro `#page=`).
+```bash
+   git clone [https://github.com/seu-usuario/tech-si-prepare.git](https://github.com/seu-usuario/tech-si-prepare.git)
 
-* **URL YouTube Sanitizer:** Tratamento nativo por Regex das *URLs* enviadas na base de respostas. Links em padrão longo (com a variável de rotação `v=`) ou atalhos mobile (`youtu.be/` e `/shorts/`) são automaticamente formatados para links passivos de `embed/` para os modais em visualização na grade do site.
+```
 
-* **Tags e Distinções Visuais:** Os inputs são limpos em minúsculas e comparados a termos parciais de String. Discursivas ou Questionário de percepção ganham tags estéticas separadas dentro da classe CSS do Acervo.
+2. Acesse a pasta do projeto:
+
+```bash
+   cd tech-si-prepare
+
+```
+
+3. Inicie um servidor local de sua preferência:
+
+* **Se usa VS Code:** Instale a extensão *Live Server* e clique em **Go Live**.
+
+---
+
+## 📝 Fluxo do Estudante
+
+O fluxo para gravação, envio e contabilização de horas de extensão funciona em quatro etapas simples mapeadas no sistema:
+
+1. **Localize uma Questão:** Vá até a aba **Acervo de Resoluções**, ative o filtro **"Em Aberto"** e selecione um exercício disponível.
+2. **Consulte o Caderno:** Clique no link para visualizar a questão exatamente na página correspondente do PDF oficial do ENADE.
+3. **Grave a Resolução:** Grave a tela do seu computador explicando a resolução de forma didática. Suba o arquivo no YouTube no modo *Público* ou *Não Listado*.
+4. **Envie os Dados:** Clique em **"Preencher Formulário de Envio"** na aba de Instruções para registrar o link do seu vídeo e garantir a validação da sua carga horária de extensão.
+
+> ⚠️ **Nota Importante:** O sistema opera por ordem de chegada do formulário. Caso dois alunos gravem a mesma questão, a validação dar-se-á para o envio correto que constar com o carimbo de data/hora mais antigo.
