@@ -122,34 +122,28 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
     const pageItems = filtrados.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     // ... (todo o restante do laço pageItems.forEach(item => { ... }) permanece exatamente igual)
-    pageItems.forEach(item => {
+pageItems.forEach(item => {
         const isDone = item.status === 'done';
 
+        // 1. Área de Mídia Superior (Proporção 16:9)
         let midiaVisual = '';
         if (isDone) {
-            midiaVisual = `<div class="card-media-wrapper"><iframe src="${item.video_url}" frameborder="0" allowfullscreen></iframe></div>`;
+            midiaVisual = `<div class="card-media-wrapper" style="aspect-ratio: 16/9; width: 100%; overflow: hidden; background: #000;">
+                <iframe src="${item.video_url}" style="width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+            </div>`;
         } else {
+            const novoIconeLapis = `<svg width="28" height="28" fill="#94a3b8" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>`;
             midiaVisual = `
-                <div class="card-media-wrapper">
-                    <div class="thumb-status-overlay" style="color: var(--status-open, #ED8936);">
-                        ${ICON_PENCIL}
-                    </div>
+                <div class="card-media-wrapper" style="aspect-ratio: 16/9; width: 100%; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
+                    ${novoIconeLapis}
                 </div>`;
         }
 
-        const statusLabel = isDone ? 'Resolvido' : 'Em Aberto';
-        const statusClass = isDone ? 'badge-status-done' : 'badge-status-open';
-
-        let tipoLabel = 'Objetiva';
-        let tipoColor = '#b1b1b1';
-
-        if (item.tipo === 'discursivas') {
-            tipoLabel = 'Discursiva';
-            tipoColor = '#d69e2e';
-        } else if (item.tipo === 'percepcao') {
-            tipoLabel = 'Percepção';
-            tipoColor = '#319795';
-        }
+        // Configurações do Badge de Status
+        const statusLabel = isDone ? 'RESOLVIDO' : 'EM ABERTO';
+        const badgeStyle = isDone 
+            ? 'background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;' // Verde pastel
+            : 'background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa;'; // Laranja pastel
 
         const textoBotaoPdf = item.pagina_pdf 
             ? `Ver questão na página ${item.pagina_pdf} do PDF` 
@@ -159,22 +153,38 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
             ? `if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){ event.preventDefault(); window.mostrarToast('Nota: Em celulares, o arquivo pode abrir no início. Role manualmente até a <strong>página ${item.pagina_pdf}</strong>.', this.href); }`
             : '';
 
+        // Formatação para "Questão 08" (Adiciona o zero à esquerda)
+        const numeroFormatado = String(item.numero).padStart(2, '0');
+        const modalidadeFormatada = item.modalidade ? ` (${item.modalidade})` : '';
+
         const card = document.createElement('div');
         card.className = 'card-questao';
+        // Flex column com height 100% garante que o margin-top: auto empurre as ações para a base
+        card.style.cssText = 'display: flex; flex-direction: column; height: 100%; background: #fff; overflow: hidden; border-radius: 8px; border: 1px solid #e2e8f0;';
+        
         card.innerHTML = `
             ${midiaVisual}
-            <div class="card-content" style="padding: 18px;">
-                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
-                    <span class="badge" style="background: #b1b1b1; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.curso}</span>
-                    <span class="badge" style="background: #4a5568; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">${item.modalidade}</span>
-                    <span class="badge" style="background: ${tipoColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${tipoLabel}</span>                    
-                    <span class="badge ${statusClass}" style="padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${statusLabel}</span>
+            
+            <div class="card-content" style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                    <span style="font-weight: 700; font-size: 14px; color: #0f172a;">Enade ${item.ano}</span>
+                    <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; ${badgeStyle}">${statusLabel}</span>
                 </div>
-                <p class="card-subtitle-origem">Enade ${item.ano} — Caderno ${item.caderno}</p>
-                <h3 class="card-title-questao">Questão ${item.numero}</h3>
-                <div class="card-actions" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
+
+                <div style="font-size: 13px; color: #64748b; line-height: 1.3; margin-bottom: 2px;">
+                    ${item.curso}${modalidadeFormatada}
+                </div>
+                
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
+                    Caderno ${item.caderno}
+                </div>
+
+                <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin: 0 0 16px 0;">Questão ${numeroFormatado}</h3>
+
+                <div class="card-actions" style="margin-top: auto; border-top: 1px solid #e2e8f0; padding-top: 12px; display: flex; flex-direction: column; gap: 10px;">
                     ${isDone 
-                        ? `<p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Resolvida por: <strong>${item.autor}</strong></p>`
+                        ? `<p style="font-size: 0.85rem; color: #4a5568; margin-bottom: 4px; text-align: center;">Resolvida por: <strong>${item.autor}</strong></p>`
                         : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary" style="text-align: center; padding: 10px; font-weight: 500;">Quero resolver essa questão</a>`
                     }
                     <a href="${item.pdf_path}" onclick="${cliquePdfAction}" target="_blank" class="btn btn-outline" style="text-align: center; font-size: 0.85rem; padding: 10px; border: 1px solid #cbd5e0; text-decoration: none; color: #4a5568; border-radius: 4px; font-weight: 500;">
