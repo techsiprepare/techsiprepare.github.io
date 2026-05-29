@@ -106,13 +106,10 @@ Gera um ID único e imutável para a prova da questão, combinando o `Ano da Pro
 =ARRAYFORMULA(Form_Responses!M2:M)
 ```
 
-* **H: `Status` (Input Manual)**
-Coluna vazia para você preencher com regras de validação de dados: "Aprovado", "Rejeitado" ou "Em Análise".
-
-* **I: `URL do Vídeo Oficial` (Input Manual)**
+* **H: `URL do Vídeo Oficial` (Input Manual)**
 Coluna vazia onde você irá colar o link do vídeo final (pós-edição/revisão/publicação).
 
-* **J: `Pré-Curadoria`**
+* **I: `Pré-Curadoria`**
 Coluna com a única responsabilidade de conferir se a Prova e a Questão informadas pelo aluno existe na planilha. Serve também para a ajudar a identificar possíveis erros de digitação.
 
 *Fórmula na célula J2:*
@@ -123,6 +120,13 @@ Coluna com a única responsabilidade de conferir se a Prova e a Questão informa
   )
 ))
 ```
+
+* **J: `Status` (Input Manual)**
+Coluna vazia para se preencher com regras de validação de dados: "Aprovado", "Rejeitado" ou "Em Análise".
+
+* **K: `Responsável` (Input Manual)**
+Coluna vazia para se preencher com o nome do responsável pela análise da resposta.
+
 
 ---
 
@@ -160,8 +164,7 @@ Ela espelha os dados do hub de gerenciamento, extraindo apenas as informações 
 Cole a fórmula abaixo **exclusivamente na célula A1**. Ela criará os cabeçalhos das colunas automaticamente e preencherá todas as linhas abaixo dela.
 
 ```excel
-=QUERY(Gerenciamento_Respostas!B:I; "SELECT B, C, D, E, F, I WHERE H = 'Aprovado' AND I IS NOT NULL LABEL B 'ID_Prova', C 'Questao_Num', D 'Tipo', E 'Nome_Aluno', F 'Assunto', I 'URL_Video_Oficial'")
-
+=QUERY(Gerenciamento_Respostas!B:J; "SELECT B, C, D, E, F, H WHERE J = 'Aprovado' AND H IS NOT NULL LABEL B 'ID_Prova', C 'Questao_Num', D 'Tipo', E 'Nome_Aluno', F 'Assunto', H 'URL_Video_Oficial'")
 ```
 
 ### Resumo do Fluxo Lógico (Para Testes)

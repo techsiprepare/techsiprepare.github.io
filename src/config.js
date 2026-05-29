@@ -1,3 +1,3 @@
-export const URL_PROVAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaTq7EG-K4TnondJXIwah1hwyBqpD63O9H8QI_Lgj3NA_OMZQRoTq7k6hOnk4zwO787TwujJYk5GJR/pub?gid=211459484&single=true&output=csv";
-export const URL_QUESTOES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaTq7EG-K4TnondJXIwah1hwyBqpD63O9H8QI_Lgj3NA_OMZQRoTq7k6hOnk4zwO787TwujJYk5GJR/pub?gid=930950504&single=true&output=csv";
-export const URL_RESPOSTAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaTq7EG-K4TnondJXIwah1hwyBqpD63O9H8QI_Lgj3NA_OMZQRoTq7k6hOnk4zwO787TwujJYk5GJR/pub?gid=1682886178&single=true&output=csv";
+export const URL_PROVAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJReAH_Mb7aiBg3aJdIIWXxxcPcN4cvcQ1Jpj1JMAneQvdbYPIiLjr9U1yWwB4ZOonaQVX_EjvuXKF/pub?gid=46332207&single=true&output=csv";
+export const URL_QUESTOES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJReAH_Mb7aiBg3aJdIIWXxxcPcN4cvcQ1Jpj1JMAneQvdbYPIiLjr9U1yWwB4ZOonaQVX_EjvuXKF/pub?gid=76285532&single=true&output=csv";
+export const URL_RESPOSTAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJReAH_Mb7aiBg3aJdIIWXxxcPcN4cvcQ1Jpj1JMAneQvdbYPIiLjr9U1yWwB4ZOonaQVX_EjvuXKF/pub?gid=264106829&single=true&output=csv";
