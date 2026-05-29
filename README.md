@@ -80,3 +80,9 @@ O fluxo para gravação, envio e contabilização de horas de extensão funciona
 4. **Envie os Dados:** Clique em **"Preencher Formulário de Envio"** na aba de Instruções para registrar o link do seu vídeo e garantir a validação da sua carga horária de extensão.
 
 > ⚠️ **Nota Importante:** O sistema opera por ordem de chegada do formulário. Caso dois alunos gravem a mesma questão, a validação dar-se-á para o envio correto que constar com o carimbo de data/hora mais antigo.
+
+---
+
+## 📊 Sobre a planilha e formulário (base de dados)
+
+[Acesse aqui.](docs/sheets-guidelines.md)
