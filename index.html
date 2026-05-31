@@ -359,12 +359,20 @@
     </main>
 
     <section id="visualizador" class="page">
-        <div class="visualizador-header">
-            <button id="btn-voltar-acervo">
-                &larr; Voltar para o Acervo
-            </button>
+        <button id="btn-voltar-acervo">
+            &larr; Voltar
+        </button>
+        
+        <div id="pdf-questao-info"></div>
 
-            <div id="pdf-questao-info"></div>
+        <div class="visualizador-header">
+
+            <div class="pdf-paginacao-container">
+                <button id="btn-pdf-anterior" disabled><</button>
+                <span id="pdf-paginacao-contador">1 de 1</span>
+                <button id="btn-pdf-proximo" disabled>></button>
+            </div>
+
         </div>
 
         <div id="pdf-loading-indicator">Carregando questão...</div>
@@ -372,6 +380,7 @@
         <div class="pdf-container">
             <canvas id="pdf-render-canvas"></canvas>
         </div>
+            
     </section>
 
     <footer>

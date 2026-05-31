@@ -1063,8 +1063,21 @@ body.menu-open {
     width: 100% ;
 }
 
+.viewer-header-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 #pdf-questao-info {
-    padding: 25px;
+    padding: 20px 0px;
+}
+
+.viewer-header-info * {
+    font-size: 14px;
+    margin: 0;
 }
 
 #btn-voltar-acervo {
@@ -1076,7 +1089,7 @@ body.menu-open {
     cursor: pointer;
     transition: background-color 0.2s ease;
     text-align: start;
-    border-radius: 20px 20px 0px 0px;
+    border-radius: 6px;
 }
 
 #pdf-loading-indicator {
@@ -1092,4 +1105,42 @@ body.menu-open {
     color: var(--text-muted);
     text-align: center;
     font-size: 12px;
+}
+
+.pdf-paginacao-container {
+    padding: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#btn-pdf-proximo, #btn-pdf-anterior {
+    background-color: #e8e8e8;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+}
+
+#btn-pdf-proximo:hover, #btn-pdf-anterior:hover {
+    cursor: pointer;
+}
+
+.info-tag-ano {
+    background-color: var(--ifmg-green);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.info-txt-curso, .info-badge-caderno {
+    background-color: #e8e8e8;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-size: 14px;
 }

@@ -157,7 +157,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         const card = document.createElement('div');
         card.className = 'card-questao';
 
-        const cliqueVisualizador = `window.abrirNoVisualizadorLocal('${item.id_prova}', ${paginaDestino}, '${item.ano}', '${item.curso}', '${numeroFormatado}', '${tipoExibicao}')`;
+        const cliqueVisualizador = `window.abrirNoVisualizadorLocal('${item.id_prova}', ${paginaDestino}, '${item.ano}', '${item.curso}', '${numeroFormatado}', '${item.caderno}')`;
 
         card.innerHTML = `
             ${midiaVisual}

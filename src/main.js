@@ -8,9 +8,9 @@ let acervoDados = [];
 window.navigate = navigate;
 window.renderAcervo = (resetPage = false) => renderAcervoGrid(acervoDados, resetPage);
 
-window.abrirNoVisualizadorLocal = (idProva, pagina, ano, curso, numero, tipo) => {
+window.abrirNoVisualizadorLocal = (idProva, paginaInicial, ano, curso, numero, caderno) => {
     navigate('visualizador');
-    carregarPdfVisualizador(idProva, pagina, ano, curso, numero, tipo);
+    carregarPdfVisualizador(idProva, paginaInicial, ano, curso, numero, caderno);
 };
 
 function setupMobileMenu() {
