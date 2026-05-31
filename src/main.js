@@ -1,11 +1,17 @@
 import { buscarDadosPlanilha } from './api.js';
 import { renderAcervoGrid, renderErro, inicializarFiltrosDinamicos } from './ui.js';
 import { navigate, initRouter } from './router.js';
+import { initPdfViewer, carregarPdfVisualizador } from './pdfViewer.js';
 
 let acervoDados = [];
 
 window.navigate = navigate;
 window.renderAcervo = (resetPage = false) => renderAcervoGrid(acervoDados, resetPage);
+
+window.abrirNoVisualizadorLocal = (idProva, pagina, ano, curso, numero, tipo) => {
+    navigate('visualizador');
+    carregarPdfVisualizador(idProva, pagina, ano, curso, numero, tipo);
+};
 
 function setupMobileMenu() {
     const menuBtn = document.getElementById('mobile-menu-btn');
@@ -13,12 +19,10 @@ function setupMobileMenu() {
     const navLinks = document.getElementById('main-nav');
     const overlay = document.getElementById('menu-overlay');
 
-    // Ajustado para usar a classe CSS 'menu-open' controlando tudo de forma centralizada
     const toggleMenu = () => {
         navLinks.classList.toggle('open');
         overlay.classList.toggle('active');
         
-        // Ativa/desativa o bloqueio de scroll de forma limpa
         document.body.classList.toggle('menu-open', navLinks.classList.contains('open'));
     };
 
@@ -26,7 +30,6 @@ function setupMobileMenu() {
     if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
     if (overlay) overlay.addEventListener('click', toggleMenu);
 
-    // BOA PRÁTICA: Fecha o menu se o usuário clicar em um link interno (mobile)
     const links = navLinks.querySelectorAll('a');
     links.forEach(link => {
         link.addEventListener('click', () => {
@@ -40,7 +43,13 @@ function setupMobileMenu() {
 async function initApp() {
     initRouter();
     setupMobileMenu();
+    initPdfViewer();
     
+    const path = window.location.hash || '#acervo';
+    if (path.includes('visualizador')) {
+        navigate('acervo');
+    }
+
     try {
         acervoDados = await buscarDadosPlanilha();
         inicializarFiltrosDinamicos(acervoDados);

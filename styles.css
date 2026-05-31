@@ -745,20 +745,6 @@ header {
     text-align: center;
 }
 
-.btn-resolver, .btn-pdf {
-    text-align: center;
-    padding: 10px;
-    font-weight: 500;
-}
-
-.btn-pdf {
-    font-size: 0.85rem;
-    border: 1px solid var(--border-dark);
-    text-decoration: none;
-    color: var(--text-gray);
-    border-radius: 4px;
-}
-
 /* --- Lightbox Modal --- */
 .modal-preview {
     position: fixed;
@@ -887,72 +873,6 @@ header {
     font-weight: 500;
     color: var(--text-main);
     font-size: 0.9rem;
-}
-
-/* --- Toast Notificações --- */
-#toast-container {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 400px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-}
-
-.toast-message {
-    background: var(--bg-dark);
-    color: var(--surface-color);
-    padding: 14px 18px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    line-height: 1.4;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    pointer-events: auto;
-    border-left: 4px solid var(--status-open);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.toast-icon { flex-shrink: 0; }
-
-.toast-content {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.toast-actions { display: flex; gap: 8px; justify-content: flex-end; }
-
-.btn-toast-cancel {
-    background: transparent;
-    color: var(--border-dark);
-    border: none;
-    padding: 6px 12px;
-    font-weight: 500;
-    font-size: 0.8rem;
-    cursor: pointer;
-}
-
-.btn-toast-confirm {
-    background: var(--status-open);
-    color: white;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 0.8rem;
-    cursor: pointer;
 }
 
 /* --- Rodapé e Globais --- */
@@ -1120,4 +1040,41 @@ body.menu-open {
     overflow: hidden !important;
     height: 100vh !important;
     height: 100dvh !important;
+}
+
+/* ==========================================================================
+   VISUALIZADOR DE PDF (FOCO NA QUESTÃO)
+   ========================================================================== */
+
+.visualizador-header {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    flex-direction: column;
+    background-color: #f0f0f0;
+    border-radius: 20px 20px 0px 0px;
+}
+
+.pdf-container {
+    width: 100%;
+}
+
+#pdf-render-canvas {
+    width: 100% ;
+}
+
+#pdf-questao-info {
+    padding: 25px;
+}
+
+#btn-voltar-acervo {
+    border: none;
+    padding: 10px 20px;
+    background-color: #e8e8e8;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: start;
+    border-radius: 20px 20px 0px 0px;
 }

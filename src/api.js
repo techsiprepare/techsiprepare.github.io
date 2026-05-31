@@ -13,7 +13,6 @@ export async function buscarDadosPlanilha() {
         const dadosQuestoes = parsearCSV(resQuestoes);
         const dadosRespostas = parsearCSV(resRespostas);
 
-        // Mapeamento de Provas_Enade: ID_Prova | Ano | Area_Prova | Modalidade | Numero_Caderno | Link_Prova
         const provasMap = new Map();
         for (let i = 1; i < dadosProvas.length; i++) {
             const row = dadosProvas[i];
@@ -28,8 +27,6 @@ export async function buscarDadosPlanilha() {
             }
         }
 
-        // Mapeamento de Respostas_Aprovadas: ID_Prova | Questao_Num | Tipo | Nome_Aluno | Assunto | URL_Video_Oficial
-        // Usando chave composta baseada em "IDProva_NumeroQuestao"
         const respostasMap = new Map();
         for (let i = 1; i < dadosRespostas.length; i++) {
             const row = dadosRespostas[i];
@@ -47,7 +44,6 @@ export async function buscarDadosPlanilha() {
 
         const bancoDadosFormatado = [];
 
-        // Processamento de Questoes_Enade: ID_Prova | Questao_Num | TipoPagina_PDF
         for (let i = 1; i < dadosQuestoes.length; i++) {
             const row = dadosQuestoes[i];
             if (row.length < 2) continue;
@@ -55,7 +51,6 @@ export async function buscarDadosPlanilha() {
             const idProva = row[0];
             const numQuestao = row[1];
 
-            // Tratamento inteligente caso 'Tipo' e 'Pagina_PDF' venham separados ou juntos
             let tipoBruto = "";
             let pagPDF = "";
 
@@ -70,7 +65,6 @@ export async function buscarDadosPlanilha() {
             const provaInfo = provasMap.get(idProva) || { ano: '', area: 'Desconhecida', modalidade: 'N/A', caderno: 'UNICO', link: '#' };
             const respostaInfo = respostasMap.get(idQuestaoComposite) || null;
 
-            // Se o tipo não foi especificado na planilha de questões, herda o tipo da resposta aprovada
             if (!tipoBruto && respostaInfo) {
                 tipoBruto = respostaInfo.tipo;
             }
@@ -91,13 +85,13 @@ export async function buscarDadosPlanilha() {
 
             bancoDadosFormatado.push({
                 id: idQuestaoComposite,
+                id_prova: idProva,
                 numero: numQuestao,
                 tipo: tipoFormatado,
                 curso: provaInfo.area,
                 modalidade: provaInfo.modalidade,
                 ano: provaInfo.ano,
                 caderno: provaInfo.caderno,
-                pdf_path: pdfPathMontado,
                 pagina_pdf: pagPDF,
                 status: respostaInfo ? 'done' : 'open',
                 autor: respostaInfo ? respostaInfo.aluno : null,

@@ -344,8 +344,8 @@
                         vídeo e seus dados básicos para validação da carga horária.</p>
 
                     <div class="btn-form-wrapper">
-                        <a href="https://forms.gle/p4Yrt9yedZF8s4ZA7"
-                            target="_blank" class="btn btn-primary btn-icon-gap">
+                        <a href="https://forms.gle/p4Yrt9yedZF8s4ZA7" target="_blank"
+                            class="btn btn-primary btn-icon-gap">
                             Preencher Formulário de Envio
                             <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
@@ -358,6 +358,22 @@
         </div>
     </main>
 
+    <section id="visualizador" class="page">
+        <div class="visualizador-header">
+            <button id="btn-voltar-acervo">
+                &larr; Voltar para o Acervo
+            </button>
+
+            <div id="pdf-questao-info"></div>
+        </div>
+
+        <div id="pdf-loading-indicator">Carregando questão...</div>
+
+        <div class="pdf-container">
+            <canvas id="pdf-render-canvas"></canvas>
+        </div>
+    </section>
+
     <footer>
         <p>&copy; 2026 Projeto de Extensão TechSI Prepare - IFMG</p>
         <div class="footer-links">
@@ -365,7 +381,14 @@
         </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
+
     <script type="module" src="src/main.js"></script>
+
 </body>
 
 </html>

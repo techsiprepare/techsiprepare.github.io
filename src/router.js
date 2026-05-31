@@ -1,8 +1,6 @@
-const PAGINAS_VALIDAS = new Set(['home', 'acervo', 'instrucoes']);
+const PAGINAS_VALIDAS = new Set(['home', 'acervo', 'instrucoes', 'visualizador']);
 
-export function navigate(pageId) {
-    if (!PAGINAS_VALIDAS.has(pageId)) return;
-
+function atualizarInterface(pageId) {
     const navLinksObj = document.getElementById('main-nav');
     const overlayObj = document.getElementById('menu-overlay');
     
@@ -22,20 +20,29 @@ export function navigate(pageId) {
     const activeLink = document.querySelector(`.nav-links a[href="#${pageId}"]`);
     if (activeLink) activeLink.classList.add('active');
     
-    window.location.hash = pageId;
     window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-export function initRouter() {
-    const obterHashAtual = () => window.location.hash.substring(1);
+export function navigate(pageId, queryString = '') {
+    if (!PAGINAS_VALIDAS.has(pageId)) return;
+    window.location.hash = queryString ? `${pageId}?${queryString}` : pageId;
+}
 
-    window.addEventListener('hashchange', () => {
-        const hash = obterHashAtual();
-        if (PAGINAS_VALIDAS.has(hash)) {
-            navigate(hash);
+export function initRouter(onRouteChanged) {
+    const resolverRota = () => {
+        const hashCompleto = window.location.hash.substring(1);
+        const [pageId, queryString] = hashCompleto.split('?');
+        
+        const paginaAlvo = PAGINAS_VALIDAS.has(pageId) ? pageId : 'home';
+        
+        atualizarInterface(paginaAlvo);
+        
+        if (onRouteChanged) {
+            onRouteChanged(paginaAlvo, new URLSearchParams(queryString || ''));
         }
-    });
+    };
 
-    const hashInicial = obterHashAtual();
-    navigate(PAGINAS_VALIDAS.has(hashInicial) ? hashInicial : 'home');
+    window.addEventListener('hashchange', resolverRota);
+    
+    resolverRota();
 }

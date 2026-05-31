@@ -68,13 +68,11 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
     const pagContainer = document.getElementById('pagination-controls');
     const contadorContainer = document.getElementById('acervo-contador');
 
-    // Seletores normais
     const filtroCurso = document.getElementById('filter-curso')?.value || 'all';
     const filtroTipo = document.getElementById('filter-tipo')?.value || 'all';
     const filtroAno = document.getElementById('filter-ano')?.value || 'all';
     const filtroModalidade = document.getElementById('filter-modalidade')?.value || 'all';
 
-    // NOVO: Captura o valor da aba de status ativa (procura pelo elemento com a classe 'active')
     const abaStatusAtiva = document.querySelector('.status-tab.active');
     const filtroStatus = abaStatusAtiva ? abaStatusAtiva.getAttribute('data-status') : 'all';
 
@@ -106,8 +104,6 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         return;
     }
 
-    // Aplica efeito de transição/piscar na Grid para indicar atualização
-    // Estes estilos inline foram mantidos por fazerem parte da lógica de animação JS
     grid.style.opacity = '0';
     grid.style.transform = 'translateY(8px)';
     grid.style.transition = 'none';
@@ -125,7 +121,6 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
     pageItems.forEach(item => {
         const isDone = item.status === 'done';
 
-        // 1. Área de Mídia Superior (Proporção 16:9)
         let midiaVisual = '';
         if (isDone) {
             midiaVisual = `<div class="card-media-wrapper card-media-video">
@@ -139,23 +134,18 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
                 </div>`;
         }
 
-        // Configurações do Badge de Status
         const statusLabel = isDone ? 'RESOLVIDO' : 'EM ABERTO';
         const badgeClass = isDone ? 'badge-done' : 'badge-open';
 
+        const paginaDestino = item.pagina_pdf ? parseInt(item.pagina_pdf, 10) : 1;
+
         const textoBotaoPdf = item.pagina_pdf
-            ? `Ver questão na página ${item.pagina_pdf} do PDF`
-            : 'Visualizar questão no caderno';
+            ? `Ver questão`
+            : 'Visualizar caderno de prova';
 
-        const cliquePdfAction = item.pagina_pdf
-            ? `if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){ event.preventDefault(); window.mostrarToast('Nota: Em celulares, o arquivo pode abrir no início. Role manualmente até a <strong>página ${item.pagina_pdf}</strong>.', this.href); }`
-            : '';
-
-        // Formatação para "Questão 08" (Adiciona o zero à esquerda)
         const numeroFormatado = String(item.numero).padStart(2, '0');
         const modalidadeFormatada = item.modalidade ? ` (${item.modalidade})` : '';
 
-        // Tratamento da string do tipo para exibição (ex: 'objetivas' -> 'Objetiva')
         let tipoExibicao = item.tipo ? item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1) : 'Objetiva';
         if (tipoExibicao.endsWith('s')) {
             tipoExibicao = tipoExibicao.slice(0, -1);
@@ -166,6 +156,8 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
 
         const card = document.createElement('div');
         card.className = 'card-questao';
+
+        const cliqueVisualizador = `window.abrirNoVisualizadorLocal('${item.id_prova}', ${paginaDestino}, '${item.ano}', '${item.curso}', '${numeroFormatado}', '${tipoExibicao}')`;
 
         card.innerHTML = `
             ${midiaVisual}
@@ -190,11 +182,11 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
                 <div class="card-actions">
                     ${isDone
                 ? `<p class="card-author">Resolvida por: <strong>${item.autor}</strong></p>`
-                : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary btn-resolver">Quero resolver essa questão</a>`
+                : `<a href="#instrucoes" onclick="navigate('instrucoes')" class="btn btn-primary">Quero resolver essa questão</a>`
             }
-                    <a href="${item.pdf_path}" onclick="${cliquePdfAction}" target="_blank" class="btn btn-outline btn-pdf">
+                    <button onclick="event.preventDefault(); ${cliqueVisualizador}" class="btn btn-outline">
                         ${textoBotaoPdf}
-                    </a>
+                    </button>
                 </div>
             </div>
         `;
@@ -255,63 +247,3 @@ export function renderErro() {
             ⚠️ Erro ao carregar o acervo em tempo real. Verifique a conexão ou a publicação da planilha.
         </p>`;
 }
-
-export function mostrarToast(mensagem, urlParaAbrir = null) {
-    let container = document.getElementById('toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = 'toast-message';
-
-    toast.innerHTML = `
-        <svg class="toast-icon" width="18" height="18" fill="var(--status-open, #ED8936)" viewBox="0 0 16 16">
-            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-        </svg>
-        <div class="toast-content">
-            <span>${mensagem}</span>
-            ${urlParaAbrir ? `
-                <div class="toast-actions">
-                    <button class="btn-toast-cancel">Cancelar</button>
-                    <button class="btn-toast-confirm">Abrir PDF</button>
-                </div>
-            ` : ''}
-        </div>
-    `;
-
-    container.appendChild(toast);
-
-    // Usa-se setTimeout e estilos inline aqui para disparar a animação (override no CSS)
-    setTimeout(() => {
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateY(0)';
-    }, 10);
-
-    const fecharToast = () => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(-10px)';
-        setTimeout(() => toast.remove(), 300);
-    };
-
-    if (urlParaAbrir) {
-        const btnConfirm = toast.querySelector('.btn-toast-confirm');
-        const btnCancel = toast.querySelector('.btn-toast-cancel');
-
-        if (btnConfirm) {
-            btnConfirm.addEventListener('click', () => {
-                window.open(urlParaAbrir, '_blank');
-                fecharToast();
-            });
-        }
-        if (btnCancel) {
-            btnCancel.addEventListener('click', fecharToast);
-        }
-    } else {
-        setTimeout(fecharToast, 5000);
-    }
-}
-
-window.mostrarToast = mostrarToast;
