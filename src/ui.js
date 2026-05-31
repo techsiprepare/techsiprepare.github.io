@@ -140,7 +140,7 @@ export function renderAcervoGrid(acervoCruze, resetPage = false) {
         const paginaDestino = item.pagina_pdf ? parseInt(item.pagina_pdf, 10) : 1;
 
         const textoBotaoPdf = item.pagina_pdf
-            ? `Ver página daquestão`
+            ? `Ver página da questão`
             : 'Visualizar caderno de prova';
 
         const numeroFormatado = String(item.numero).padStart(2, '0');
