@@ -1081,7 +1081,7 @@ body.menu-open {
 
 #pdf-loading-indicator {
     padding: 40px;
-    display: flex !important;
+    display: flex;
     align-items: center;
     flex-direction: column;
     border: dashed 4px #e1e1e1;
