@@ -61,6 +61,6 @@ export function carregarPdfVisualizador(idProva, paginaInicial, ano, curso, nume
         
     }).catch(function(error) {
         console.error("Falha ao abrir PDF Local:", error);
-        loadingIndicator.innerHTML = `⚠️ Erro: Não foi possível carregar <strong>${idProva}.pdf</strong>.`;
+        loadingIndicator.innerHTML = `⚠️ Erro: Não foi possível carregar o PDF.`;
     });
 }
