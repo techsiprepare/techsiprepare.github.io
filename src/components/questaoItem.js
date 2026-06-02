@@ -24,7 +24,7 @@ export function ComponenteQuestaoItem({ q, idProva, exibirBotao = true }) {
 
                 ${exibirBotao ? `
                     <div class="q-card-actions">
-                        <a href="#visualizar?prova=${idProva}&questao=${q.numero}" class="btn-abrir-questao" title="Visualizar Questão">
+                        <a href="#visualizar?prova=${idProva}&questao=${q.id}" class="btn-abrir-questao" title="Visualizar Questão">
                             <i data-lucide="external-link"></i>
                         </a>
                     </div>
@@ -45,7 +45,7 @@ export function ComponenteQuestaoItem({ q, idProva, exibirBotao = true }) {
             </div>
             ${exibirBotao ? `
                 <div class="q-card-actions">
-                    <a href="#visualizar?prova=${idProva}&questao=${q.numero}" class="btn-abrir-questao">
+                    <a href="#visualizar?prova=${idProva}&questao=${q.id}" class="btn-abrir-questao">
                         <i data-lucide="external-link"></i>
                     </a>
                 </div>

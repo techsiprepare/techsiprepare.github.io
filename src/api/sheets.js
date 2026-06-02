@@ -35,7 +35,9 @@ export async function inicializarDados() {
         // 2. Mapear Questões
         csvParaObjetos(resQuestoes).forEach(q => { 
             if (estadoApp[q.ID_Prova]) {
-                estadoApp[q.ID_Prova].questoes[q.Questao_Num] = {
+                const questaoId = `${q.Questao_Num}-${q.Tipo}`;
+                estadoApp[q.ID_Prova].questoes[questaoId] = {
+                    id: questaoId,
                     numero: q.Questao_Num,
                     tipo: q.Tipo,
                     paginaPdf: parseInt(q.Pagina_PDF), 
@@ -50,8 +52,9 @@ export async function inicializarDados() {
         // 3. Acoplar as Respostas
         csvParaObjetos(resRespostas).forEach(r => { 
             const prova = estadoApp[r.ID_Prova];
-            if (prova && prova.questoes[r.Questao_Num]) {
-                const questao = prova.questoes[r.Questao_Num];
+            const questaoId = `${r.Questao_Num}-${r.Tipo}`;
+            if (prova && prova.questoes[questaoId]) {
+                const questao = prova.questoes[questaoId];
                 questao.status = "Resolvida";
                 questao.assunto = r.Assunto || questao.assunto; 
                 questao.videoUrl = r.URL_Video_Oficial;
