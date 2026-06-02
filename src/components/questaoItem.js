@@ -17,16 +17,16 @@ function obterUrlEmbed(videoUrl) {
     } catch (e) {
         return null;
     }
-    
+
     if (videoId && videoId.includes('?')) {
         videoId = videoId.split('?')[0];
     }
-    
+
     return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
 }
 
 export function ComponenteQuestaoItem({ q, idProva, exibirBotao = true }) {
-    const iconTipo = q.tipo === "Objetiva" ? "file-text" : "edit-3";
+    const iconTipo = q.tipo === "Objetiva" ? "list-todo" : "edit-3";
 
     if (q.status === "Resolvida") {
         const embedUrl = obterUrlEmbed(q.videoUrl);
@@ -43,7 +43,6 @@ export function ComponenteQuestaoItem({ q, idProva, exibirBotao = true }) {
                     <div class="q-card-meta">
                         <strong class="q-numero-tag">Q-${q.numero}</strong>
                         <i data-lucide="${iconTipo}" title="${q.tipo}"></i>
-                        <i data-lucide="tag"></i>
                         ${ComponenteBadge({ status: q.status })}
                         
                         ${exibirBotao ? `
@@ -74,7 +73,6 @@ export function ComponenteQuestaoItem({ q, idProva, exibirBotao = true }) {
                 <div class="q-card-meta">
                     <strong class="q-numero-tag">Q-${q.numero}</strong>
                     <i data-lucide="${iconTipo}"></i>
-                    <i data-lucide="tag"></i>
                     ${ComponenteBadge({ status: q.status })}
                     
                     ${exibirBotao ? `

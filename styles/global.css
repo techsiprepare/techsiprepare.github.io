@@ -5,19 +5,27 @@
 
 :root {
     /* Identidade e Ação */
-    --color-primary: #10b981;        /* Verde oficial ativo */
-    --color-primary-hover: #059669;  /* Verde escuro para estado físico */
-    --color-danger: #ef4444;         /* Vermelho para ações destrutivas/erros */
+    --color-primary: #10b981;
+    /* Verde oficial ativo */
+    --color-primary-hover: #059669;
+    /* Verde escuro para estado físico */
+    --color-danger: #ef4444;
+    /* Vermelho para ações destrutivas/erros */
 
     /* Superfícies e Profundidade */
-    --color-bg-system: #f2f5f3;      /* Cinza muito claro com sutil toque esverdeado */
-    --color-surface-pure: #ffffff;   /* Branco puro para painéis e cartões */
+    --color-bg-system: #f2f5f3;
+    /* Cinza muito claro com sutil toque esverdeado */
+    --color-surface-pure: #ffffff;
+    /* Branco puro para painéis e cartões */
     --color-border: #e2e8f0;
 
     /* Hierarquia de Texto */
-    --color-text-impact: #1a1f26;    /* Grafite quase preto */
-    --color-text-main: #374151;      /* Cinza escuro confortável */
-    --color-text-support: #6b7280;   /* Cinza médio atenuado */
+    --color-text-impact: #1a1f26;
+    /* Grafite quase preto */
+    --color-text-main: #374151;
+    /* Cinza escuro confortável */
+    --color-text-support: #6b7280;
+    /* Cinza médio atenuado */
 
     /* Sinalização de Status (Pastéis) */
     --status-pending-bg: #ffedd5;
@@ -26,9 +34,12 @@
     --status-resolved-text: #065f46;
 
     /* Geometria Suavizada */
-    --radius-large: 12px;            /* Cartões e blocos de formulários */
-    --radius-medium: 8px;            /* Botões e elementos menores */
-    --radius-pill: 9999px;           /* Etiquetas de status */
+    --radius-large: 12px;
+    /* Cartões e blocos de formulários */
+    --radius-medium: 8px;
+    /* Botões e elementos menores */
+    --radius-pill: 9999px;
+    /* Etiquetas de status */
 
     /* Transições e Sombras */
     --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -63,7 +74,8 @@ a {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 100px 24px 48px 24px; /* Compensando a barra do topo fixa */
+    padding: 100px 24px 48px 24px;
+    /* Compensando a barra do topo fixa */
 }
 
 /* ==========================================================================
@@ -157,7 +169,7 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 12px;
+    padding: 4px;
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -214,7 +226,8 @@ h2 {
 /* ==========================================================================
    1. LAYOUT GRID E CARTÕES (Sensação de Flutuação e Toque)
    ========================================================================== */
-.grid-provas, .grid-cards {
+.grid-provas,
+.grid-cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px;
@@ -351,7 +364,8 @@ h2 {
 }
 
 /* Estrutura Base das Questões */
-.questao-item-card-detalhado, .questao-item-compacto {
+.questao-item-card-detalhado,
+.questao-item-compacto {
     background-color: var(--color-surface-pure);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-large);
@@ -382,7 +396,7 @@ h2 {
 
 /* Letras e dados pequenos com peso acentuado e espaçado (Refinado) */
 .q-numero-tag {
-    font-size: 0.85rem;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: 0.05em;
     color: var(--color-text-impact);
@@ -440,7 +454,8 @@ h2 {
 
 /* Estilos de Botões em Linha e Layout Novo da Questão (Vídeo Embed) */
 .q-card-actions-inline {
-    margin-left: auto; /* Empurra o botão de visualizar para a direita na flexbox do meta */
+    margin-left: auto;
+    /* Empurra o botão de visualizar para a direita na flexbox do meta */
 }
 
 .questao-item-card-detalhado.q-layout-novo {
@@ -460,7 +475,8 @@ h2 {
 
 .q-card-video-embed {
     flex-shrink: 0;
-    width: 213px; /* Aspect Ratio ~16:9 para 120px de altura */
+    width: 213px;
+    /* Aspect Ratio ~16:9 para 120px de altura */
     height: 120px;
     border-radius: var(--radius-medium);
     overflow: hidden;
@@ -481,9 +497,11 @@ h2 {
 .card-thumbnail-wrapper {
     position: relative;
     width: 100%;
-    height: 160px; /* Altura fixa para cortar o PDF de forma uniforme */
+    height: 160px;
+    /* Altura fixa para cortar o PDF de forma uniforme */
     overflow: hidden;
-    background-color: var(--color-bg-system); /* Cinza sutil de fundo */
+    background-color: var(--color-bg-system);
+    /* Cinza sutil de fundo */
     border-bottom: 1px solid var(--color-border);
     display: flex;
     justify-content: center;
@@ -495,7 +513,8 @@ h2 {
     width: 100%;
     height: auto;
     object-fit: cover;
-    pointer-events: none; /* Impede interações físicas com o canvas */
+    pointer-events: none;
+    /* Impede interações físicas com o canvas */
 }
 
 .pdf-badge-tag i {
@@ -507,12 +526,14 @@ h2 {
 .prova-card {
     display: flex;
     flex-direction: column;
-    padding: 0; /* Remove o padding interno padrão para colar a imagem nas bordas */
+    padding: 0;
+    /* Remove o padding interno padrão para colar a imagem nas bordas */
     overflow: hidden;
 }
 
 .card-content-wrapper {
-    padding: 20px; /* Reaplica o respiro para os textos */
+    padding: 20px;
+    /* Reaplica o respiro para os textos */
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -566,7 +587,10 @@ h2 {
 /* Spinner de Carregamento Assíncrono */
 .pdf-loading {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-color: rgba(82, 86, 89, 0.9);
     display: flex;
     flex-direction: column;
@@ -588,7 +612,9 @@ h2 {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Barra Lateral de Contexto */
@@ -624,7 +650,8 @@ h2 {
 /* Player do YouTube Embutido */
 .video-wrapper {
     position: relative;
-    padding-bottom: 56.25%; /* Aspect Ratio 16:9 */
+    padding-bottom: 56.25%;
+    /* Aspect Ratio 16:9 */
     height: 0;
     overflow: hidden;
     border-radius: var(--radius-medium);
@@ -633,8 +660,10 @@ h2 {
 
 .video-wrapper iframe {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .video-placeholder {
@@ -663,28 +692,40 @@ h2 {
    ========================================================================== */
 @media (max-width: 992px) {
     .split-view {
-        grid-template-columns: 1fr; /* Colunas passam a ser estritamente verticais */
+        grid-template-columns: 1fr;
+        /* Colunas passam a ser estritamente verticais */
     }
-    
+
     .sidebar-context {
-        order: -1; /* Traz as informações contextuais e vídeos para cima do PDF no mobile */
+        order: -1;
+        /* Traz as informações contextuais e vídeos para cima do PDF no mobile */
     }
 }
 
 @media (max-width: 600px) {
-    .hero h1 { font-size: 1.85rem; }
-    .hero p { font-size: 1rem; }
-    
-    .nav-links { display: none; } /* Ocultação para posterior acoplamento do drawer */
-    
+    .hero h1 {
+        font-size: 1.85rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    /* Ocultação para posterior acoplamento do drawer */
+
     .pdf-toolbar {
         flex-direction: column;
         gap: 12px;
         text-align: center;
     }
-    
+
     /* Botões com largura total para o polegar */
-    .pdf-toolbar .btn, .video-placeholder .btn {
+    .pdf-toolbar .btn,
+    .video-placeholder .btn {
         width: 100%;
     }
 
@@ -695,7 +736,7 @@ h2 {
     .questao-item-card-detalhado.q-layout-novo {
         flex-direction: column;
     }
-    
+
     .q-card-video-embed {
         width: 100%;
         height: auto;

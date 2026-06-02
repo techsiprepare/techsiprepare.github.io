@@ -16,7 +16,7 @@ export function viewQuestoesProva(idProva) {
     return `
         <div class="back-link"><a href="#acervo">← Voltar para Provas</a></div>
         <h2>${prova.curso} — Ano ${prova.ano}</h2>
-        <p class="subtitle">${prova.modalidade} | ID: ${prova.id}</p>
+        <p class="subtitle">${prova.modalidade} | Caderno: ${prova.caderno}</p>
         <div class="lista-questoes">
             ${questoesHtml || '<p>Nenhuma questão mapeada para esta prova.</p>'}
         </div>
