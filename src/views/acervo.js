@@ -1,5 +1,5 @@
-import { estadoApp } from '../api.js';
-import { ComponenteCardProva } from '../components/card.js';
+import { estadoApp } from '../api/sheets.js'; // Corrigido de ../../ para ../
+import { ComponenteCardProva } from '../components/card.js'; // Mantido de acordo com seu arquivo real
 
 export function viewAcervo() {
     const provas = Object.values(estadoApp);

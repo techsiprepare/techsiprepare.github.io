@@ -1,4 +1,4 @@
-import { inicializarDados } from './api.js';
+import { inicializarDados } from './api/sheets.js';
 import { inicializarRoteador } from './router.js';
 
 document.addEventListener("DOMContentLoaded", async () => {

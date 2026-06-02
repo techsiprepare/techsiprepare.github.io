@@ -1,12 +1,14 @@
 import { viewHome } from './views/home.js';
 import { viewAcervo } from './views/acervo.js';
-import { viewQuestoesProva } from './views/questoesProva.js';
+import { viewQuestoesProva } from './views/questoesProva.js'; 
 import { viewVisualizar } from './views/visualizar.js';
 import { viewTutorial } from './views/tutorial.js';
+import { gerarThumbnailPdf } from './pdfViewer.js';
+import { estadoApp } from './api/sheets.js';
 
-export function inicializarRoteador() {
-    window.addEventListener("hashchange", lidarComRoteamento);
-    lidarComRoteamento();
+export function inicializarRoteador() { 
+    window.addEventListener("hashchange", lidarComRoteamento); 
+    lidarComRoteamento(); 
 }
 
 function lidarComRoteamento() {
@@ -26,7 +28,22 @@ function lidarComRoteamento() {
     if (rota === "" || rota === "home") {
         root.innerHTML = viewHome();
     } else if (rota === "acervo") {
-        root.innerHTML = parametros.prova ? viewQuestoesProva(parametros.prova) : viewAcervo();
+        if (parametros.prova) {
+            root.innerHTML = viewQuestoesProva(parametros.prova);
+        } else {
+            root.innerHTML = viewAcervo();
+            
+            // --- NOVA LÓGICA PARA RENDERIZAR AS THUMBNAILS ---
+            // Aguarda um micro-instante para garantir que o Lucide e os elementos estejam no DOM
+            setTimeout(() => {
+                Object.values(estadoApp).forEach(prova => {
+                    // O caminhoPdf gerado no sheets.js é 'assets/provas/ID_PROVA.pdf'
+                    const urlPdf = prova.caminhoPdf; 
+                    const idCanvas = `thumb-${prova.id}`;
+                    gerarThumbnailPdf(urlPdf, idCanvas);
+                });
+            }, 50);
+        }
     } else if (rota === "visualizar") {
         root.innerHTML = (parametros.prova && parametros.questao) 
             ? viewVisualizar(parametros.prova, parametros.questao) 
