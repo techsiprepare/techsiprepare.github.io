@@ -346,6 +346,8 @@ h2 {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    container-type: inline-size;
+    container-name: listaQuestoes;
 }
 
 /* Estrutura Base das Questões */
@@ -434,6 +436,41 @@ h2 {
 .btn-abrir-questao:hover {
     color: var(--color-primary);
     background-color: var(--color-bg-system);
+}
+
+/* Estilos de Botões em Linha e Layout Novo da Questão (Vídeo Embed) */
+.q-card-actions-inline {
+    margin-left: auto; /* Empurra o botão de visualizar para a direita na flexbox do meta */
+}
+
+.questao-item-card-detalhado.q-layout-novo {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.questao-item-card-detalhado.q-layout-novo .q-card-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+}
+
+.q-card-video-embed {
+    flex-shrink: 0;
+    width: 213px; /* Aspect Ratio ~16:9 para 120px de altura */
+    height: 120px;
+    border-radius: var(--radius-medium);
+    overflow: hidden;
+    background-color: #000;
+}
+
+.q-card-video-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
 /* ==========================================================================
@@ -649,5 +686,19 @@ h2 {
     /* Botões com largura total para o polegar */
     .pdf-toolbar .btn, .video-placeholder .btn {
         width: 100%;
+    }
+
+}
+
+/* Container Queries para Responsividade Inteligente do Componente */
+@container listaQuestoes (max-width: 600px) {
+    .questao-item-card-detalhado.q-layout-novo {
+        flex-direction: column;
+    }
+    
+    .q-card-video-embed {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
     }
 }
