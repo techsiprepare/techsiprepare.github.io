@@ -1,48 +1,41 @@
-const PAGINAS_VALIDAS = new Set(['home', 'acervo', 'instrucoes', 'visualizador']);
+import { viewHome } from './views/home.js';
+import { viewAcervo } from './views/acervo.js';
+import { viewQuestoesProva } from './views/questoesProva.js';
+import { viewVisualizar } from './views/visualizar.js';
+import { viewTutorial } from './views/tutorial.js';
 
-function atualizarInterface(pageId) {
-    const navLinksObj = document.getElementById('main-nav');
-    const overlayObj = document.getElementById('menu-overlay');
-    
-    if (navLinksObj && navLinksObj.classList.contains('open')) {
-        navLinksObj.classList.remove('open');
-        if (overlayObj) overlayObj.classList.remove('active');
-        document.body.style.overflow = '';
+export function inicializarRoteador() {
+    window.addEventListener("hashchange", lidarComRoteamento);
+    lidarComRoteamento();
+}
+
+function lidarComRoteamento() {
+    const root = document.getElementById("app-root");
+    const hashCompleta = window.location.hash || "#";
+    const [caminhoComHash, stringParametros] = hashCompleta.split("?");
+    const rota = caminhoComHash.replace("#", "");
+
+    const parametros = {};
+    if (stringParametros) {
+        stringParametros.split("&").forEach(p => {
+            const [chave, valor] = p.split("=");
+            parametros[chave] = decodeURIComponent(valor);
+        });
     }
 
-    document.querySelectorAll('.page.active, .nav-links a.active').forEach(elemento => {
-        elemento.classList.remove('active');
-    });
-    
-    const targetPage = document.getElementById(pageId);
-    if (targetPage) targetPage.classList.add('active');
-    
-    const activeLink = document.querySelector(`.nav-links a[href="#${pageId}"]`);
-    if (activeLink) activeLink.classList.add('active');
-    
-    window.scrollTo({ top: 0, behavior: 'instant' });
-}
+    if (rota === "" || rota === "home") {
+        root.innerHTML = viewHome();
+    } else if (rota === "acervo") {
+        root.innerHTML = parametros.prova ? viewQuestoesProva(parametros.prova) : viewAcervo();
+    } else if (rota === "visualizar") {
+        root.innerHTML = (parametros.prova && parametros.questao) 
+            ? viewVisualizar(parametros.prova, parametros.questao) 
+            : `<h2>Parâmetros inválidos.</h2>`;
+    } else if (rota === "tutorial") {
+        root.innerHTML = viewTutorial();
+    } else {
+        root.innerHTML = `<h2>Página não encontrada (Erro 404).</h2>`;
+    }
 
-export function navigate(pageId, queryString = '') {
-    if (!PAGINAS_VALIDAS.has(pageId)) return;
-    window.location.hash = queryString ? `${pageId}?${queryString}` : pageId;
-}
-
-export function initRouter(onRouteChanged) {
-    const resolverRota = () => {
-        const hashCompleto = window.location.hash.substring(1);
-        const [pageId, queryString] = hashCompleto.split('?');
-        
-        const paginaAlvo = PAGINAS_VALIDAS.has(pageId) ? pageId : 'home';
-        
-        atualizarInterface(paginaAlvo);
-        
-        if (onRouteChanged) {
-            onRouteChanged(paginaAlvo, new URLSearchParams(queryString || ''));
-        }
-    };
-
-    window.addEventListener('hashchange', resolverRota);
-    
-    resolverRota();
+    if (window.lucide) window.lucide.createIcons();
 }

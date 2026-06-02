@@ -1,108 +1,88 @@
-import { URL_PROVAS, URL_QUESTOES, URL_RESPOSTAS } from './config.js';
-import { parsearCSV, formatarUrlEmbed } from './utils.js';
+const URLS = {
+    provas: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJReAH_Mb7aiBg3aJdIIWXxxcPcN4cvcQ1Jpj1JMAneQvdbYPIiLjr9U1yWwB4ZOonaQVX_EjvuXKF/pub?gid=46332207&single=true&output=csv",
+    questoes: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJReAH_Mb7aiBg3aJdIIWXxxcPcN4cvcQ1Jpj1JMAneQvdbYPIiLjr9U1yWwB4ZOonaQVX_EjvuXKF/pub?gid=76285532&single=true&output=csv",
+    respostas: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJReAH_Mb7aiBg3aJdIIWXxxcPcN4cvcQ1Jpj1JMAneQvdbYPIiLjr9U1yWwB4ZOonaQVX_EjvuXKF/pub?gid=264106829&single=true&output=csv"
+};
 
-export async function buscarDadosPlanilha() {
+export let estadoApp = {};
+
+function csvParaObjetos(csvTexto) {
+    // Remove retornos de carro (\r) para evitar problemas com arquivos gerados no Windows
+    const textoLimpo = csvTexto.replace(/\r/g, "");
+    const linhas = textoLimpo.split("\n").map(l => l.trim()).filter(l => l);
+    if (linhas.length === 0) return [];
+
+    const cabecalhos = linhas[0].split(",").map(c => c.trim());
+    return linhas.slice(1).map(linha => {
+        // Expressão regular para lidar com campos que possuem vírgulas entre aspas
+        const valores = linha.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || linha.split(",");
+        const obj = {};
+        cabecalhos.forEach((cabecalho, i) => {
+            let valor = valores[i] ? valores[i].trim() : "";
+            // Remove aspas extras se o campo veio encapsulado do Sheets
+            if (valor.startsWith('"') && valor.endsWith('"')) {
+                valor = valor.slice(1, -1);
+            }
+            obj[cabecalho] = valor;
+        });
+        return obj;
+    });
+}
+
+export async function inicializarDados() {
     try {
+        console.log("Buscando dados das planilhas...");
         const [resProvas, resQuestoes, resRespostas] = await Promise.all([
-            fetch(URL_PROVAS).then(r => r.text()),
-            fetch(URL_QUESTOES).then(r => r.text()),
-            fetch(URL_RESPOSTAS).then(r => r.text())
+            fetch(URLS.provas).then(r => r.text()),
+            fetch(URLS.questoes).then(r => r.text()),
+            fetch(URLS.respostas).then(r => r.text())
         ]);
 
-        const dadosProvas = parsearCSV(resProvas);
-        const dadosQuestoes = parsearCSV(resQuestoes);
-        const dadosRespostas = parsearCSV(resRespostas);
+        // 1. Processar e estruturar as Provas
+        csvParaObjetos(resProvas).forEach(p => {
+            if (!p.ID_Prova) return;
+            estadoApp[p.ID_Prova] = {
+                id: p.ID_Prova,
+                ano: p.Ano,
+                curso: p.Area_Prova,
+                modalidade: p.Modalidade,
+                caderno: p.Numero_Caderno,
+                caminhoPdf: `assets/provas/${p.ID_Prova}.pdf`,
+                questoes: {}
+            };
+        });
 
-        const provasMap = new Map();
-        for (let i = 1; i < dadosProvas.length; i++) {
-            const row = dadosProvas[i];
-            if (row.length >= 5) {
-                provasMap.set(row[0], {
-                    ano: row[1],
-                    area: row[2],
-                    modalidade: row[3],
-                    caderno: row[4],
-                    link: row[5] || '#'
-                });
+        // 2. Mapear as Questões dentro de suas respectivas provas
+        csvParaObjetos(resQuestoes).forEach(q => {
+            if (estadoApp[q.ID_Prova]) {
+                estadoApp[q.ID_Prova].questoes[q.Questao_Num] = {
+                    numero: q.Questao_Num,
+                    tipo: q.Tipo,
+                    paginaPdf: parseInt(q.Pagina_PDF),
+                    assunto: "Aguardando catálogo de assunto",
+                    status: "Em Aberto",
+                    videoUrl: null,
+                    autor: null
+                };
             }
-        }
+        });
 
-        const respostasMap = new Map();
-        for (let i = 1; i < dadosRespostas.length; i++) {
-            const row = dadosRespostas[i];
-            if (row.length >= 6) {
-                const idProva = row[0];
-                const numQuestao = row[1];
-                respostasMap.set(`${idProva}_${numQuestao}`, {
-                    tipo: row[2],
-                    aluno: row[3],
-                    assunto: row[4],
-                    urlVideo: row[5]
-                });
+        // 3. Cruzar e acoplar as Respostas Aprovadas da comunidade
+        csvParaObjetos(resRespostas).forEach(r => {
+            const prova = estadoApp[r.ID_Prova];
+            if (prova && prova.questoes[r.Questao_Num]) {
+                const questao = prova.questoes[r.Questao_Num];
+                
+                // Atualiza os dados da questão com as informações da resolução aprovada
+                questao.status = "Resolvida";
+                questao.assunto = r.Assunto || questao.assunto;
+                questao.videoUrl = r.URL_Video_Oficial;
+                questao.autor = r.Nome_Aluno;
             }
-        }
+        });
 
-        const bancoDadosFormatado = [];
-
-        for (let i = 1; i < dadosQuestoes.length; i++) {
-            const row = dadosQuestoes[i];
-            if (row.length < 2) continue;
-
-            const idProva = row[0];
-            const numQuestao = row[1];
-
-            let tipoBruto = "";
-            let pagPDF = "";
-
-            if (row.length >= 4) {
-                tipoBruto = row[2];
-                pagPDF = row[3];
-            } else if (row.length === 3) {
-                pagPDF = row[2];
-            }
-
-            const idQuestaoComposite = `${idProva}_${numQuestao}`;
-            const provaInfo = provasMap.get(idProva) || { ano: '', area: 'Desconhecida', modalidade: 'N/A', caderno: 'UNICO', link: '#' };
-            const respostaInfo = respostasMap.get(idQuestaoComposite) || null;
-
-            if (!tipoBruto && respostaInfo) {
-                tipoBruto = respostaInfo.tipo;
-            }
-
-            let tipoFormatado = 'objetivas';
-            const tipoLower = (tipoBruto || '').toLowerCase();
-
-            if (tipoLower.includes('discursiva')) {
-                tipoFormatado = 'discursivas';
-            } else if (tipoLower.includes('percepcao') || tipoLower.includes('questionario') || tipoLower.includes('percepção')) {
-                tipoFormatado = 'percepcao';
-            }
-            
-            let pdfPathMontado = provaInfo.link;
-            if (pagPDF && pdfPathMontado.includes('.pdf')) {
-                pdfPathMontado = `${pdfPathMontado}#page=${pagPDF}`;
-            }
-
-            bancoDadosFormatado.push({
-                id: idQuestaoComposite,
-                id_prova: idProva,
-                numero: numQuestao,
-                tipo: tipoFormatado,
-                curso: provaInfo.area,
-                modalidade: provaInfo.modalidade,
-                ano: provaInfo.ano,
-                caderno: provaInfo.caderno,
-                pagina_pdf: pagPDF,
-                status: respostaInfo ? 'done' : 'open',
-                autor: respostaInfo ? respostaInfo.aluno : null,
-                video_url: respostaInfo ? formatarUrlEmbed(respostaInfo.urlVideo) : null
-            });
-        }
-
-        return bancoDadosFormatado;
-
+        console.log("Ecossistema de dados carregado com sucesso!", estadoApp);
     } catch (erro) {
-        console.error("Erro técnico ao processar banco de dados das planilhas:", erro);
-        throw erro;
+        console.error("Erro crítico ao processar dados do Google Sheets:", erro);
     }
 }
