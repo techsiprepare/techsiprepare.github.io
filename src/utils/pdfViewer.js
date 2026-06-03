@@ -25,33 +25,31 @@ let tarefaRenderizacaoAtiva = null;
 export async function renderizarPaginaPdf(urlPdf, numeroPagina) {
     const canvas = document.getElementById('pdf-canvas');
     if (!canvas) return 0;
-
     alternarEstadoCarregamento(true);
 
     try {
         const pdf = await obterInstanciaPdf(urlPdf);
-
         if (numeroPagina < 1 || numeroPagina > pdf.numPages) {
             alternarEstadoCarregamento(false);
             return pdf.numPages;
         }
-
         const pagina = await pdf.getPage(numeroPagina);
         const contexto = canvas.getContext('2d');
-        const viewport = calcularViewportResponsivo(pagina, canvas.parentElement?.clientWidth);
+        const viewportBase = calcularViewportResponsivo(pagina, canvas.parentElement?.clientWidth);
+        const dpr = window.devicePixelRatio || 1;
+        const viewportAltaDefinicao = pagina.getViewport({ scale: viewportBase.scale * dpr });
+        canvas.height = viewportAltaDefinicao.height;
+        canvas.width = viewportAltaDefinicao.width;
+        canvas.style.height = `${viewportBase.height}px`;
+        canvas.style.width = `${viewportBase.width}px`;
 
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        await executarRenderizacaoSegura(pagina, contexto, viewport);
+        await executarRenderizacaoSegura(pagina, contexto, viewportAltaDefinicao);
 
         atualizarIndicadorPagina(numeroPagina);
         alternarEstadoCarregamento(false);
-
         return pdf.numPages;
     } catch (erro) {
         if (erro.name === 'RenderingCancelledException') return 0;
-
         tratarErroRenderizacao(erro);
         return 0;
     }
