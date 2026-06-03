@@ -3,10 +3,11 @@
 }
 
 .back-link a {
+    display: flex;
+    gap: .5rem;
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--color-text-support);
-    display: inline-flex;
     align-items: center;
 }
 

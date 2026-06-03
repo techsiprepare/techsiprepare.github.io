@@ -8,6 +8,7 @@ import { estadoApp } from '../api/sheets.js';
 import { renderizarPaginaPdf } from '../utils/pdfViewer.js';
 import { loadingPdf } from '../components/loading-pdf.js';
 import { questaoItem } from '../components/questao-item.js';
+import { backLink } from '../components/back-link.js';
 
 function extrairQuestoesDaPagina(prova, numeroPagina) {
     return Object.values(prova?.questoes || {})
@@ -59,9 +60,7 @@ async function processarRenderizacaoPdf(prova, paginaAtual, callbackTotalPaginas
 
 function criarTemplateHtml(idProva, paginaAtual, questoesHtml) {
     return `
-        <div class="back-link">
-            <a href="#acervo?prova=${idProva}">← Voltar para Lista de Questões</a>
-        </div>
+        ${backLink({ destino: `#acervo?prova=${idProva}`, texto: "Voltar para Lista de Questões" })}
         
         <div class="pdf-toolbar">
             <button onclick="window._mudarPaginaPdf(-1)" class="btn btn-sm">

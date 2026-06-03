@@ -6,6 +6,7 @@
 
 import { estadoApp } from '../api/sheets.js';
 import { questaoItem } from '../components/questao-item.js';
+import { backLink } from '../components/back-link.js';
 
 function criarTemplateErroHtml() {
     return `
@@ -30,9 +31,7 @@ function renderizarListaQuestoesHtml(questoes, idProva) {
 
 function criarTemplateProvaHtml(questoesHtml) {
     return `
-        <div class="back-link">
-            <a href="#acervo">← Voltar para Provas</a>
-        </div>
+        ${backLink({ destino: "#acervo", texto: "Voltar para Provas" })}
         <div class="lista-questoes">
             ${questoesHtml}
         </div>
