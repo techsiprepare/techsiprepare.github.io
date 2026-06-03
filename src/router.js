@@ -11,6 +11,7 @@ import { acervo } from './views/acervo.js';
 import { visualizar } from './views/visualizar.js';
 import { tutorial } from './views/tutorial.js';
 import { navbar, atualizarNavActive, inicializarDrawerMobile } from './components/navbar.js';
+import { estadoApp } from './api/sheets.js';
 
 export function inicializarRoteador() {
     configurarNavbar();
@@ -85,10 +86,23 @@ function processarRoteamento(rota, parametros) {
 }
 
 function gerenciarRotaVisualizar(parametros) {
-    if (parametros.prova && parametros.questao) {
-        return visualizar(parametros.prova, parametros.questao);
+    if (!parametros.prova || !parametros.questao) {
+        return renderMensagemErro('Parâmetros inválidos.');
     }
-    return renderizarMensagemErro('Parâmetros inválidos.');
+
+    if (Object.keys(estadoApp).length === 0) {
+        window.addEventListener('dadosProntos', () => {
+            lidarComRoteamento();
+        }, { once: true });
+        return `
+            <div class="loading-container" style="text-align: center; padding: 40px;">
+                <div class="spinner"></div>
+                <p>Carregando informações da questão...</p>
+            </div>
+        `;
+    }
+
+    return visualizar(parametros.prova, parametros.questao);
 }
 
 function renderizarMensagemErro(mensagem) {
