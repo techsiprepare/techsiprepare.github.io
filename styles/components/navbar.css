@@ -104,18 +104,6 @@
     font-weight: 600;
 }
 
-.nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 2px;
-    background-color: var(--color-primary);
-    border-radius: var(--radius-pill);
-}
-
 .nav-link i {
     width: 18px;
     height: 18px;
