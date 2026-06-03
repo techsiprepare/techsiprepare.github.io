@@ -31,7 +31,7 @@ const ETAPAS_TUTORIAL = Object.freeze([
                 <li><strong>Duração:</strong> O vídeo deve ter no máximo 15 minutos.</li>
                 <li><strong>Carga Horária:</strong> Cada vídeo validado contabilizará 12 horas de Carga Horária para fins de Curricularização da Extensão.</li>
             </ul>
-            <p>Após gravar, publique o vídeo no YouTube (pode ser como "Não Listado" ou "Público", mas nunca "Privado").</p>
+            <p>Realize o upload do seu vídeo, em sua conta, no Google Drive e compartilhe o link. Subiremos nos canais oficiais caso a resolução seja aprovada.</p>
         `
     },
     {
