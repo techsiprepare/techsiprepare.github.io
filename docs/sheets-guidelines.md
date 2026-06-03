@@ -22,6 +22,7 @@
 | **Tipo de Questão** | Múltipla escolha | Objetiva ou Discursiva. |
 | **Assunto Principal** | Resposta curta | Texto livre (ex: *Programação Orientada a Objetos*). |
 | **URL do Vídeo** | Resposta curta | Validação: Deve ser uma URL válida. |
+| **Autorização** | Upload de Arquivo | Validação: Apenas 1 arquivo PDF com no máximo 1MB de tamanho. |
 
 ---
 
