@@ -41,7 +41,18 @@
     margin-bottom: 6px;
 }
 
-.step-content p {
+.step-desc p,
+.step-desc {
     font-size: 0.95rem;
     color: var(--color-text-main);
+    margin-bottom: 8px;
+}
+
+.step-desc p:last-child {
+    margin-bottom: 0;
+}
+
+.step-btn {
+    margin-top: 16px;
+    display: inline-block;
 }

@@ -5,10 +5,23 @@ import { viewVisualizar } from './views/visualizar.js';
 import { viewTutorial } from './views/tutorial.js';
 import { gerarThumbnailPdf } from './pdfViewer.js';
 import { estadoApp } from './api/sheets.js';
+import { ComponenteNavbar, atualizarNavActive, inicializarDrawerMobile } from './components/navbar.js';
 
-export function inicializarRoteador() { 
-    window.addEventListener("hashchange", lidarComRoteamento); 
-    lidarComRoteamento(); 
+export function inicializarRoteador() {
+    // Injeta a navbar no DOM antes de qualquer rota
+    const navWrapper = document.getElementById('nav-wrapper');
+    if (navWrapper) {
+        navWrapper.innerHTML = ComponenteNavbar();
+        // requestAnimationFrame garante que o browser processou os novos nós
+        // antes de tentarmos buscar #nav-menu-btn, #nav-drawer, etc.
+        requestAnimationFrame(() => {
+            if (window.lucide) window.lucide.createIcons();
+            inicializarDrawerMobile();
+        });
+    }
+
+    window.addEventListener("hashchange", lidarComRoteamento);
+    lidarComRoteamento();
 }
 
 function lidarComRoteamento() {
@@ -55,4 +68,5 @@ function lidarComRoteamento() {
     }
 
     if (window.lucide) window.lucide.createIcons();
+    atualizarNavActive();
 }

@@ -19,12 +19,6 @@
         font-size: 1rem;
     }
 
-    .nav-links {
-        display: none;
-    }
-
-    /* Ocultação para posterior acoplamento do drawer */
-
     .pdf-toolbar {
         flex-direction: row;
         gap: 8px;

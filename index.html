@@ -9,19 +9,19 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="brand">TechSI Prepare</a>
-            <div class="nav-links">
-                <a href="#"><i data-lucide="home"></i> Home</a>
-                <a href="#acervo"><i data-lucide="book-open"></i> Acervo</a>
-                <a href="#tutorial"><i data-lucide="help-circle"></i> Como Participar</a>
-            </div>
-        </div>
-    </nav>
+    <div id="nav-wrapper"></div>
 
     <main id="app-root" class="container"></main>
 
+    <footer id="app-footer"></footer>
+
     <script type="module" src="src/app.js"></script>
+    <script type="module">
+        import { ComponenteFooter } from './src/components/footer.js';
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('app-footer').outerHTML = ComponenteFooter();
+            if (window.lucide) window.lucide.createIcons();
+        });
+    </script>
 </body>
 </html>

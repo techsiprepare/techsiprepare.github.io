@@ -1,3 +1,4 @@
+/* ===== NAVBAR PRINCIPAL ===== */
 .navbar {
     position: fixed;
     top: 0;
@@ -27,27 +28,204 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    text-decoration: none;
 }
 
+/* ===== LINKS DA NAVBAR ===== */
 .nav-links {
     display: flex;
-    gap: 24px;
+    gap: 4px;
 }
 
-.nav-links a {
+.nav-link {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--color-text-main);
+    padding: 7px 12px;
+    border-radius: var(--radius-medium);
+    text-decoration: none;
+    transition: var(--transition-smooth);
+    position: relative;
 }
 
-.nav-links a:hover {
+.nav-link:hover {
+    color: var(--color-primary);
+    background-color: rgba(16, 185, 129, 0.08);
+}
+
+/* Estado ATIVO */
+.nav-link.active {
+    color: var(--color-primary);
+    background-color: rgba(16, 185, 129, 0.1);
+    font-weight: 600;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-pill);
+}
+
+.nav-link i {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* ===== BOTÃO HAMBURGUER ===== */
+.nav-menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    color: var(--color-text-main);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.nav-menu-btn:hover {
+    background-color: rgba(16, 185, 129, 0.08);
+    border-color: var(--color-primary);
     color: var(--color-primary);
 }
 
-.nav-links a i {
+.nav-menu-btn i {
+    width: 20px;
+    height: 20px;
+}
+
+/* ===== OVERLAY ===== */
+.nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1099;
+    background: rgba(26, 31, 38, 0.45);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;      /* nunca bloqueia cliques quando inativo */
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.nav-overlay.visivel {
+    opacity: 1;
+    pointer-events: auto;      /* só intercepta cliques quando visível */
+    visibility: visible;
+}
+
+/* ===== DRAWER LATERAL (ASIDE MOBILE) ===== */
+.nav-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1100;
+    width: min(320px, 85vw);
+    background: var(--color-surface-pure);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.nav-drawer.aberto {
+    transform: translateX(0);
+}
+
+.nav-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.nav-drawer-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    color: var(--color-text-support);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.nav-drawer-close:hover {
+    background-color: rgba(239, 68, 68, 0.08);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+
+.nav-drawer-close i {
     width: 18px;
     height: 18px;
+}
+
+.nav-drawer-links {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px;
+    gap: 4px;
+}
+
+.nav-drawer-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text-main);
+    border-radius: var(--radius-large);
+    text-decoration: none;
+    transition: var(--transition-smooth);
+}
+
+.nav-drawer-link:hover {
+    background-color: rgba(16, 185, 129, 0.08);
+    color: var(--color-primary);
+}
+
+.nav-drawer-link.active {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.nav-drawer-link i {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 600px) {
+    .nav-links {
+        display: none;
+    }
+
+    .nav-menu-btn {
+        display: flex;
+    }
+    /* .nav-overlay: sem display:block — usa pointer-events para não bloquear cliques */
 }
