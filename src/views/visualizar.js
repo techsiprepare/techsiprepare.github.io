@@ -3,7 +3,6 @@ import { renderizarPaginaPdf } from '../pdfViewer.js';
 import { ComponenteLoadingPdf } from '../components/loadingPdf.js';
 import { ComponenteQuestaoItem } from '../components/questaoItem.js';
 
-// Função auxiliar para gerar o HTML das questões de uma página específica
 function gerarQuestoesDaPaginaHtml(prova, numeroPagina) {
     const questoesFiltradas = Object.values(prova.questoes)
         .filter(q => q.paginaPdf === numeroPagina);
@@ -12,7 +11,6 @@ function gerarQuestoesDaPaginaHtml(prova, numeroPagina) {
         return `<p class="text-muted">Nenhuma questão mapeada para esta página.</p>`;
     }
 
-    // Força exibirBotao como false para ocultar o botão "Abrir" na tela do PDF
     return questoesFiltradas.map(q => ComponenteQuestaoItem({
         q,
         idProva: prova.id,
@@ -28,29 +26,25 @@ export function viewVisualizar(idProva, numQuestao) {
     let paginaAtual = questao.paginaPdf;
     let totalPaginasPdf = 0;
 
-    // Injeta a lógica de paginação no escopo global
     window._mudarPaginaPdf = async (direcao) => {
         const novaPagina = paginaAtual + direcao;
-        if (novaPagina < 1) return; 
+        if (novaPagina < 1) return;
         if (totalPaginasPdf > 0 && novaPagina > totalPaginasPdf) return;
-        
+
         paginaAtual = novaPagina;
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        // 1. Atualiza o número da página nos indicadores de texto
+
         const txtPagina = document.getElementById('pdf-page-indicator-txt');
         const txtTituloLista = document.getElementById('sidebar-page-title-txt');
         if (txtPagina) txtPagina.textContent = totalPaginasPdf > 0 ? `${paginaAtual}/${totalPaginasPdf}` : `${paginaAtual}/?`;
         if (txtTituloLista) txtTituloLista.textContent = paginaAtual;
-        
-        // 2. Atualiza a lista lateral com as questões (e vídeos) da nova página
+
         const containerLista = document.getElementById('sidebar-questoes-dinamica');
         if (containerLista) {
             containerLista.innerHTML = gerarQuestoesDaPaginaHtml(prova, paginaAtual);
             if (window.lucide) window.lucide.createIcons();
         }
-        
-        // 3. Renderiza a nova página no Canvas
+
         const total = await renderizarPaginaPdf(prova.caminhoPdf, paginaAtual);
         if (total && total > 0) {
             totalPaginasPdf = total;
@@ -58,10 +52,8 @@ export function viewVisualizar(idProva, numQuestao) {
         }
     };
 
-    // Gera a listagem inicial para a página do PDF correspondente
     const questoesMesmaPaginaHtml = gerarQuestoesDaPaginaHtml(prova, paginaAtual);
 
-    // Dispara a renderização assíncrona inicial do arquivo PDF
     setTimeout(async () => {
         const total = await renderizarPaginaPdf(prova.caminhoPdf, paginaAtual);
         if (total && total > 0) {

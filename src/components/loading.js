@@ -1,4 +1,3 @@
-// Adicionado o "= {}" no final dos parâmetros da função
 export function ComponenteLoadingPdf({ mensagem = "Carregando página oficial do ENADE..." } = {}) {
     return `
         <div class="pdf-container custom-pdf-scroll">

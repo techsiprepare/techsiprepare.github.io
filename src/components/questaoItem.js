@@ -1,6 +1,5 @@
 import { ComponenteBadge } from './badge.js';
 
-// Função auxiliar para converter URL do YouTube para URL de Embed
 function obterUrlEmbed(videoUrl) {
     if (!videoUrl) return null;
     let videoId = null;

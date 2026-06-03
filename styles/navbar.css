@@ -78,7 +78,7 @@
 /* ===== LINKS DA NAVBAR ===== */
 .nav-links {
     display: flex;
-    gap: 4px;
+    gap: 10px;
 }
 
 .nav-link {
@@ -278,6 +278,4 @@
     .brand-logo-img {
         height: 32px;
     }
-
-    /* .nav-overlay: sem display:block — usa pointer-events para não bloquear cliques */
 }

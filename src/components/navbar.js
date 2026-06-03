@@ -1,7 +1,7 @@
 const navItems = [
-    { href: '#',        icon: 'home',        label: 'Home',           rota: ''        },
-    { href: '#acervo',  icon: 'book-open',   label: 'Acervo',         rota: 'acervo'  },
-    { href: '#tutorial',icon: 'help-circle', label: 'Como Participar',rota: 'tutorial'},
+    { href: '#', icon: 'home', label: 'Home', rota: '' },
+    { href: '#acervo', icon: 'book-open', label: 'Acervo', rota: 'acervo' },
+    { href: '#tutorial', icon: 'help-circle', label: 'Como Participar', rota: 'tutorial' },
 ];
 
 function buildLinks(extraClass = '') {
@@ -57,7 +57,6 @@ export function ComponenteNavbar() {
     `;
 }
 
-/** Atualiza a classe .active nos links de navegação com base na rota atual. */
 export function atualizarNavActive() {
     const hashCompleta = window.location.hash || '#';
     const [caminhoComHash] = hashCompleta.split('?');
@@ -71,12 +70,11 @@ export function atualizarNavActive() {
     });
 }
 
-/** Inicializa os eventos do drawer mobile (hamburguer + overlay + fechar). */
 export function inicializarDrawerMobile() {
-    const menuBtn   = document.getElementById('nav-menu-btn');
-    const drawer    = document.getElementById('nav-drawer');
-    const overlay   = document.getElementById('nav-overlay');
-    const closeBtn  = document.getElementById('nav-drawer-close');
+    const menuBtn = document.getElementById('nav-menu-btn');
+    const drawer = document.getElementById('nav-drawer');
+    const overlay = document.getElementById('nav-overlay');
+    const closeBtn = document.getElementById('nav-drawer-close');
 
     if (!menuBtn || !drawer || !overlay || !closeBtn) return;
 
@@ -98,12 +96,10 @@ export function inicializarDrawerMobile() {
     closeBtn.addEventListener('click', fecharDrawer);
     overlay.addEventListener('click', fecharDrawer);
 
-    // Fecha o drawer ao navegar (clicar em link do drawer)
     drawer.querySelectorAll('.nav-drawer-link').forEach(link => {
         link.addEventListener('click', fecharDrawer);
     });
 
-    // Fecha com ESC
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && drawer.classList.contains('aberto')) fecharDrawer();
     });
