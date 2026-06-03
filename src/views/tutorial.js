@@ -23,13 +23,26 @@ const ETAPAS_TUTORIAL = Object.freeze([
         numero: 3,
         icone: "video",
         titulo: "Grave e Publique",
-        descricao: "<p>Grave a tela do seu computador resolvendo a questão. Certifique-se de que o áudio esteja limpo e a explicação didática. Após gravar, publique o vídeo no YouTube (pode ser como 'Não Listado' ou 'Público', mas nunca 'Privado').</p>"
+        descricao: `
+            <p>Grave a tela do seu computador resolvendo a questão. Certifique-se de que o áudio esteja limpo e a explicação didática. Siga os requisitos obrigatórios:</p>
+            <ul style="margin-bottom: 15px; padding-left: 20px;">
+                <li><strong>Imagem e voz:</strong> Grave a sua própria imagem no vídeo (pode ser em formato reduzido/picture-in-picture).</li>
+                <li><strong>Foco único:</strong> Cada arquivo de vídeo deve conter a resolução de apenas 1 questão.</li>
+                <li><strong>Duração:</strong> O vídeo deve ter no máximo 15 minutos.</li>
+                <li><strong>Carga Horária:</strong> Cada vídeo validado contabilizará 12 horas de Carga Horária para fins de Curricularização da Extensão.</li>
+            </ul>
+            <p>Após gravar, publique o vídeo no YouTube (pode ser como "Não Listado" ou "Público", mas nunca "Privado").</p>
+        `
     },
     {
         numero: 4,
         icone: "send",
         titulo: "Preencha o Formulário",
-        descricao: "<p>Clique no botão abaixo para abrir o formulário institucional. Nele você enviará o link do seu vídeo e seus dados básicos para validação da carga horária.</p><a href=\"https://forms.gle/p4Yrt9yedZF8s4ZA7\" target=\"_blank\" class=\"btn step-btn\">Preencher Formulário</a>"
+        descricao: `
+            <p>Clique no botão abaixo para abrir o formulário institucional. Nele você enviará o link do seu vídeo e seus dados básicos para validação da carga horária.</p>
+            <p><strong>Atenção:</strong> No formulário, será obrigatório o envio do <strong>Formulário de Autorização de Uso de Imagem e Voz</strong> devidamente preenchido e assinado.</p>
+            <a href="https://forms.gle/p4Yrt9yedZF8s4ZA7" target="_blank" class="btn step-btn">Preencher Formulário</a>
+        `
     }
 ]);
 
