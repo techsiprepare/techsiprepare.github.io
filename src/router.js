@@ -69,7 +69,7 @@ function processarRoteamento(rota, parametros) {
     }
 
     const mapaDeRotas = {
-        'acervo': () => acervo(parametros),
+        'acervo': () => gerenciarRotaAcervo(parametros),
         'visualizar': () => gerenciarRotaVisualizar(parametros),
         'tutorial': () => tutorial(),
     };
@@ -83,6 +83,22 @@ function processarRoteamento(rota, parametros) {
     }
 
     return renderizarRota();
+}
+
+function gerenciarRotaAcervo(parametros) {
+    if (Object.keys(estadoApp).length === 0) {
+        window.addEventListener('dadosProntos', () => {
+            lidarComRoteamento();
+        }, { once: true });
+
+        return `
+            <div class="loading-container" style="text-align: center; padding: 40px;">
+                <div class="spinner"></div>
+                <p>Carregando acervo...</p>
+            </div>
+        `;
+    }
+    return acervo(parametros);
 }
 
 function gerenciarRotaVisualizar(parametros) {
