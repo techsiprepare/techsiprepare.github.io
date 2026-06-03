@@ -12,15 +12,11 @@ import { visualizar } from './views/visualizar.js';
 import { tutorial } from './views/tutorial.js';
 import { navbar, atualizarNavActive, inicializarDrawerMobile } from './components/navbar.js';
 
-// --- PONTO DE ENTRADA (MÉTODO PRINCIPAL) ---
-
 export function inicializarRoteador() {
     configurarNavbar();
     window.addEventListener('hashchange', lidarComRoteamento);
     lidarComRoteamento();
 }
-
-// --- CONFIGURAÇÃO E FLUXO DE ROTEAMENTO ---
 
 function configurarNavbar() {
     const navWrapper = document.getElementById('nav-wrapper');
@@ -48,8 +44,6 @@ function lidarComRoteamento() {
     executarCicloDeVidaVisual();
     atualizarNavActive();
 }
-
-// --- PROCESSAMENTO DE URL ---
 
 function extrairDadosUrl() {
     const hashCompleta = window.location.hash || '#';
@@ -90,8 +84,6 @@ function processarRoteamento(rota, parametros) {
     return renderizarRota();
 }
 
-// --- ROTAS COM VALIDAÇÃO DE PARÂMETROS ---
-
 function gerenciarRotaVisualizar(parametros) {
     if (parametros.prova && parametros.questao) {
         return visualizar(parametros.prova, parametros.questao);
@@ -99,26 +91,16 @@ function gerenciarRotaVisualizar(parametros) {
     return renderizarMensagemErro('Parâmetros inválidos.');
 }
 
-// --- AUXILIARES ---
-
 function renderizarMensagemErro(mensagem) {
     return `<h2>${mensagem}</h2>`;
 }
 
-/**
- * Executa a inicialização de ícones Lucide, se disponíveis.
- */
 function executarCicloDeVidaVisual() {
     if (window.lucide?.createIcons) {
         window.lucide.createIcons();
     }
 }
 
-/**
- * Limpa elementos de interface global antes de cada transição de rota.
- * Centraliza o comportamento de reset de UI (ex: fechar navbar mobile)
- * para que o roteador não precise conhecer IDs internos de componentes.
- */
 function limparInterfaceGlobal() {
     const navToggle = document.getElementById('nav-toggle');
     if (navToggle) {

@@ -8,8 +8,6 @@ import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.mjs';
 
-// --- ESTADO LOCAL E CONTROLE DE CACHE ---
-
 const cachePdf = {
     url: null,
     documento: null,
@@ -17,8 +15,6 @@ const cachePdf = {
 };
 
 let tarefaRenderizacaoAtiva = null;
-
-// --- FUNÇÕES PRINCIPAIS ---
 
 /**
  * Renderiza uma página específica do PDF em um canvas responsivo com controle de estado de carregamento.

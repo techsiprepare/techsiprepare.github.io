@@ -11,8 +11,6 @@ import { gerarThumbnailPdf } from '../utils/pdfViewer.js';
 import { cardProva } from '../components/card-prova.js';
 import { questoesProva } from './questoesProva.js';
 
-// --- LÓGICA DE CICLO DE VIDA ---
-
 /**
  * Ponto de entrada da rota 'acervo'. Decide qual sub-view renderizar
  * com base nos parâmetros extraídos da URL pelo roteador.
@@ -56,8 +54,6 @@ export function acervo(parametros = {}) {
     );
 }
 
-// --- THUMBNAILS ---
-
 /**
  * Percorre o estado da aplicação e gera thumbnails para cada prova que
  * possui um PDF associado. O agendamento com setTimeout garante que os
@@ -73,8 +69,6 @@ function agendarRenderizacaoThumbnails() {
     }, 50);
 }
 
-// --- MÉTRICAS ---
-
 function calcularMetricasProva(questoes = {}) {
     return Object.values(questoes).reduce((metricas, questao) => {
         if (questao.tipo === 'Objetiva') metricas.qtdObjetivas++;
@@ -84,8 +78,6 @@ function calcularMetricasProva(questoes = {}) {
         return metricas;
     }, { qtdObjetivas: 0, qtdDiscursivas: 0, qtdResolvidas: 0 });
 }
-
-// --- RENDERIZAÇÃO ---
 
 function renderizarListaProvasHtml(provas) {
     if (!provas || provas.length === 0) {
