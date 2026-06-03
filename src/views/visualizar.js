@@ -35,6 +35,7 @@ export function viewVisualizar(idProva, numQuestao) {
         if (totalPaginasPdf > 0 && novaPagina > totalPaginasPdf) return;
         
         paginaAtual = novaPagina;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         
         // 1. Atualiza o número da página nos indicadores de texto
         const txtPagina = document.getElementById('pdf-page-indicator-txt');

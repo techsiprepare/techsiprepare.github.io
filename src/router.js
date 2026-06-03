@@ -25,6 +25,8 @@ export function inicializarRoteador() {
 }
 
 function lidarComRoteamento() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     const root = document.getElementById("app-root");
     const hashCompleta = window.location.hash || "#";
     const [caminhoComHash, stringParametros] = hashCompleta.split("?");
