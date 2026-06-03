@@ -24,3 +24,19 @@
     background-color: var(--status-info-bg);
     color: var(--status-info-text);
 }
+
+/* Reduzir e forçar o tamanho dos ícones gerados pelo Lucide dentro do card de provas */
+.badge svg {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+}
+
+.badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    font-size: 10px !important;
+}
