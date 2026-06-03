@@ -1,0 +1,74 @@
+.grid-provas,
+.grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+/* Geometria Suavizada e Elevação Tridimensional */
+.card {
+    background-color: var(--color-surface-pure);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-large);
+    padding: 24px;
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition-smooth);
+}
+
+/* Animação física ao passar o mouse */
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevation);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.card h3 {
+    font-size: 1.15rem;
+    color: var(--color-text-impact);
+    margin-bottom: 8px;
+}
+
+.card .meta {
+    font-size: 0.85rem;
+    color: var(--color-text-support);
+    margin-bottom: 20px;
+}
+
+.card-action {
+    cursor: pointer;
+}
+
+.card-action .icon-lg {
+    width: 32px;
+    height: 32px;
+    color: var(--color-primary);
+    margin-bottom: 16px;
+}
+
+.card-action p {
+    font-size: 0.9rem;
+    color: var(--color-text-main);
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text-impact);
+    margin-bottom: 16px;
+}
+
+.hero p {
+    font-size: 1.15rem;
+    color: var(--color-text-support);
+    max-width: 700px;
+    margin: 0 auto 40px auto;
+}

@@ -1,0 +1,51 @@
+@media (max-width: 992px) {
+    .split-view {
+        grid-template-columns: 1fr;
+        /* Colunas passam a ser estritamente verticais */
+    }
+
+    .sidebar-context {
+        order: -1;
+        /* Traz as informações contextuais e vídeos para cima do PDF no mobile */
+    }
+}
+
+@media (max-width: 600px) {
+    .hero h1 {
+        font-size: 1.85rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    /* Ocultação para posterior acoplamento do drawer */
+
+    .pdf-toolbar {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    /* Botões com largura total para o polegar */
+    .video-placeholder .btn {
+        width: 100%;
+    }
+
+}
+
+/* Container Queries para Responsividade Inteligente do Componente */
+@container listaQuestoes (max-width: 600px) {
+    .questao-item-card-detalhado.q-layout-novo {
+        flex-direction: column;
+    }
+
+    .q-card-video-embed {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+    }
+}

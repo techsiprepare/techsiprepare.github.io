@@ -1,0 +1,84 @@
+/* Botões */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--color-primary);
+    color: var(--color-surface-pure);
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--radius-medium);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.btn-sm {
+    padding: 6px;
+    font-size: 0.85rem;
+}
+
+/* Badges estruturadas em Pílula */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius-pill);
+}
+
+.badge-warning {
+    background-color: var(--status-pending-bg);
+    color: var(--status-pending-text);
+}
+
+.badge-success {
+    background-color: var(--status-resolved-bg);
+    color: var(--status-resolved-text);
+}
+
+.badge i {
+    width: 14px;
+    height: 14px;
+}
+
+/* Link de retorno unificado */
+.back-link {
+    margin-bottom: 24px;
+}
+
+.back-link a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text-support);
+    display: inline-flex;
+    align-items: center;
+}
+
+.back-link a:hover {
+    color: var(--color-primary);
+}
+
+/* Títulos Globais */
+h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-impact);
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: var(--color-text-support);
+    margin-bottom: 32px;
+}

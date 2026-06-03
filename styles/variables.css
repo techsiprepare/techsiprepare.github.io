@@ -1,0 +1,43 @@
+:root {
+    /* Identidade e Ação */
+    --color-primary: #10b981;
+    /* Verde oficial ativo */
+    --color-primary-hover: #059669;
+    /* Verde escuro para estado físico */
+    --color-danger: #ef4444;
+    /* Vermelho para ações destrutivas/erros */
+
+    /* Superfícies e Profundidade */
+    --color-bg-system: #f2f5f3;
+    /* Cinza muito claro com sutil toque esverdeado */
+    --color-surface-pure: #ffffff;
+    /* Branco puro para painéis e cartões */
+    --color-border: #e2e8f0;
+
+    /* Hierarquia de Texto */
+    --color-text-impact: #1a1f26;
+    /* Grafite quase preto */
+    --color-text-main: #374151;
+    /* Cinza escuro confortável */
+    --color-text-support: #6b7280;
+    /* Cinza médio atenuado */
+
+    /* Sinalização de Status (Pastéis) */
+    --status-pending-bg: #ffedd5;
+    --status-pending-text: #ea580c;
+    --status-resolved-bg: #d1fae5;
+    --status-resolved-text: #065f46;
+
+    /* Geometria Suavizada */
+    --radius-large: 12px;
+    /* Cartões e blocos de formulários */
+    --radius-medium: 8px;
+    /* Botões e elementos menores */
+    --radius-pill: 9999px;
+    /* Etiquetas de status */
+
+    /* Transições e Sombras */
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-subtle: 0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+    --shadow-elevation: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+}
