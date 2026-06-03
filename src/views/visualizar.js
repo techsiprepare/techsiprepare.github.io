@@ -26,18 +26,20 @@ export function viewVisualizar(idProva, numQuestao) {
     if (!questao) return `<h2>Questão não encontrada!</h2>`;
 
     let paginaAtual = questao.paginaPdf;
+    let totalPaginasPdf = 0;
 
     // Injeta a lógica de paginação no escopo global
-    window._mudarPaginaPdf = (direcao) => {
+    window._mudarPaginaPdf = async (direcao) => {
         const novaPagina = paginaAtual + direcao;
         if (novaPagina < 1) return; 
+        if (totalPaginasPdf > 0 && novaPagina > totalPaginasPdf) return;
         
         paginaAtual = novaPagina;
         
         // 1. Atualiza o número da página nos indicadores de texto
         const txtPagina = document.getElementById('pdf-page-indicator-txt');
         const txtTituloLista = document.getElementById('sidebar-page-title-txt');
-        if (txtPagina) txtPagina.textContent = paginaAtual;
+        if (txtPagina) txtPagina.textContent = totalPaginasPdf > 0 ? `${paginaAtual}/${totalPaginasPdf}` : `${paginaAtual}/?`;
         if (txtTituloLista) txtTituloLista.textContent = paginaAtual;
         
         // 2. Atualiza a lista lateral com as questões (e vídeos) da nova página
@@ -48,14 +50,25 @@ export function viewVisualizar(idProva, numQuestao) {
         }
         
         // 3. Renderiza a nova página no Canvas
-        renderizarPaginaPdf(prova.caminhoPdf, paginaAtual);
+        const total = await renderizarPaginaPdf(prova.caminhoPdf, paginaAtual);
+        if (total && total > 0) {
+            totalPaginasPdf = total;
+            if (txtPagina) txtPagina.textContent = `${paginaAtual}/${totalPaginasPdf}`;
+        }
     };
 
     // Gera a listagem inicial para a página do PDF correspondente
     const questoesMesmaPaginaHtml = gerarQuestoesDaPaginaHtml(prova, paginaAtual);
 
     // Dispara a renderização assíncrona inicial do arquivo PDF
-    setTimeout(() => renderizarPaginaPdf(prova.caminhoPdf, paginaAtual), 50);
+    setTimeout(async () => {
+        const total = await renderizarPaginaPdf(prova.caminhoPdf, paginaAtual);
+        if (total && total > 0) {
+            totalPaginasPdf = total;
+            const txtPagina = document.getElementById('pdf-page-indicator-txt');
+            if (txtPagina) txtPagina.textContent = `${paginaAtual}/${totalPaginasPdf}`;
+        }
+    }, 50);
 
     return `
         <div class="back-link">
@@ -64,13 +77,11 @@ export function viewVisualizar(idProva, numQuestao) {
         
         <div class="pdf-toolbar">
             <button onclick="window._mudarPaginaPdf(-1)" class="btn btn-sm">
-                <i data-lucide="chevron-left"></i> Página Anterior
+                <i data-lucide="chevron-left"></i>
             </button>
-            <span>
-                Página do PDF: <strong id="pdf-page-indicator-txt">${paginaAtual}</strong>
-            </span>
+            <span style="font-weight: bold; font-size: 1rem; user-select: none;" id="pdf-page-indicator-txt">${paginaAtual}/?</span>
             <button onclick="window._mudarPaginaPdf(1)" class="btn btn-sm">
-                Próxima Página <i data-lucide="chevron-right"></i>
+                <i data-lucide="chevron-right"></i>
             </button>
         </div>
 

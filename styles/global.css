@@ -160,7 +160,7 @@ a {
 }
 
 .btn-sm {
-    padding: 6px 12px;
+    padding: 6px;
     font-size: 0.85rem;
 }
 
@@ -400,7 +400,7 @@ h2 {
     font-weight: 700;
     letter-spacing: 0.05em;
     color: var(--color-text-impact);
-    width: 50px;
+    width: 60px;
 }
 
 .q-card-meta i {
@@ -495,12 +495,13 @@ h2 {
 
 /* Container da Miniatura dentro do Card */
 .card-thumbnail-wrapper {
+    padding: 60px;
     position: relative;
     width: 100%;
-    height: 160px;
+    height: 200px;
     /* Altura fixa para cortar o PDF de forma uniforme */
     overflow: hidden;
-    background-color: var(--color-bg-system);
+    background-color: #e9e9e9;
     /* Cinza sutil de fundo */
     border-bottom: 1px solid var(--color-border);
     display: flex;
@@ -718,13 +719,11 @@ h2 {
     /* Ocultação para posterior acoplamento do drawer */
 
     .pdf-toolbar {
-        flex-direction: column;
-        gap: 12px;
-        text-align: center;
+        flex-direction: row;
+        gap: 8px;
     }
 
     /* Botões com largura total para o polegar */
-    .pdf-toolbar .btn,
     .video-placeholder .btn {
         width: 100%;
     }

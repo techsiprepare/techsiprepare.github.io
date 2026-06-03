@@ -39,11 +39,13 @@ export async function renderizarPaginaPdf(urlPdf, numeroPagina) {
         const indicador = document.getElementById('pdf-page-current');
         if (indicador) indicador.textContent = numeroPagina;
 
+        return pdfDocumentoCachado.numPages;
     } catch (erro) {
         console.error("Erro ao renderizar PDF:", erro);
         if (loadingDiv) {
             loadingDiv.innerHTML = `<p style="color:#ef4444;">Não foi possível carregar o PDF.</p>`;
         }
+        return 0;
     }
 }
 

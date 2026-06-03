@@ -5,7 +5,7 @@ export function csvParaObjetos(csvTexto) {
 
     const cabecalhos = linhas[0].split(",").map(c => c.trim()); 
     return linhas.slice(1).map(linha => { 
-        const valores = linha.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || linha.split(","); 
+        const valores = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
         const obj = {};
         cabecalhos.forEach((cabecalho, i) => {
             let valor = valores[i] ? valores[i].trim() : ""; 
