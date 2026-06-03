@@ -16,7 +16,7 @@ export function cardProva({ id, curso, ano, modalidade, caderno, qtdObjetivas = 
     const badgeStyle = "padding: 4px 8px; background-color: var(--color-bg-system); color: var(--color-text-main);";
 
     return `
-        <div class="card prova-card" data-prova-id="${id}">
+        <div class="prova-card" data-prova-id="${id}">
             <div class="card-thumbnail-wrapper">
                 <canvas id="thumb-${id}" class="card-pdf-thumbnail"></canvas>
             </div>

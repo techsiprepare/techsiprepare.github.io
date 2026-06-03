@@ -6,12 +6,13 @@
 
 /* Layout e UI Global */
 @import './ui.css';
-@import './cards.css';
 
 /* Componentes Específicos */
 @import './components/navbar.css';
 @import './components/back-link.css';
 @import './components/badge.css';
+@import './components/hero.css';
+@import './components/card-home.css';
 @import './components/card-prova.css';
 @import './components/footer.css';
 @import './components/grid.css';

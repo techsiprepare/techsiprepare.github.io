@@ -18,10 +18,8 @@ a {
     transition: var(--transition-smooth);
 }
 
-/* Espaçamento Generoso (Respiro) */
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 100px 24px 48px 24px;
-    /* Compensando a barra do topo fixa */
 }

@@ -1,3 +1,37 @@
+/* Card Prova — Componente Isolado do Acervo */
+/* Classe exclusiva .prova-card, sem dependência da classe genérica .card */
+
+.prova-card {
+    background-color: var(--color-surface-pure);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+
+.prova-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevation);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.prova-card h3 {
+    font-size: 1.15rem;
+    color: var(--color-text-impact);
+    margin-bottom: 8px;
+}
+
+.prova-card .meta {
+    font-size: 0.85rem;
+    color: var(--color-text-support);
+    margin-bottom: 20px;
+}
+
 .card-thumbnail-wrapper {
     padding: 60px;
     position: relative;
@@ -21,13 +55,6 @@
 .pdf-badge-tag i {
     width: 12px;
     height: 12px;
-}
-
-.prova-card {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    overflow: hidden;
 }
 
 .card-content-wrapper {

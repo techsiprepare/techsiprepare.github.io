@@ -1,15 +1,23 @@
-/* Home View Specific Styles */
+/* Card Home — Componente Isolado */
+/* Classe exclusiva .card-home, sem dependência da classe genérica .card */
 
-.home-view {
+.card-home {
+    background-color: var(--color-surface-pure);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-large);
+    padding: 28px;
+    box-shadow: var(--shadow-subtle);
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+    transition: var(--transition-smooth);
 }
 
-.btn-hero {
-    margin-bottom: 48px;
-    font-size: 1.1rem;
-    padding: 12px 32px;
+.card-home:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevation);
+    border-color: rgba(16, 185, 129, 0.3);
 }
 
 .home-cards {
@@ -21,14 +29,7 @@
     text-align: left !important;
 }
 
-/* Home Feature Cards */
-.home-feature-card {
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 0;
-    padding: 28px;
-}
-
+/* Ícone */
 .home-card-icon {
     display: flex;
     align-items: center;
@@ -48,10 +49,11 @@
     color: var(--color-primary);
 }
 
-.home-feature-card:hover .home-card-icon {
+.card-home:hover .home-card-icon {
     background-color: rgba(16, 185, 129, 0.18);
 }
 
+/* Corpo do Card */
 .home-card-body h3 {
     font-size: 1.1rem;
     font-weight: 600;
@@ -65,4 +67,3 @@
     line-height: 1.65;
     margin: 0;
 }
-
