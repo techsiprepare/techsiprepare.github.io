@@ -63,3 +63,7 @@
     flex-direction: column;
     flex-grow: 1;
 }
+
+.card-content-wrapper a.btn {
+    margin-top: auto;
+}
