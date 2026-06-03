@@ -2,7 +2,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px;
+    padding: 4px 8px;
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -18,9 +18,4 @@
 .badge-success {
     background-color: var(--status-resolved-bg);
     color: var(--status-resolved-text);
-}
-
-.badge i {
-    width: 14px;
-    height: 14px;
 }
