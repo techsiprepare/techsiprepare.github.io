@@ -1,48 +1,6 @@
-/* Container da Miniatura dentro do Card */
-.card-thumbnail-wrapper {
-    padding: 60px;
-    position: relative;
-    width: 100%;
-    height: 200px;
-    /* Altura fixa para cortar o PDF de forma uniforme */
-    overflow: hidden;
-    background-color: #e9e9e9;
-    /* Cinza sutil de fundo */
-    border-bottom: 1px solid var(--color-border);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-/* Canvas do PDF adaptável */
-.card-pdf-thumbnail {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    pointer-events: none;
-    /* Impede interações físicas com o canvas */
-}
-
 .pdf-badge-tag i {
     width: 12px;
     height: 12px;
-}
-
-/* Ajuste no card para suportar a estrutura com imagem superior */
-.prova-card {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    /* Remove o padding interno padrão para colar a imagem nas bordas */
-    overflow: hidden;
-}
-
-.card-content-wrapper {
-    padding: 20px;
-    /* Reaplica o respiro para os textos */
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
 }
 
 .pdf-toolbar {
@@ -69,60 +27,6 @@
     align-items: start;
 }
 
-/* Container do PDF e Canvas Adaptativo */
-.pdf-container {
-    border-radius: var(--radius-large);
-    min-height: 600px;
-    display: flex;
-    justify-content: center;
-    align-items: start;
-    position: relative;
-}
-
-.custom-pdf-scroll {
-    overflow-x: auto;
-}
-
-#pdf-canvas {
-    width: 100%;
-    height: auto;
-    background-color: var(--color-surface-pure);
-    border-radius: 4px;
-}
-
-/* Spinner de Carregamento Assíncrono */
-.pdf-loading {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(82, 86, 89, 0.9);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-surface-pure);
-    border-radius: var(--radius-large);
-    z-index: 10;
-}
-
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(255, 255, 255, 0.2);
-    border-top-color: var(--color-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 /* Barra Lateral de Contexto */
 .sidebar-context {
     display: flex;
@@ -130,65 +34,9 @@
     gap: 20px;
 }
 
-.side-box {
-    background-color: var(--color-surface-pure);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-large);
-    padding: 20px;
-    box-shadow: var(--shadow-subtle);
-}
-
-.side-box h4 {
-    font-size: 0.95rem;
-    color: var(--color-text-impact);
-    margin-bottom: 16px;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 8px;
-}
-
 .side-lista-questoes .questao-item-card-detalhado,
 .side-lista-questoes .questao-item-compacto {
     padding: 12px 14px;
     box-shadow: none;
     border-color: var(--color-border);
-}
-
-/* Player do YouTube Embutido */
-.video-wrapper {
-    position: relative;
-    padding-bottom: 56.25%;
-    /* Aspect Ratio 16:9 */
-    height: 0;
-    overflow: hidden;
-    border-radius: var(--radius-medium);
-    margin-bottom: 12px;
-}
-
-.video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.video-placeholder {
-    text-align: center;
-    padding: 24px 16px;
-    background-color: var(--color-bg-system);
-    border: 2px dashed var(--color-border);
-    border-radius: var(--radius-large);
-}
-
-.video-placeholder i {
-    width: 36px;
-    height: 36px;
-    color: var(--color-text-support);
-    margin-bottom: 12px;
-}
-
-.video-placeholder p {
-    font-size: 0.85rem;
-    color: var(--color-text-main);
-    margin-bottom: 16px;
 }

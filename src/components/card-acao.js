@@ -1,4 +1,4 @@
-export function ComponenteCardAcao({ href, icone, titulo, descricao }) {
+export function cardAcao({ href, icone, titulo, descricao }) {
     return `
         <a href="${href}" class="card card-action">
             <i data-lucide="${icone}" class="icon-lg"></i>

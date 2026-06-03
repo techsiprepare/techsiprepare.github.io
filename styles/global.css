@@ -5,13 +5,23 @@
 @import './reset.css';
 
 /* Layout e UI Global */
-@import './navbar.css';
 @import './ui.css';
 @import './cards.css';
 
 /* Componentes Específicos */
-@import './timeline.css';
-@import './questoes.css';
+@import './components/navbar.css';
+@import './components/back-link.css';
+@import './components/badge.css';
+@import './components/card-prova.css';
+@import './components/card-acao.css';
+@import './components/footer.css';
+@import './components/grid.css';
+@import './components/loading-pdf.css';
+@import './components/questao-item.css';
+@import './components/sidebar-box.css';
+@import './components/step-timeline.css';
+@import './components/video-player.css';
+
 @import './pdf-viewer.css';
 @import './loading.css';
 

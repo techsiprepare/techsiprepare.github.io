@@ -1,4 +1,4 @@
-export function ComponenteLoadingPdf({ mensagem = "Carregando página oficial do ENADE..." } = {}) { 
+export function loadingPdf({ mensagem = "Carregando página oficial do ENADE..." } = {}) { 
     return `
         <div class="pdf-container custom-pdf-scroll">
             <div id="pdf-loading" class="pdf-loading">

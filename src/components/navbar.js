@@ -13,7 +13,7 @@ function buildLinks(extraClass = '') {
     `).join('');
 }
 
-export function ComponenteNavbar() {
+export function navbar() {
     return `
         <!-- Overlay do drawer mobile -->
         <div id="nav-overlay" class="nav-overlay" aria-hidden="true"></div>

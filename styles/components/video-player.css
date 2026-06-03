@@ -1,0 +1,37 @@
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: var(--radius-medium);
+    margin-bottom: 12px;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.video-placeholder {
+    text-align: center;
+    padding: 24px 16px;
+    background-color: var(--color-bg-system);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-large);
+}
+
+.video-placeholder i {
+    width: 36px;
+    height: 36px;
+    color: var(--color-text-support);
+    margin-bottom: 12px;
+}
+
+.video-placeholder p {
+    font-size: 0.85rem;
+    color: var(--color-text-main);
+    margin-bottom: 16px;
+}

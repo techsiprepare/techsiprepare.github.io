@@ -1,4 +1,4 @@
-export function viewHome() {
+export function home() {
     return `
         <div class="hero home-view">
             <h1>Colaboração que gera conhecimento.</h1>

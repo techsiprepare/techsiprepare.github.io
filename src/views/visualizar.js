@@ -6,8 +6,8 @@
 
 import { estadoApp } from '../api/sheets.js';
 import { renderizarPaginaPdf } from '../utils/pdfViewer.js';
-import { ComponenteLoadingPdf } from '../components/loadingPdf.js';
-import { ComponenteQuestaoItem } from '../components/questaoItem.js';
+import { loadingPdf } from '../components/loading-pdf.js';
+import { questaoItem } from '../components/questao-item.js';
 
 function extrairQuestoesDaPagina(prova, numeroPagina) {
     return Object.values(prova?.questoes || {})
@@ -21,7 +21,7 @@ function renderizarListaQuestoesHtml(prova, numeroPagina) {
         return `<p class="text-muted">Nenhuma questão mapeada para esta página.</p>`;
     }
 
-    return questoes.map(questao => ComponenteQuestaoItem({
+    return questoes.map(questao => questaoItem({
         q: questao,
         idProva: prova.id,
         exibirBotao: false
@@ -74,7 +74,7 @@ function criarTemplateHtml(idProva, paginaAtual, questoesHtml) {
         </div>
 
         <div class="split-view">
-            ${ComponenteLoadingPdf()}
+            ${loadingPdf()}
             <div class="sidebar-context">
                 <div class="side-box">
                     <h4>Questões na página <span id="sidebar-page-title-txt">${paginaAtual}</span>:</h4>
@@ -87,7 +87,7 @@ function criarTemplateHtml(idProva, paginaAtual, questoesHtml) {
     `;
 }
 
-export function viewVisualizar(idProva, numQuestao) {
+export function visualizar(idProva, numQuestao) {
     const prova = estadoApp[idProva];
     const questao = prova?.questoes[numQuestao];
     if (!questao) return `<h2>Questão não encontrada!</h2>`;

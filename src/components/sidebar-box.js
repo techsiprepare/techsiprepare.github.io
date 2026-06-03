@@ -5,7 +5,7 @@
  * @param {string} props.conteudo - O HTML interno da caixa (vídeo, listas, etc.)
  * @param {boolean} [props.isSubsecao=false] - Se verdadeiro, usa h4 em vez de h3 para hierarquia
  */
-export function ComponenteSidebarBox({ titulo, conteudo, isSubsecao = false }) {
+export function sidebarBox({ titulo, conteudo, isSubsecao = false }) {
     const tagTitulo = isSubsecao ? 'h4' : 'h3';
     
     return `

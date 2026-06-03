@@ -4,7 +4,7 @@
  * mapeando etapas predefinidas para componentes reutilizáveis.
  */
 
-import { ComponentePassoTimeline } from '../components/stepTimeline.js';
+import { stepTimeline } from '../components/step-timeline.js';
 
 const ETAPAS_TUTORIAL = Object.freeze([
     {
@@ -45,9 +45,9 @@ function construirTemplateTutorialHtml(timelineHtml) {
     `;
 }
 
-export function viewTutorial() {
+export function tutorial() {
     const timelineHtml = ETAPAS_TUTORIAL
-        .map(etapa => ComponentePassoTimeline(etapa))
+        .map(etapa => stepTimeline(etapa))
         .join('');
 
     return construirTemplateTutorialHtml(timelineHtml);

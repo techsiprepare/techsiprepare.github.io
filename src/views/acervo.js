@@ -8,8 +8,8 @@
 
 import { estadoApp } from '../api/sheets.js';
 import { gerarThumbnailPdf } from '../utils/pdfViewer.js';
-import { ComponenteCardProva } from '../components/card.js';
-import { viewQuestoesProva } from './questoesProva.js';
+import { cardProva } from '../components/card-prova.js';
+import { questoesProva } from './questoesProva.js';
 
 // --- LÓGICA DE CICLO DE VIDA ---
 
@@ -20,9 +20,9 @@ import { viewQuestoesProva } from './questoesProva.js';
  * @param {Object} parametros - Parâmetros extraídos da URL (ex: { prova: 'id-da-prova' }).
  * @returns {string} HTML da view a renderizar.
  */
-export function viewAcervo(parametros = {}) {
+export function acervo(parametros = {}) {
     if (parametros.prova) {
-        return viewQuestoesProva(parametros.prova);
+        return questoesProva(parametros.prova);
     }
 
     if (!estadoApp || Object.keys(estadoApp).length === 0) {
@@ -35,7 +35,7 @@ export function viewAcervo(parametros = {}) {
             if (rota === 'acervo' && !temProva) {
                 const root = document.getElementById('app-root');
                 if (root) {
-                    root.innerHTML = viewAcervo(parametros);
+                    root.innerHTML = acervo(parametros);
                 }
             }
         };
@@ -95,7 +95,7 @@ function renderizarListaProvasHtml(provas) {
     return provas.map(prova => {
         const metricas = calcularMetricasProva(prova.questoes);
 
-        return ComponenteCardProva({
+        return cardProva({
             id: prova.id,
             curso: prova.curso,
             ano: prova.ano,

@@ -17,9 +17,9 @@
 
     <script type="module" src="src/app.js"></script>
     <script type="module">
-        import { ComponenteFooter } from './src/components/footer.js';
+        import { footer } from './src/components/footer.js';
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('app-footer').outerHTML = ComponenteFooter();
+            document.getElementById('app-footer').outerHTML = footer();
             if (window.lucide) window.lucide.createIcons();
         });
     </script>

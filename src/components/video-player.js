@@ -1,6 +1,6 @@
 import { obterUrlEmbedYoutube } from '../utils/youtube.js';
 
-export function ComponenteVideoPlayer({ status, videoUrl, autor }) {
+export function videoPlayer({ status, videoUrl, autor }) {
     if (status === "Resolvida") {
         const urlVideoFormatada = obterUrlEmbedYoutube(videoUrl);
         return `

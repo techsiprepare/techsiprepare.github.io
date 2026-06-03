@@ -1,0 +1,51 @@
+.pdf-container {
+    border-radius: var(--radius-large);
+    min-height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    position: relative;
+}
+
+.custom-pdf-scroll {
+    overflow-x: auto;
+}
+
+#pdf-canvas {
+    width: 100%;
+    height: auto;
+    background-color: var(--color-surface-pure);
+    border-radius: 4px;
+}
+
+.pdf-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(82, 86, 89, 0.9);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-surface-pure);
+    border-radius: var(--radius-large);
+    z-index: 10;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

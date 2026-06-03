@@ -1,4 +1,4 @@
-export function ComponentePassoTimeline({ numero, icone, titulo, descricao }) {
+export function stepTimeline({ numero, icone, titulo, descricao }) {
     return `
         <div class="step">
             <div class="step-num"><i data-lucide="${icone}"></i></div>

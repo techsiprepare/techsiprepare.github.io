@@ -1,4 +1,4 @@
-export function ComponenteCardProva({ id, curso, ano, modalidade, caderno, qtdObjetivas = 0, qtdDiscursivas = 0, qtdResolvidas = 0 }) {
+export function cardProva({ id, curso, ano, modalidade, caderno, qtdObjetivas = 0, qtdDiscursivas = 0, qtdResolvidas = 0 }) {
     const totalQuestoes = qtdObjetivas + qtdDiscursivas;
     const progresso = totalQuestoes > 0 ? Math.round((qtdResolvidas / totalQuestoes) * 100) : 0;
 

@@ -5,7 +5,7 @@
  */
 
 import { estadoApp } from '../api/sheets.js';
-import { ComponenteQuestaoItem } from '../components/questaoItem.js';
+import { questaoItem } from '../components/questao-item.js';
 
 function criarTemplateErroHtml() {
     return `
@@ -20,7 +20,7 @@ function renderizarListaQuestoesHtml(questoes, idProva) {
     }
 
     return questoes
-        .map(questao => ComponenteQuestaoItem({
+        .map(questao => questaoItem({
             q: questao,
             idProva,
             exibirBotao: true
@@ -39,7 +39,7 @@ function criarTemplateProvaHtml(questoesHtml) {
     `;
 }
 
-export function viewQuestoesProva(idProva) {
+export function questoesProva(idProva) {
     const prova = estadoApp[idProva];
     if (!prova) {
         return criarTemplateErroHtml();

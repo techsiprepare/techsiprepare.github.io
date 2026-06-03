@@ -1,4 +1,4 @@
-import { ComponenteBadge } from './badge.js';
+import { badge } from './badge.js';
 
 function obterUrlEmbed(videoUrl) {
     if (!videoUrl) return null;
@@ -24,7 +24,7 @@ function obterUrlEmbed(videoUrl) {
     return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
 }
 
-export function ComponenteQuestaoItem({ q, idProva, exibirBotao = true }) {
+export function questaoItem({ q, idProva, exibirBotao = true }) {
     const iconTipo = q.tipo === "Objetiva" ? "list-todo" : "edit-3";
 
     if (q.bloqueado) {
@@ -54,7 +54,7 @@ export function ComponenteQuestaoItem({ q, idProva, exibirBotao = true }) {
                     <div class="q-card-meta">
                         <strong class="q-numero-tag">Q-${q.numero}</strong>
                         <i data-lucide="${iconTipo}" title="${q.tipo}"></i>
-                        ${ComponenteBadge({ status: q.status })}
+                        ${badge({ status: q.status })}
                         
                         ${exibirBotao ? `
                         <div class="q-card-actions-inline">
@@ -84,7 +84,7 @@ export function ComponenteQuestaoItem({ q, idProva, exibirBotao = true }) {
                 <div class="q-card-meta">
                     <strong class="q-numero-tag">Q-${q.numero}</strong>
                     <i data-lucide="${iconTipo}"></i>
-                    ${ComponenteBadge({ status: q.status })}
+                    ${badge({ status: q.status })}
                     
                     ${exibirBotao ? `
                     <div class="q-card-actions-inline">

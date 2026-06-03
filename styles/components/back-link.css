@@ -1,0 +1,15 @@
+.back-link {
+    margin-bottom: 24px;
+}
+
+.back-link a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text-support);
+    display: inline-flex;
+    align-items: center;
+}
+
+.back-link a:hover {
+    color: var(--color-primary);
+}

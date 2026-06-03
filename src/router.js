@@ -6,11 +6,11 @@
  * funções genéricas de ciclo de vida de UI (ícones Lucide e navbar).
  */
 
-import { viewHome } from './views/home.js';
-import { viewAcervo } from './views/acervo.js';
-import { viewVisualizar } from './views/visualizar.js';
-import { viewTutorial } from './views/tutorial.js';
-import { ComponenteNavbar, atualizarNavActive, inicializarDrawerMobile } from './components/navbar.js';
+import { home } from './views/home.js';
+import { acervo } from './views/acervo.js';
+import { visualizar } from './views/visualizar.js';
+import { tutorial } from './views/tutorial.js';
+import { navbar, atualizarNavActive, inicializarDrawerMobile } from './components/navbar.js';
 
 // --- PONTO DE ENTRADA (MÉTODO PRINCIPAL) ---
 
@@ -26,7 +26,7 @@ function configurarNavbar() {
     const navWrapper = document.getElementById('nav-wrapper');
     if (!navWrapper) return;
 
-    navWrapper.innerHTML = ComponenteNavbar();
+    navWrapper.innerHTML = navbar();
     requestAnimationFrame(() => {
         executarCicloDeVidaVisual();
         inicializarDrawerMobile();
@@ -70,13 +70,13 @@ function extrairDadosUrl() {
 function processarRoteamento(rota, parametros) {
     const rotasPadrao = ['', 'home'];
     if (rotasPadrao.includes(rota)) {
-        return viewHome();
+        return home();
     }
 
     const mapaDeRotas = {
-        'acervo': () => viewAcervo(parametros),
+        'acervo': () => acervo(parametros),
         'visualizar': () => gerenciarRotaVisualizar(parametros),
-        'tutorial': () => viewTutorial(),
+        'tutorial': () => tutorial(),
     };
 
     const renderizarRota = mapaDeRotas[rota];
@@ -94,7 +94,7 @@ function processarRoteamento(rota, parametros) {
 
 function gerenciarRotaVisualizar(parametros) {
     if (parametros.prova && parametros.questao) {
-        return viewVisualizar(parametros.prova, parametros.questao);
+        return visualizar(parametros.prova, parametros.questao);
     }
     return renderizarMensagemErro('Parâmetros inválidos.');
 }
