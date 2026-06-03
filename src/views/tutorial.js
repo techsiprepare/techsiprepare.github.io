@@ -11,7 +11,7 @@ const ETAPAS_TUTORIAL = Object.freeze([
         numero: 1,
         icone: "search",
         titulo: "Já Consultou o Acervo?",
-        descricao: "<p>Acesse a página Acervo de Resoluções e filtre pelo status \"Em Aberto\".</p><p>Lá você poderá visualizar as que ainda não foram resolvidas e que não possuem vídeos cadastrados.</p>"
+        descricao: "<p>Acesse a página Acervo de Resoluções e procure por questões com status \"Em Aberto\".</p><p>Lá você poderá visualizar as que ainda não foram resolvidas e que não possuem vídeos cadastrados.</p>"
     },
     {
         numero: 2,
