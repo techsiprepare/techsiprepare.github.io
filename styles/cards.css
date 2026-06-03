@@ -64,6 +64,7 @@
     font-weight: 700;
     color: var(--color-text-impact);
     margin-bottom: 16px;
+    margin-top: 60px;
 }
 
 .hero p {

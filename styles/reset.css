@@ -22,6 +22,6 @@ a {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 140px 24px 48px 24px;
+    padding: 100px 24px 48px 24px;
     /* Compensando a barra do topo fixa */
 }

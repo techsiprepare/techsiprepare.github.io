@@ -17,6 +17,56 @@
     margin-top: 24px;
 }
 
+.home-cards * {
+    text-align: left !important;
+}
+
+/* Home Feature Cards */
+.home-feature-card {
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 28px;
+}
+
+.home-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: rgba(16, 185, 129, 0.1);
+    border-radius: var(--radius-medium);
+    margin-bottom: 20px;
+    flex-shrink: 0;
+    transition: var(--transition-smooth);
+}
+
+.home-card-icon i {
+    width: 24px;
+    height: 24px;
+    color: var(--color-primary);
+}
+
+.home-feature-card:hover .home-card-icon {
+    background-color: rgba(16, 185, 129, 0.18);
+}
+
+.home-card-body h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-impact);
+    margin-bottom: 10px;
+}
+
+.home-card-body p {
+    font-size: 0.925rem;
+    color: var(--color-text-support);
+    line-height: 1.65;
+    margin: 0;
+}
+
+
 /* Footer */
 
 .footer {
