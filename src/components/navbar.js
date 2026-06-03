@@ -21,7 +21,7 @@ export function ComponenteNavbar() {
         <!-- Drawer lateral mobile -->
         <aside id="nav-drawer" class="nav-drawer" aria-label="Menu de navegação" role="navigation">
             <div class="nav-drawer-header">
-                <span class="brand">TechSI Prepare</span>
+                <span class="brand-name">TechSI Prepare</span>
                 <button id="nav-drawer-close" class="nav-drawer-close" aria-label="Fechar menu">
                     <i data-lucide="x"></i>
                 </button>
@@ -34,7 +34,17 @@ export function ComponenteNavbar() {
         <!-- Barra de navegação principal -->
         <nav class="navbar" role="navigation" aria-label="Navegação principal">
             <div class="nav-container">
-                <a href="#" class="brand">TechSI Prepare</a>
+                <a href="#" class="brand">
+                    <picture class="brand-logo">
+                        <source media="(max-width: 600px)" srcset="img/institucional/logotipos/IFMG-OB-vertical.png">
+                        <img src="img/institucional/logotipos/IFMG-OB.png" alt="IFMG Campus Ouro Branco" class="brand-logo-img">
+                    </picture>
+                    <div class="brand-divider"></div>
+                    <div class="brand-text">
+                        <span class="brand-name">TechSI Prepare</span>
+                        <span class="brand-subtitle">Projeto de Extensão</span>
+                    </div>
+                </a>
                 <div class="nav-links">
                     ${buildLinks()}
                 </div>
