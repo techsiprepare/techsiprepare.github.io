@@ -19,3 +19,8 @@
     background-color: var(--status-resolved-bg);
     color: var(--status-resolved-text);
 }
+
+.badge-info {
+    background-color: var(--status-info-bg);
+    color: var(--status-info-text);
+}

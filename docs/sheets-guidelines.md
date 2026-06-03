@@ -156,6 +156,21 @@ Esta aba detalha cada questão da prova. Ela deve ser completamente gerada pelo 
 
 * **E:** `Bloquear`
 
+* **F:** `Total_Tentativas`
+
+*Fórmula na célula F2:*
+```excel
+=ARRAYFORMULA(
+  SE(A2:A=""; ""; 
+    CONT.SES(
+      Gerenciamento_Respostas!B:B; A2:A; 
+      Gerenciamento_Respostas!C:C; B2:B; 
+      Gerenciamento_Respostas!D:D; C2:C
+    )
+  )
+)
+```
+
 --
 
 #### Aba 5: `Respostas_Aprovadas`

@@ -1,6 +1,11 @@
 export function badge({ status }) {
-    const isResolvida = status === "Resolvida";
-    const badgeClass = isResolvida ? "badge-success" : "badge-warning";
+    let badgeClass = "badge-warning";
+
+    if (status === "Resolvida") {
+        badgeClass = "badge-success";
+    } else if (status && status.includes("Envio")) {
+        badgeClass = "badge-info";
+    }
 
     return `
         <span class="badge ${badgeClass}">

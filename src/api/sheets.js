@@ -35,13 +35,20 @@ export async function inicializarDados() {
         csvParaObjetos(resQuestoes).forEach(q => {
             if (estadoApp[q.ID_Prova]) {
                 const questaoId = `${q.Questao_Num}-${q.Tipo}`;
+                const tentativas = parseInt(q.Total_Tentativas) || 0;
+
+                let statusInicial = "Em Aberto";
+                if (tentativas > 0) {
+                    statusInicial = `${tentativas} Envio${tentativas !== 1 ? 's' : ''}`;
+                }
+
                 estadoApp[q.ID_Prova].questoes[questaoId] = {
                     id: questaoId,
                     numero: q.Questao_Num,
                     tipo: q.Tipo,
                     paginaPdf: parseInt(q.Pagina_PDF),
                     assunto: "Aguardando catálogo de assunto",
-                    status: "Em Aberto",
+                    status: statusInicial,
                     bloqueado: q.Bloquear === "Bloqueado",
                     videoUrl: null,
                     autor: null
@@ -49,7 +56,7 @@ export async function inicializarDados() {
             }
         });
 
-        // 3. Acoplar as Respostas
+        // 3. Acoplar as Respostas (Garante a sobreposição de status caso esteja homologada)
         csvParaObjetos(resRespostas).forEach(r => {
             const prova = estadoApp[r.ID_Prova];
             const questaoId = `${r.Questao_Num}-${r.Tipo}`;
