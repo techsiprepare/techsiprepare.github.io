@@ -43,6 +43,7 @@ export async function inicializarDados() {
                     paginaPdf: parseInt(q.Pagina_PDF), 
                     assunto: "Aguardando catálogo de assunto",
                     status: "Em Aberto",
+                    bloqueado: q.Bloquear === "Bloqueado",
                     videoUrl: null,
                     autor: null 
                 };

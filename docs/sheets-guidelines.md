@@ -153,6 +153,8 @@ Esta aba detalha cada questão da prova. Ela deve ser completamente gerada pelo 
 
 * **D:** `Pagina_PDF`
 
+* **E:** `Bloquear`
+
 --
 
 #### Aba 5: `Respostas_Aprovadas`

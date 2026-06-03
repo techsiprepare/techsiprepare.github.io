@@ -28,6 +28,18 @@ function obterUrlEmbed(videoUrl) {
 export function ComponenteQuestaoItem({ q, idProva, exibirBotao = true }) {
     const iconTipo = q.tipo === "Objetiva" ? "list-todo" : "edit-3";
 
+    if (q.bloqueado) {
+        return `
+            <div class="questao-item-compacto questao-bloqueada">
+                <div class="q-card-meta">
+                    <strong class="q-numero-tag">Q-${q.numero}</strong>
+                    <i data-lucide="${iconTipo}" title="${q.tipo}"></i>
+                    <span class="q-bloqueada-msg">Fora dos objetivos do projeto de extensão.</span>
+                </div>
+            </div>
+        `;
+    }
+
     if (q.status === "Resolvida") {
         const embedUrl = obterUrlEmbed(q.videoUrl);
 

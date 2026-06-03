@@ -42,4 +42,8 @@
         height: auto;
         aspect-ratio: 16 / 9;
     }
+
+    .q-bloqueada-msg {
+        width: 150px;
+    }
 }

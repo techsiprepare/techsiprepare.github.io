@@ -160,14 +160,16 @@
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
     opacity: 0;
-    pointer-events: none;      /* nunca bloqueia cliques quando inativo */
+    pointer-events: none;
+    /* nunca bloqueia cliques quando inativo */
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .nav-overlay.visivel {
     opacity: 1;
-    pointer-events: auto;      /* só intercepta cliques quando visível */
+    pointer-events: auto;
+    /* só intercepta cliques quando visível */
     visibility: visible;
 }
 
@@ -263,7 +265,7 @@
 }
 
 /* ===== RESPONSIVIDADE ===== */
-@media (max-width: 600px) {
+@media (max-width: 900px) {
     .nav-links {
         display: none;
     }
@@ -276,5 +278,6 @@
     .brand-logo-img {
         height: 32px;
     }
+
     /* .nav-overlay: sem display:block — usa pointer-events para não bloquear cliques */
 }

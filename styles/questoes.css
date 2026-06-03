@@ -24,6 +24,19 @@
     border-color: var(--color-primary) !important;
 }
 
+/* Questão bloqueada */
+.questao-item-compacto.questao-bloqueada {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.q-bloqueada-msg {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--color-text-support);
+}
+
 .q-card-main-content {
     display: flex;
     flex-direction: column;
@@ -104,7 +117,7 @@
 .questao-item-card-detalhado.q-layout-novo {
     display: flex;
     flex-direction: row;
-    gap: 16px;
+    gap: 20px;
     align-items: flex-start;
 }
 
