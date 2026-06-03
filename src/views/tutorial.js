@@ -1,6 +1,12 @@
+/**
+ * @file tutorial.js
+ * @description Renderiza a visualização da linha do tempo do tutorial de participação,
+ * mapeando etapas predefinidas para componentes reutilizáveis.
+ */
+
 import { ComponentePassoTimeline } from '../components/stepTimeline.js';
 
-const ETAPAS_TUTORIAL = [
+const ETAPAS_TUTORIAL = Object.freeze([
     {
         numero: 1,
         icone: "search",
@@ -25,11 +31,9 @@ const ETAPAS_TUTORIAL = [
         titulo: "Preencha o Formulário",
         descricao: "<p>Clique no botão abaixo para abrir o formulário institucional. Nele você enviará o link do seu vídeo e seus dados básicos para validação da carga horária.</p><a href=\"https://forms.gle/p4Yrt9yedZF8s4ZA7\" target=\"_blank\" class=\"btn step-btn\">Preencher Formulário</a>"
     }
-];
+]);
 
-export function viewTutorial() {
-    const timelineHtml = ETAPAS_TUTORIAL.map(etapa => ComponentePassoTimeline(etapa)).join('');
-
+function construirTemplateTutorialHtml(timelineHtml) {
     return `
         <div class="hero">
             <h1>Como Participar</h1>
@@ -39,4 +43,12 @@ export function viewTutorial() {
             ${timelineHtml}
         </div>
     `;
+}
+
+export function viewTutorial() {
+    const timelineHtml = ETAPAS_TUTORIAL
+        .map(etapa => ComponentePassoTimeline(etapa))
+        .join('');
+
+    return construirTemplateTutorialHtml(timelineHtml);
 }

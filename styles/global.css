@@ -13,6 +13,7 @@
 @import './timeline.css';
 @import './questoes.css';
 @import './pdf-viewer.css';
+@import './loading.css';
 
 /* Responsividade Geral */
 @import './responsive.css';
