@@ -29,6 +29,15 @@
     text-align: left !important;
 }
 
+.home-card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
 /* Ícone */
 .home-card-icon {
     display: flex;
@@ -38,7 +47,6 @@
     height: 48px;
     background-color: rgba(16, 185, 129, 0.1);
     border-radius: var(--radius-medium);
-    margin-bottom: 20px;
     flex-shrink: 0;
     transition: var(--transition-smooth);
 }
