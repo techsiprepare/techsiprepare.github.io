@@ -31,8 +31,6 @@ function configurarNavbar() {
 }
 
 function lidarComRoteamento() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
     const root = document.getElementById('app-root');
     if (!root) return;
 
@@ -44,6 +42,23 @@ function lidarComRoteamento() {
 
     executarCicloDeVidaVisual();
     atualizarNavActive();
+
+    requestAnimationFrame(() => {
+        rolarParaPrimeiraDisponivel();
+    });
+}
+
+function rolarParaPrimeiraDisponivel() {
+    const primeiraQuestaoAberta = document.querySelector('.questao-item-compacto:not(.questao-bloqueada)');
+
+    if (primeiraQuestaoAberta) {
+        primeiraQuestaoAberta.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
 function extrairDadosUrl() {
