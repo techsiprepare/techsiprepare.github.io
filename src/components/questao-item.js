@@ -33,7 +33,8 @@ export function questaoItem({ q, idProva, exibirBotao = true }) {
                 <div class="q-card-meta">
                     <strong class="q-numero-tag">Q-${q.numero}</strong>
                     <i data-lucide="${iconTipo}" title="${q.tipo}"></i>
-                    <span class="q-bloqueada-msg">Fora dos objetivos do projeto de extensão.</span>
+                    <i data-lucide="circle-off" title="${q.tipo}"></i>
+                    <span class="q-bloqueada-msg">Indisponível para responder.</span>
                 </div>
             </div>
         `;

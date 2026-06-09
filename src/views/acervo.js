@@ -73,10 +73,21 @@ function calcularMetricasProva(questoes = {}) {
     return Object.values(questoes).reduce((metricas, questao) => {
         if (questao.tipo === 'Objetiva') metricas.qtdObjetivas++;
         if (questao.tipo === 'Discursiva') metricas.qtdDiscursivas++;
-        if (questao.status === 'Resolvida') metricas.qtdResolvidas++;
+
+        if (!questao.bloqueado) {
+            if (questao.tipo === 'Objetiva') metricas.qtdObjetivasAtivas++;
+            if (questao.tipo === 'Discursiva') metricas.qtdDiscursivasAtivas++;
+            if (questao.status === 'Resolvida') metricas.qtdResolvidas++;
+        }
 
         return metricas;
-    }, { qtdObjetivas: 0, qtdDiscursivas: 0, qtdResolvidas: 0 });
+    }, { 
+        qtdObjetivas: 0, 
+        qtdDiscursivas: 0, 
+        qtdObjetivasAtivas: 0, 
+        qtdDiscursivasAtivas: 0, 
+        qtdResolvidas: 0 
+    });
 }
 
 function renderizarListaProvasHtml(provas) {
