@@ -17,8 +17,7 @@ const ETAPAS_TUTORIAL = Object.freeze([
         numero: 2,
         icone: "book-open",
         titulo: "Escolha uma Questão",
-        descricao: "<p>Veja o enunciado da questão no caderno correpondente e inicie a resolução.</p><p><strong>Atenção:</strong> Não é possível \"reservar\" uma questão. O sistema funciona por ordem de chegada do formulário. Se duas pessoas gravarem a mesma questão, a que enviar o formulário primeiro com a resolução correta terá o vídeo validado. Fique atento(a)!</p>"
-    },
+        descricao: "<p>Consulte o enunciado da questão no caderno correspondente e inicie a resolução. Fique atento: são válidas apenas as questões referentes aos <strong>\"componentes específicos\"</strong>.</p><p><strong>Atenção:</strong> Não é possível reservar questões. O sistema funciona por ordem de envio. Caso duas pessoas resolvam a mesma questão, será validado o vídeo de quem enviar o formulário primeiro com a resposta correta. Fique atento(a)!</p>"    },
     {
         numero: 3,
         icone: "video",
