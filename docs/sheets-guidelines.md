@@ -12,8 +12,8 @@
 | :--- | :--- | :--- |
 | **Endereço de e-mail** | Coletado pelo Formulário | Deve ser ativado pelas configurações do form. |
 | **Email Institucional** | Resposta curta | Validação de e-mail ativa. |
-| **Telefone (WhatsApp)** | Resposta curta | Sem validações. |
 | **Nome Completo** | Resposta curta | Sem validações. |
+| **Telefone (WhatsApp)** | Resposta curta | Sem validações. |
 | **RA (Registro Acadêmico)** | Resposta curta | Validação: Apenas números. |
 | **Período** | Resposta curta | Validação: Apenas números. |
 | **Curso da Prova** | Lista suspensa | • Ciência da Computação<br>• Computação<br>• Tecnologia em Análise e Desenvolvimento de Sistemas<br>• Tecnologia em Redes de Computadores<br>• Engenharia de Computação<br>• Engenharia de Controle e Automação<br>• Sistemas de Informação<br>• Tecnologia em Gestão da TI |
