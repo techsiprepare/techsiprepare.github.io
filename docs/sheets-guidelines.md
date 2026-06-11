@@ -10,7 +10,9 @@
 
 | Campo | Tipo de Entrada | Regras / Opções Disponíveis |
 | :--- | :--- | :--- |
+| **Endereço de e-mail** | Coletado pelo Formulário | Deve ser ativado pelas configurações do form. |
 | **Email Institucional** | Resposta curta | Validação de e-mail ativa. |
+| **Telefone (WhatsApp)** | Resposta curta | Sem validações. |
 | **Nome Completo** | Resposta curta | Sem validações. |
 | **RA (Registro Acadêmico)** | Resposta curta | Validação: Apenas números. |
 | **Período** | Resposta curta | Validação: Apenas números. |
@@ -35,18 +37,21 @@
 Esta aba é muito importante e servirá estritamente como *Data Lake*. Ela é gerada e alimentada automaticamente pelo Google Forms. Não renomeie as colunas, não adicione colunas manuais e não altere a ordem.
 
 * **A:** Carimbo de data/hora
-* **B:** Email Institucional
-* **C:** Nome Completo
-* **D:** RA
-* **E:** Período
-* **F:** Curso da Prova
-* **G:** Modalidade
-* **H:** Ano da Prova
-* **I:** Caderno da Prova
-* **J:** Número da Questão
-* **K:** Tipo de Questão
-* **L:** Assunto Principal
-* **M:** URL do Vídeo
+* **B:** Endereço de e-mail
+* **C:** Email Institucional
+* **D:** Nome Completo
+* **E:** Telefone (WhatsApp)
+* **F:** RA
+* **G:** Período
+* **H:** Curso da Prova
+* **I:** Modalidade
+* **J:** Ano da Prova
+* **K:** Caderno da Prova
+* **L:** Número da Questão
+* **M:** Tipo de Questão
+* **N:** Assunto Principal
+* **O:** URL do Vídeo
+* **P:** Autorização
 
 ---
 
@@ -60,7 +65,7 @@ Gera um ID único e imutável para a submissão, combinando o timestamp com o RA
 *Fórmula na célula A2:*
 
 ```excel
-=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; TEXTO(Form_Responses!A2:A; "YYYYMMDD_HHMMSS") & "_" & Form_Responses!D2:D))
+=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; TEXTO(Form_Responses!A2:A; "YYYYMMDD_HHMMSS") & "_" & Form_Responses!F2:F))
 ```
 
 * **B: `ID_Prova`**
@@ -69,42 +74,42 @@ Gera um ID único e imutável para a prova da questão, combinando o `Ano da Pro
 *Fórmula na célula B2:*
 
 ```excel
-=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!H2:H & "_" & SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(MAIÚSCULA(Form_Responses!F2:F); "Á"; "A"); "À"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ó"; "O"); "Ô"; "O"); "Ú"; "U"); "Ç"; "C"); " "; "") & "_" & SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(MAIÚSCULA(Form_Responses!G2:G); "Á"; "A"); "À"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ó"; "O"); "Ô"; "O"); "Ú"; "U"); "Ç"; "C"); " "; ""); "𝖢𝖧𝖤𝖢𝖪"; "") & "_" & SE(Form_Responses!I2:I="Caderno Único"; "UNICO"; MAIÚSCULA(Form_Responses!I2:I))))
+=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!J2:J & "_" & SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(MAIÚSCULA(Form_Responses!H2:H); "Á"; "A"); "À"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ó"; "O"); "Ô"; "O"); "Ú"; "U"); "Ç"; "C"); " "; "") & "_" & SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(MAIÚSCULA(Form_Responses!I2:I); "Á"; "A"); "À"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ó"; "O"); "Ô"; "O"); "Ú"; "U"); "Ç"; "C"); " "; ""); "𝖢𝖧𝖤𝖢𝖪"; "") & "_" & SE(Form_Responses!K2:K="Caderno Único"; "UNICO"; MAIÚSCULA(Form_Responses!K2:K))))
 ```
 
 * **C: `Questao_Num`**
 
 *Fórmula na célula C2:*
 ```excel
-=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!J2:J))
+=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!L2:L))
 ```
 
 * **D: `Tipo`**
 
 *Fórmula na célula D2:*
 ```excel
-=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!K2:K))
+=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!M2:M))
 ```
 
 * **E: `Nome Completo`**
 
 *Fórmula na célula E2:*
 ```excel
-=ARRAYFORMULA(Form_Responses!C2:C)
+=ARRAYFORMULA(Form_Responses!D2:D)
 ```
 
 * **F: `Assunto Principal`**
 
-*Fórmula na célula D2:*
+*Fórmula na célula F2:*
 ```excel
-=ARRAYFORMULA(Form_Responses!L2:L)
+=ARRAYFORMULA(Form_Responses!N2:N)
 ```
 
 * **G: `URL do Vídeo Original`**
 
-*Fórmula na célula E2:*
+*Fórmula na célula G2:*
 ```excel
-=ARRAYFORMULA(Form_Responses!M2:M)
+=ARRAYFORMULA(Form_Responses!O2:O)
 ```
 
 * **H: `URL do Vídeo Oficial` (Input Manual)**
@@ -113,7 +118,7 @@ Coluna vazia onde você irá colar o link do vídeo final (pós-edição/revisã
 * **I: `Pré-Curadoria`**
 Coluna com a única responsabilidade de conferir se a Prova e a Questão informadas pelo aluno existe na planilha. Serve também para a ajudar a identificar possíveis erros de digitação.
 
-*Fórmula na célula J2:*
+*Fórmula na célula H2:*
 ```excel
 =ARRAYFORMULA(SE(A2:A=""; ""; 
   SE(ÉERROS(CORRESP(ARRUMAR(B2:B); ARRUMAR(Provas_Enade!A:A); 0)); "❌ Prova não existe: [" & B2:B & "]";
