@@ -57,82 +57,46 @@ Esta aba é muito importante e servirá estritamente como *Data Lake*. Ela é ge
 
 #### Aba 2: `Gerenciamento_Respostas` (Hub de Triagem e Curadoria)
 
+> **Atualização de Arquitetura:** Para evitar o desalinhamento entre os dados importados e as entradas manuais (Status, Responsável, Link Oficial), esta aba **não utiliza mais fórmulas (`ARRAYFORMULA`)**. O preenchimento das colunas de A até I é feito de forma automatizada e definitiva (hardcoded) através de **Google Apps Script**, garantindo total integridade das linhas.
+
 Este é o seu painel de controle operacional. É aqui que você assiste aos vídeos, aprova o conteúdo e insere o link final para publicação.
 
-* **A: `ID_Resposta`**
-Gera um ID único e imutável para a submissão, combinando o timestamp com o RA do aluno.
-
-*Fórmula na célula A2:*
-
-```excel
-=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; TEXTO(Form_Responses!A2:A; "YYYYMMDD_HHMMSS") & "_" & Form_Responses!F2:F))
-```
-
-* **B: `ID_Prova`**
-Gera um ID único e imutável para a prova da questão, combinando o `Ano da Prova` + `Curso da Prova` + `Modalidade` + `Caderno da Prova`.
-
-*Fórmula na célula B2:*
-
-```excel
-=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!J2:J & "_" & SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(MAIÚSCULA(Form_Responses!H2:H); "Á"; "A"); "À"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ó"; "O"); "Ô"; "O"); "Ú"; "U"); "Ç"; "C"); " "; "") & "_" & SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(SUBSTITUIR(MAIÚSCULA(Form_Responses!I2:I); "Á"; "A"); "À"; "A"); "Ã"; "A"); "Â"; "A"); "É"; "E"); "Ê"; "E"); "Í"; "I"); "Ó"; "O"); "Ô"; "O"); "Ú"; "U"); "Ç"; "C"); " "; ""); "𝖢𝖧𝖤𝖢𝖪"; "") & "_" & SE(Form_Responses!K2:K="Caderno Único"; "UNICO"; MAIÚSCULA(Form_Responses!K2:K))))
-```
-
-* **C: `Questao_Num`**
-
-*Fórmula na célula C2:*
-```excel
-=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!L2:L))
-```
-
-* **D: `Tipo`**
-
-*Fórmula na célula D2:*
-```excel
-=ARRAYFORMULA(SE(Form_Responses!A2:A=""; ""; Form_Responses!M2:M))
-```
-
-* **E: `Nome Completo`**
-
-*Fórmula na célula E2:*
-```excel
-=ARRAYFORMULA(Form_Responses!D2:D)
-```
-
-* **F: `Assunto Principal`**
-
-*Fórmula na célula F2:*
-```excel
-=ARRAYFORMULA(Form_Responses!N2:N)
-```
-
-* **G: `URL do Vídeo Original`**
-
-*Fórmula na célula G2:*
-```excel
-=ARRAYFORMULA(Form_Responses!O2:O)
-```
-
+* **A: `ID_Resposta` (Gerado via Script)**
+Gera um ID único e imutável para a submissão, combinando o timestamp formatado com o RA do aluno (ex: `20210815_143000_123456`).
+* **B: `ID_Prova` (Gerado via Script)**
+Gera um ID único e imutável para a prova da questão, normalizando e combinando o `Ano da Prova` + `Curso da Prova` + `Modalidade` + `Caderno da Prova`.
+* **C: `Questao_Num` (Trazido via Script)**
+Número da questão preenchido no forms.
+* **D: `Tipo` (Trazido via Script)**
+Tipo da questão (Objetiva ou Discursiva).
+* **E: `Nome Completo` (Trazido via Script)**
+Nome do aluno submetido no forms.
+* **F: `Assunto Principal` (Trazido via Script)**
+Assunto base da questão informada.
+* **G: `URL do Vídeo Original` (Trazido via Script)**
+Link bruto fornecido no formulário.
 * **H: `URL do Vídeo Oficial` (Input Manual)**
-Coluna vazia onde você irá colar o link do vídeo final (pós-edição/revisão/publicação).
+Coluna vazia onde você irá colar o link do vídeo final (pós-edição/revisão/publicação). O script é programado para deixar essa célula limpa e pronta para sua inserção.
+* **I: `Pré-Curadoria` (Gerado via Script)**
+Verificação automática de consistência de dados. O script compara a resposta submetida com as abas `Provas_Enade` e `Questoes_Enade` e retorna:
+* `✅ Válido (Prova e Questão existem)`
+* `❌ Prova não existe: [...]`
+* `⚠️ Qst não existe: [...]`
 
-* **I: `Pré-Curadoria`**
-Coluna com a única responsabilidade de conferir se a Prova e a Questão informadas pelo aluno existe na planilha. Serve também para a ajudar a identificar possíveis erros de digitação.
-
-*Fórmula na célula H2:*
-```excel
-=ARRAYFORMULA(SE(A2:A=""; ""; 
-  SE(ÉERROS(CORRESP(ARRUMAR(B2:B); ARRUMAR(Provas_Enade!A:A); 0)); "❌ Prova não existe: [" & B2:B & "]";
-    SE(CONT.SE(ARRUMAR(Questoes_Enade!A:A) & "_" & ARRUMAR(Questoes_Enade!B:B) & "_" & MAIÚSCULA(ARRUMAR(Questoes_Enade!C:C)); ARRUMAR(B2:B) & "_" & ARRUMAR(C2:C) & "_" & MAIÚSCULA(ARRUMAR(D2:D))) = 0; "⚠️ Qst não existe: [" & B2:B & "_" & C2:C & "_" & D2:D & "]"; "✅ Válido (Prova e Questão existem)")
-  )
-))
-```
 
 * **J: `Status` (Input Manual)**
 Coluna vazia para se preencher com regras de validação de dados: "Aprovado", "Rejeitado" ou "Em Análise".
-
 * **K: `Responsável` (Input Manual)**
 Coluna vazia para se preencher com o nome do responsável pela análise da resposta.
 
+---
+
+#### 🚀 Implementação da Automação (Google Apps Script)
+
+Para habilitar essa automação de inserção de dados, utilize o script [gerenciamento-respostas.md](gerenciamento-respostas.md) em **Extensões > Apps Script**. O fluxo depende de dois métodos de uso:
+
+1. **Gatilho (Trigger) em Tempo Real:** Configure um acionador no Apps Script para a função `processarNovaResposta(e)` com o evento **"Ao enviar formulário"**. Isso fará com que toda nova resposta caia processada na aba de gerenciamento na mesma hora.
+2. **Carga Retroativa:** Execute manualmente a função `preencherRetroativo()` diretamente do editor sempre que precisar resgatar respostas antigas da `Form_Responses`. O script possui proteção integrada e **não gera registros duplicados**.
 
 ---
 
