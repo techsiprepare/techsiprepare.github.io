@@ -52,7 +52,7 @@ function criarLinhaDestino(rowData, timeZone) {
   // Junta tudo com um único underline entre as partes principais
   var idProva = ano + "_" + cursoPart + "_" + modalidadePart + "_" + cadernoPart;
 
-  // 3. Montagem da URL para a coluna L (Ver_Questão_Site)
+  // 3. Montagem da URL para a coluna M (Ver_Questão_Site)
   var tipoUrl = String(tipo).trim();
   if (tipoUrl.length > 0) {
     // Formata para Capitalized (ex: "DISCURSIVA" vira "Discursiva")
@@ -145,11 +145,11 @@ function processarNovaResposta(e) {
   // Calcula o status com base nas regras solicitadas
   var statusValidacao = calcularStatusValidacao(resultado.idProva, resultado.questaoNum, resultado.tipo, mapas);
   
-  // Mapeamento das colunas: 
-  // resultado.dados (A-G) + H("") + I(status) + J("") + K("") + L(urlQuestao)
-  var linhaCompleta = resultado.dados.concat(["", statusValidacao, "", "", resultado.urlQuestao]);
+  // Mapeamento das colunas atualizado: 
+  // resultado.dados (A-G) + H("") + I(status) + J("") + K("") + L("") + M(urlQuestao)
+  var linhaCompleta = resultado.dados.concat(["", statusValidacao, "", "", "", resultado.urlQuestao]);
   
-  // Encontra a próxima linha disponível na aba de gerenciamento e grava de uma vez (A-L)
+  // Encontra a próxima linha disponível na aba de gerenciamento e grava de uma vez (A-M)
   var nextRow = sheetGerenciamento.getLastRow() + 1;
   sheetGerenciamento.getRange(nextRow, 1, 1, linhaCompleta.length).setValues([linhaCompleta]);
 }
@@ -200,9 +200,9 @@ function preencherRetroativo() {
     // Calcula a validação para o histórico
     var statusValidacao = calcularStatusValidacao(resultado.idProva, resultado.questaoNum, resultado.tipo, mapas);
     
-    // Mapeamento das colunas: 
-    // resultado.dados (A-G) + H("") + I(status) + J("") + K("") + L(urlQuestao)
-    var linhaCompleta = resultado.dados.concat(["", statusValidacao, "", "", resultado.urlQuestao]);
+    // Mapeamento das colunas atualizado: 
+    // resultado.dados (A-G) + H("") + I(status) + J("") + K("") + L("") + M(urlQuestao)
+    var linhaCompleta = resultado.dados.concat(["", statusValidacao, "", "", "", resultado.urlQuestao]);
     
     rowsToAppend.push(linhaCompleta);
   }
@@ -210,9 +210,9 @@ function preencherRetroativo() {
   // 4. Grava os dados novos em lote (Batch Update) no final da planilha
   if (rowsToAppend.length > 0) {
     var nextRow = sheetGerenciamento.getLastRow() + 1;
-    // O range agora considera 12 colunas (de A até L)
-    sheetGerenciamento.getRange(nextRow, 1, rowsToAppend.length, 12).setValues(rowsToAppend);
-    Logger.log(rowsToAppend.length + " respostas antigas foram importadas, validadas e atualizadas com links na coluna L com sucesso!");
+    // O range agora considera 13 colunas (de A até M)
+    sheetGerenciamento.getRange(nextRow, 1, rowsToAppend.length, 13).setValues(rowsToAppend);
+    Logger.log(rowsToAppend.length + " respostas antigas foram importadas, validadas e atualizadas com links na coluna M com sucesso!");
   } else {
     Logger.log("Tudo atualizado! Nenhuma resposta nova para importar retroativamente.");
   }

@@ -136,7 +136,8 @@ Esta aba detalha cada questão da prova. Ela deve ser completamente gerada pelo 
     CONT.SES(
       Gerenciamento_Respostas!B:B; A2:A; 
       Gerenciamento_Respostas!C:C; B2:B; 
-      Gerenciamento_Respostas!D:D; C2:C
+      Gerenciamento_Respostas!D:D; C2:C;
+      Gerenciamento_Respostas!J:J; "<>Rejeitado"
     )
   )
 )
