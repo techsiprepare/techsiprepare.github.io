@@ -88,6 +88,8 @@ Verificação automática de consistência de dados. O script compara a resposta
 Coluna vazia para se preencher com regras de validação de dados: "Aprovado", "Rejeitado" ou "Em Análise".
 * **K: `Responsável` (Input Manual)**
 Coluna vazia para se preencher com o nome do responsável pela análise da resposta.
+* **L: `Ver_Questão_Site` (Trazido via Script)**
+Link da questão no site para visualizar.
 
 ---
 

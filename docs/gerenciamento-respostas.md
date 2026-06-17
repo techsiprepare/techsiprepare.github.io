@@ -1,4 +1,3 @@
-``` javascript
 /**
  * Função global para normalizar textos removendo acentos e caracteres especiais.
  * Remove TODOS os espaços em branco (junta as palavras), ideal para Curso e Modalidade.
@@ -53,12 +52,21 @@ function criarLinhaDestino(rowData, timeZone) {
   // Junta tudo com um único underline entre as partes principais
   var idProva = ano + "_" + cursoPart + "_" + modalidadePart + "_" + cadernoPart;
 
+  // 3. Montagem da URL para a coluna L (Ver_Questão_Site)
+  var tipoUrl = String(tipo).trim();
+  if (tipoUrl.length > 0) {
+    // Formata para Capitalized (ex: "DISCURSIVA" vira "Discursiva")
+    tipoUrl = tipoUrl.charAt(0).toUpperCase() + tipoUrl.slice(1).toLowerCase();
+  }
+  var urlQuestao = "https://techsiprepare.github.io/#visualizar?prova=" + idProva + "&questao=" + String(questaoNum).trim() + "-" + tipoUrl;
+
   // Retorna o objeto com o ID para validação e a estrutura exata das colunas (A até G)
   return {
     idResposta: idResposta,
     idProva: idProva,
     questaoNum: String(questaoNum).trim(),
     tipo: String(tipo).trim().toUpperCase(),
+    urlQuestao: urlQuestao,
     dados: [idResposta, idProva, questaoNum, tipo, nomeCompleto, assunto, urlVideoOriginal]
   };
 }
@@ -137,10 +145,11 @@ function processarNovaResposta(e) {
   // Calcula o status com base nas regras solicitadas
   var statusValidacao = calcularStatusValidacao(resultado.idProva, resultado.questaoNum, resultado.tipo, mapas);
   
-  // Modificação aqui: concatenamos uma string vazia para a coluna H e o status na coluna I
-  var linhaCompleta = resultado.dados.concat(["", statusValidacao]);
+  // Mapeamento das colunas: 
+  // resultado.dados (A-G) + H("") + I(status) + J("") + K("") + L(urlQuestao)
+  var linhaCompleta = resultado.dados.concat(["", statusValidacao, "", "", resultado.urlQuestao]);
   
-  // Encontra a próxima linha disponível na aba de gerenciamento e grava de uma vez (A-I)
+  // Encontra a próxima linha disponível na aba de gerenciamento e grava de uma vez (A-L)
   var nextRow = sheetGerenciamento.getLastRow() + 1;
   sheetGerenciamento.getRange(nextRow, 1, 1, linhaCompleta.length).setValues([linhaCompleta]);
 }
@@ -191,8 +200,9 @@ function preencherRetroativo() {
     // Calcula a validação para o histórico
     var statusValidacao = calcularStatusValidacao(resultado.idProva, resultado.questaoNum, resultado.tipo, mapas);
     
-    // Modificação aqui: adiciona uma coluna vazia (H) e o status na coluna I
-    var linhaCompleta = resultado.dados.concat(["", statusValidacao]);
+    // Mapeamento das colunas: 
+    // resultado.dados (A-G) + H("") + I(status) + J("") + K("") + L(urlQuestao)
+    var linhaCompleta = resultado.dados.concat(["", statusValidacao, "", "", resultado.urlQuestao]);
     
     rowsToAppend.push(linhaCompleta);
   }
@@ -200,12 +210,106 @@ function preencherRetroativo() {
   // 4. Grava os dados novos em lote (Batch Update) no final da planilha
   if (rowsToAppend.length > 0) {
     var nextRow = sheetGerenciamento.getLastRow() + 1;
-    // O range agora considera 9 colunas (de A até I)
-    sheetGerenciamento.getRange(nextRow, 1, rowsToAppend.length, 9).setValues(rowsToAppend);
-    Logger.log(rowsToAppend.length + " respostas antigas foram importadas e validadas na coluna I com sucesso!");
+    // O range agora considera 12 colunas (de A até L)
+    sheetGerenciamento.getRange(nextRow, 1, rowsToAppend.length, 12).setValues(rowsToAppend);
+    Logger.log(rowsToAppend.length + " respostas antigas foram importadas, validadas e atualizadas com links na coluna L com sucesso!");
   } else {
     Logger.log("Tudo atualizado! Nenhuma resposta nova para importar retroativamente.");
   }
 }
 
-```
+/**
+ * Filtra a aba Gerenciamento_Respostas para exibir APENAS as linhas de questões 
+ * que possuem 2 ou mais respostas registradas no total, independentemente de quem respondeu.
+ */
+function exibirRespostasDaMesmaQuestao() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetGerenciamento = ss.getSheetByName("Gerenciamento_Respostas");
+  
+  if (!sheetGerenciamento) {
+    Logger.log("Aba Gerenciamento_Respostas não encontrada.");
+    return;
+  }
+  
+  var lastRow = sheetGerenciamento.getLastRow();
+  if (lastRow <= 1) {
+    Logger.log("Planilha vazia ou contém apenas o cabeçalho.");
+    return; 
+  }
+  
+  // 1. Limpa qualquer ocultação anterior para ler a planilha completa
+  sheetGerenciamento.showRows(1, lastRow);
+  
+  // Pega os dados das colunas B, C e D (ID_Prova, Num, Tipo) onde a questão é definida
+  var range = sheetGerenciamento.getRange(2, 2, lastRow - 1, 3);
+  var values = range.getValues();
+  
+  var contagemQuestoes = {};
+  var chavesPorLinha = [];
+  
+  // Passo 1: Mapear e contar quantas respostas cada QUESTÃO recebeu no total
+  for (var i = 0; i < values.length; i++) {
+    var idProva    = String(values[i][0]).trim(); // Coluna B
+    var questaoNum = String(values[i][1]).trim(); // Coluna C
+    var tipo       = String(values[i][2]).trim().toUpperCase(); // Coluna D
+    
+    // A chave agora identifica estritamente A PERGUNTA
+    var chaveQuestao = idProva + "|" + questaoNum + "|" + tipo;
+    chavesPorLinha.push(chaveQuestao);
+    
+    if (!contagemQuestoes[chaveQuestao]) {
+      contagemQuestoes[chaveQuestao] = 0;
+    }
+    contagemQuestoes[chaveQuestao]++;
+  }
+  
+  // Passo 2: Ocultar em lotes as linhas das questões que só possuem 1 resposta única
+  var inicioBlocoOcultar = -1;
+  var tamanhoBloco = 0;
+  
+  for (var j = 0; j < chavesPorLinha.length; j++) {
+    var numLinhaPlanilha = j + 2; // +2 compensa o cabeçalho
+    var chaveAtual = chavesPorLinha[j];
+    
+    // Se a questão só foi respondida uma única vez na planilha toda, ela sai da tela
+    if (contagemQuestoes[chaveAtual] === 1) {
+      if (inicioBlocoOcultar === -1) {
+        inicioBlocoOcultar = numLinhaPlanilha;
+        tamanhoBloco = 1;
+      } else {
+        tamanhoBloco++;
+      }
+    } else {
+      // Se a questão tem 2 ou mais respostas (mesmo ou diferentes alunos), ela fica visível.
+      // Caso estivéssemos acumulando um bloco para ocultar, aplica a ação agora.
+      if (inicioBlocoOcultar !== -1) {
+        sheetGerenciamento.hideRows(inicioBlocoOcultar, tamanhoBloco);
+        inicioBlocoOcultar = -1;
+        tamanhoBloco = 0;
+      }
+    }
+  }
+  
+  // Limpa o último bloco pendente se a planilha terminar em linhas ocultas
+  if (inicioBlocoOcultar !== -1) {
+    sheetGerenciamento.hideRows(inicioBlocoOcultar, tamanhoBloco);
+  }
+  
+  Logger.log("Filtro aplicado! Exibindo apenas perguntas que possuem múltiplas respostas.");
+}
+
+/**
+ * Remove o filtro de questões, voltando a exibir todas as linhas da planilha.
+ */
+function mostrarTodasAsRespostas() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetGerenciamento = ss.getSheetByName("Gerenciamento_Respostas");
+  
+  if (!sheetGerenciamento) return;
+  
+  var lastRow = sheetGerenciamento.getLastRow();
+  if (lastRow > 0) {
+    sheetGerenciamento.showRows(1, lastRow);
+    Logger.log("Filtro removido. Todas as respostas voltaram a ser exibidas.");
+  }
+}
