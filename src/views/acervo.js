@@ -3,11 +3,9 @@
  * @description View do acervo de provas. Responsável por:
  * - Decidir qual sub-view renderizar com base nos parâmetros de URL (acervo completo ou questões de uma prova).
  * - Calcular as métricas de questões de cada prova.
- * - Agendar a geração assíncrona de thumbnails PDF após a view ser inserida no DOM.
  */
 
 import { estadoApp } from '../api/sheets.js';
-import { gerarThumbnailPdf } from '../utils/pdfViewer.js';
 import { cardProva } from '../components/card-prova.js';
 import { questoesProva } from './questoesProva.js';
 
@@ -47,26 +45,9 @@ export function acervo(parametros = {}) {
         `);
     }
 
-    agendarRenderizacaoThumbnails();
-
     return criarTemplateAcervoHtml(
         renderizarListaProvasHtml(Object.values(estadoApp))
     );
-}
-
-/**
- * Percorre o estado da aplicação e gera thumbnails para cada prova que
- * possui um PDF associado. O agendamento com setTimeout garante que os
- * elementos <canvas> já estão no DOM quando as funções são chamadas.
- */
-function agendarRenderizacaoThumbnails() {
-    setTimeout(() => {
-        Object.values(estadoApp).forEach(prova => {
-            if (prova.caminhoPdf && prova.id) {
-                gerarThumbnailPdf(prova.caminhoPdf, `thumb-${prova.id}`);
-            }
-        });
-    }, 50);
 }
 
 function calcularMetricasProva(questoes = {}) {
@@ -104,6 +85,7 @@ function renderizarListaProvasHtml(provas) {
             ano: prova.ano,
             modalidade: prova.modalidade,
             caderno: prova.caderno,
+            nomeArquivo: prova.id,
             ...metricas
         });
     }).join('');

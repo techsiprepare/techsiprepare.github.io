@@ -55,35 +55,6 @@ export async function renderizarPaginaPdf(urlPdf, numeroPagina) {
     }
 }
 
-/**
- * Gera uma miniatura (thumbnail) da primeira página de um PDF em um canvas específico.
- * @param {string} urlPdf - URL do arquivo PDF.
- * @param {string} idCanvas - ID do elemento canvas de destino.
- */
-export async function gerarThumbnailPdf(urlPdf, idCanvas) {
-    const canvas = document.getElementById(idCanvas);
-    if (!canvas) return;
-
-    try {
-        const pdf = await obterInstanciaPdf(urlPdf);
-        const pagina = await pdf.getPage(1);
-        const contexto = canvas.getContext('2d');
-
-        const LARGURA_THUMBNAIL = 250;
-        const viewportOriginal = pagina.getViewport({ scale: 1.0 });
-        const escala = LARGURA_THUMBNAIL / viewportOriginal.width;
-        const viewportFinal = pagina.getViewport({ scale: escala });
-
-        canvas.height = viewportFinal.height;
-        canvas.width = viewportFinal.width;
-
-        await pagina.render({ canvasContext: contexto, viewport: viewportFinal }).promise;
-    } catch (erro) {
-        console.error(`Erro ao gerar thumbnail para ${urlPdf}:`, erro);
-        canvas.style.display = 'none';
-    }
-}
-
 // --- FLUXO INTERNO E AUXILIARES ---
 
 async function obterInstanciaPdf(urlPdf) {

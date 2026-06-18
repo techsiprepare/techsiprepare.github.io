@@ -4,6 +4,7 @@ export function cardProva({
     ano, 
     modalidade, 
     caderno, 
+    nomeArquivo,
     qtdObjetivas = 0, 
     qtdDiscursivas = 0,
     qtdObjetivasAtivas = 0, 
@@ -30,10 +31,12 @@ export function cardProva({
     const badgeStyle = "padding: 4px 8px; background-color: var(--color-bg-system); color: var(--color-text-main);";
     const estaBloqueadaCompleta = totalQuestoesAtivas === 0;
 
+    const srcThumbnail = `assets/thumbs/${nomeArquivo || id}.webp`; 
+
     return `
         <div class="prova-card ${estaBloqueadaCompleta ? 'prova-bloqueada' : ''}" data-prova-id="${id}" style="${estaBloqueadaCompleta ? 'opacity: 0.6; border-style: dashed;' : ''}">
             <div class="card-thumbnail-wrapper">
-                <canvas id="thumb-${id}" class="card-pdf-thumbnail"></canvas>
+                <img src="${srcThumbnail}" alt="Capa da prova ${curso} (${ano})" class="card-pdf-thumbnail" loading="lazy" style="width: 100%; height: auto; object-fit: cover;">
             </div>
             <div class="card-content-wrapper">
                 <h3>${curso} (${ano})</h3>
