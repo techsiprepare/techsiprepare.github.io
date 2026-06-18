@@ -93,7 +93,7 @@ Coluna vazia para se preencher com o nome do responsável pela análise da respo
 * **M: `Ver_Questão_Site` (ArrayFormula Manual)**
 Link da questão no site para visualizar.
 
-*Fórmula na célula F2:*
+*Fórmula na célula M2:*
 ```excel
 =ARRAYFORMULA(SE(B2:B=""; ""; SE(I2:I="✅ Válido (Prova e Questão existem)"; HIPERLINK("https://techsiprepare.github.io/#visualizar?prova=" & B2:B & "&questao=" & C2:C & "-" & PRI.MAIÚSCULA(D2:D); "🌐 Ver questão"); "❌ Inexistente")))
 ```
