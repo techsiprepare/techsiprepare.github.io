@@ -40,7 +40,7 @@ export function navbar() {
                         <img src="img/institucional/logotipos/IFMG-OB.png" alt="IFMG Campus Ouro Branco" class="brand-logo-img">
                     </picture>
                     <div class="brand-divider"></div>
-                                            <img src="img/institucional/logotipos/simbolo.svg" alt="Tech SIPrepare" style="width: 30px; height: 30px; margin-bottom: 10px;">
+                                            <img src="img/institucional/logotipos/Simbolo.svg" alt="Tech SIPrepare" style="width: 30px; height: 30px; margin-bottom: 10px;">
 
                     <div class="brand-text">
                         <span class="brand-name">TechSI Prepare</span>
