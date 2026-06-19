@@ -1,6 +1,5 @@
 .pdf-container {
     border-radius: var(--radius-large);
-    min-height: 600px;
     display: flex;
     justify-content: center;
     align-items: start;
@@ -12,8 +11,8 @@
 }
 
 #pdf-canvas {
-    width: 100%;
-    height: auto;
+    width: 100% !important;
+    height: auto !important;
     background-color: var(--color-surface-pure);
     border-radius: 4px;
 }

@@ -40,8 +40,6 @@ export async function renderizarPaginaPdf(urlPdf, numeroPagina) {
         const viewportAltaDefinicao = pagina.getViewport({ scale: viewportBase.scale * dpr });
         canvas.height = viewportAltaDefinicao.height;
         canvas.width = viewportAltaDefinicao.width;
-        canvas.style.height = `${viewportBase.height}px`;
-        canvas.style.width = `${viewportBase.width}px`;
 
         await executarRenderizacaoSegura(pagina, contexto, viewportAltaDefinicao);
 
