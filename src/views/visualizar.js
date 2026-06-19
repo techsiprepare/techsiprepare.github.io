@@ -1,7 +1,6 @@
 /**
  * @file visualizar.js
- * @description Gerencia a visualização assíncrona de páginas de PDF de provas e sincroniza
- * a renderização com uma barra lateral contendo as questões mapeadas para a respectiva página.
+ * @description Gerencia a visualização assíncrona de páginas de PDF de provas.
  */
 
 import { estadoApp } from '../api/sheets.js';
@@ -9,6 +8,7 @@ import { renderizarPaginaPdf } from '../utils/pdfViewer.js';
 import { loadingPdf } from '../components/loading-pdf.js';
 import { questaoItem } from '../components/questao-item.js';
 import { backLink } from '../components/back-link.js';
+import { provaHeader } from '../components/prova-header.js';
 
 function extrairQuestoesDaPagina(prova, numeroPagina) {
     return Object.values(prova?.questoes || {})
@@ -58,15 +58,17 @@ async function processarRenderizacaoPdf(prova, paginaAtual, callbackTotalPaginas
     }
 }
 
-function criarTemplateHtml(idProva, paginaAtual, questoesHtml) {
+function criarTemplateHtml(prova, paginaAtual, questoesHtml) {
     return `
-        ${backLink({ destino: `#acervo?prova=${idProva}`, texto: "Voltar para Lista de Questões" })}
+        ${backLink({ destino: `#acervo?prova=${prova.id}`, texto: "Voltar para Lista de Questões" })}
         
+        ${provaHeader({ prova, sufixoContexto: "(Visualizando PDF)" })}
+
         <div class="pdf-toolbar">
             <button onclick="window._mudarPaginaPdf(-1)" class="btn btn-sm">
                 <i data-lucide="chevron-left"></i>
             </button>
-            <span style="font-weight: bold; font-size: 1rem; user-select: none;" id="pdf-page-indicator-txt">${paginaAtual}/?</span>
+            <span class="pdf-page-indicator" id="pdf-page-indicator-txt">${paginaAtual}/?</span>
             <button onclick="window._mudarPaginaPdf(1)" class="btn btn-sm">
                 <i data-lucide="chevron-right"></i>
             </button>
@@ -116,5 +118,5 @@ export function visualizar(idProva, numQuestao) {
     }, 50);
 
     const questoesIniciaisHtml = renderizarListaQuestoesHtml(prova, paginaAtual);
-    return criarTemplateHtml(idProva, paginaAtual, questoesIniciaisHtml);
+    return criarTemplateHtml(prova, paginaAtual, questoesIniciaisHtml);
 }

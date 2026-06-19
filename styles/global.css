@@ -9,6 +9,7 @@
 
 /* Componentes Específicos */
 @import './components/navbar.css';
+@import './components/prova-header.css';
 @import './components/back-link.css';
 @import './components/badge.css';
 @import './components/hero.css';

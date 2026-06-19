@@ -1,0 +1,30 @@
+.prova-context-header {
+    background-color: var(--color-surface-pure, #f8f9fa);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.prova-context-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.prova-context-title {
+    font-size: 1.4rem;
+    color: var(--color-text-impact);
+    margin-top: 0;
+    margin-bottom: 6px;
+}
+
+.prova-context-meta {
+    font-size: 0.9rem;
+    color: var(--color-text-main);
+    margin: 0;
+}

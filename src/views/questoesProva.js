@@ -1,12 +1,12 @@
 /**
  * @file questoesProva.js
- * @description Renderiza a lista de questões associadas a uma prova específica,
- * validando a existência da prova no estado global da aplicação.
+ * @description Renderiza a lista de questões associadas a uma prova específica.
  */
 
 import { estadoApp } from '../api/sheets.js';
 import { questaoItem } from '../components/questao-item.js';
 import { backLink } from '../components/back-link.js';
+import { provaHeader } from '../components/prova-header.js';
 
 function criarTemplateErroHtml() {
     return `
@@ -29,9 +29,12 @@ function renderizarListaQuestoesHtml(questoes, idProva) {
         .join('');
 }
 
-function criarTemplateProvaHtml(questoesHtml) {
+function criarTemplateProvaHtml(prova, questoesHtml) {
     return `
         ${backLink({ destino: "#acervo", texto: "Voltar para Provas" })}
+        
+        ${provaHeader({ prova })}
+
         <div class="lista-questoes">
             ${questoesHtml}
         </div>
@@ -47,5 +50,5 @@ export function questoesProva(idProva) {
     const listaQuestoes = Object.values(prova.questoes || {});
     const questoesHtml = renderizarListaQuestoesHtml(listaQuestoes, idProva);
 
-    return criarTemplateProvaHtml(questoesHtml);
+    return criarTemplateProvaHtml(prova, questoesHtml);
 }
