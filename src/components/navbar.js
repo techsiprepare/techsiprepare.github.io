@@ -21,7 +21,7 @@ export function navbar() {
         <!-- Drawer lateral mobile -->
         <aside id="nav-drawer" class="nav-drawer" aria-label="Menu de navegação" role="navigation">
             <div class="nav-drawer-header">
-                <span class="brand-name">TechSI Prepare</span>
+                <span class="brand-name">Tech SIPrepare</span>
                 <button id="nav-drawer-close" class="nav-drawer-close" aria-label="Fechar menu">
                     <i data-lucide="x"></i>
                 </button>
@@ -43,7 +43,7 @@ export function navbar() {
                                             <img src="img/institucional/logotipos/Simbolo.svg" alt="Tech SIPrepare" style="width: 30px; height: 30px; margin-bottom: 10px;">
 
                     <div class="brand-text">
-                        <span class="brand-name">TechSI Prepare</span>
+                        <span class="brand-name">Tech SIPrepare</span>
                         <span class="brand-subtitle">Projeto de Extensão</span>
                     </div>
                 </a>
