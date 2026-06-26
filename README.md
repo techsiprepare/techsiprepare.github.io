@@ -14,7 +14,7 @@ O ecossistema é dividido em três camadas principais operadas de forma integrad
 
 1. **Entrada de Dados (Google Forms):** Canal por onde os estudantes enviam suas submissões contendo metadados da questão (ano, curso, número, tipo), o link do vídeo explicativo original e o termo de autorização em PDF.
 2. **Processamento e Banco de Dados (Google Sheets & Apps Script):** As respostas do formulário alimentam um Data Lake na planilha. Um conjunto de automações em Google Apps Script realiza a validação cruzada instantânea de dados, previne registros duplicados e cria chaves relacionais exclusivas para indexação das provas e questões.
-3. **Interface do Usuário (SPA Frontend):** Uma aplicação web desenvolvida em JavaScript puro (Vanilla JS) que consome os dados processados da planilha exportados publicamente em formato CSV (apenas abas sem dados sensíveis). A navegação ocorre por meio de rotas baseadas no fragmento da URL (hash routing), atualizando os elementos dinamicamente sem recarregar a página.
+3. **Interface do Usuário (SPA Frontend):** Uma aplicação web desenvolvida em JavaScript puro (Vanilla JS) que consome os dados processados da planilha exportados publicamente em formato CSV (apenas abas sem dados sensíveis). A navegação ocorre por meio de rotas baseadas no fragmento da URL (hash routing) com suporte a *Deep Linking*, atualizando os elementos dinamicamente e sincronizando a URL com a paginação interna de documentos (PDFs) sem recarregar a página.
 
 ---
 
