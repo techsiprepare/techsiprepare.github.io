@@ -117,8 +117,8 @@ function gerenciarRotaAcervo(parametros) {
 }
 
 function gerenciarRotaVisualizar(parametros) {
-    if (!parametros.prova || !parametros.questao) {
-        return renderMensagemErro('Parâmetros inválidos.');
+    if (!parametros.prova || (!parametros.questao && !parametros.pagina)) {
+        return renderizarMensagemErro('Parâmetros inválidos.');
     }
 
     if (Object.keys(estadoApp).length === 0) {
@@ -133,7 +133,7 @@ function gerenciarRotaVisualizar(parametros) {
         `;
     }
 
-    return visualizar(parametros.prova, parametros.questao);
+    return visualizar(parametros);
 }
 
 function renderizarMensagemErro(mensagem) {

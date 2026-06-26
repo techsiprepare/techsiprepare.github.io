@@ -88,12 +88,22 @@ function criarTemplateHtml(prova, paginaAtual, questoesHtml) {
     `;
 }
 
-export function visualizar(idProva, numQuestao) {
+export function visualizar(parametros) {
+    const idProva = parametros.prova;
     const prova = estadoApp[idProva];
-    const questao = prova?.questoes[numQuestao];
-    if (!questao) return `<h2>Questão não encontrada!</h2>`;
+    
+    if (!prova) return `<h2>Prova não encontrada!</h2>`;
 
-    let paginaAtual = questao.paginaPdf;
+    let paginaAtual = 1;
+
+    if (parametros.questao) {
+        const questao = prova.questoes[parametros.questao];
+        if (!questao) return `<h2>Questão não encontrada!</h2>`;
+        paginaAtual = questao.paginaPdf;
+    } else if (parametros.pagina) {
+        paginaAtual = parseInt(parametros.pagina);
+    }
+
     let totalPaginasPdf = 0;
 
     window._mudarPaginaPdf = async (direcao) => {
@@ -102,6 +112,10 @@ export function visualizar(idProva, numQuestao) {
 
         paginaAtual = novaPagina;
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Atualização silenciosa da URL
+        const novaUrl = `#visualizar?prova=${prova.id}&pagina=${paginaAtual}`;
+        history.replaceState(null, '', novaUrl);
 
         atualizarIndicadoresDomi(paginaAtual, totalPaginasPdf);
         atualizarListaQuestoesDomi(prova, paginaAtual);
