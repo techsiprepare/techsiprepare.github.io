@@ -12,6 +12,7 @@ import { visualizar } from './views/visualizar.js';
 import { tutorial } from './views/tutorial.js';
 import { navbar, atualizarNavActive, inicializarDrawerMobile } from './components/navbar.js';
 import { estadoApp } from './api/sheets.js';
+import { shareModalTemplate, inicializarShareModal, atualizarVisibilidadeShare } from './components/share-modal.js';
 
 export function inicializarRoteador() {
     configurarNavbar();
@@ -21,9 +22,14 @@ export function inicializarRoteador() {
 
 function configurarNavbar() {
     const navWrapper = document.getElementById('nav-wrapper');
-    if (!navWrapper) return;
+    if (navWrapper) navWrapper.innerHTML = navbar();
 
-    navWrapper.innerHTML = navbar();
+    const shareWrapper = document.getElementById('share-wrapper');
+    if (shareWrapper) {
+        shareWrapper.innerHTML = shareModalTemplate();
+        inicializarShareModal();
+    }
+
     requestAnimationFrame(() => {
         executarCicloDeVidaVisual();
         inicializarDrawerMobile();
@@ -42,6 +48,8 @@ function lidarComRoteamento() {
 
     executarCicloDeVidaVisual();
     atualizarNavActive();
+
+    atualizarVisibilidadeShare(parametros, rota);
 
     requestAnimationFrame(() => {
         rolarParaPrimeiraDisponivel();
