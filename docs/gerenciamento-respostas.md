@@ -33,32 +33,21 @@ function criarLinhaDestino(rowData, timeZone) {
   var idResposta = normalizarTexto(formattedDate + "_" + ra);
 
   // 2. Geração do ID_Prova
-  var cursoPart = normalizarTexto(curso);           // "TECNOLOGIA EM ANALISE..." vira "TECNOLOGIAEMANALISE..."
-  var modalidadePart = normalizarTexto(modalidade); // "TECNOLOGO" vira "TECNOLOGO"
+  var cursoPart = normalizarTexto(curso);
+  var modalidadePart = normalizarTexto(modalidade);
   
   // Tratamento especial para o Caderno
   var cadernoTexto = String(caderno).trim().toUpperCase();
   var cadernoPart = "";
 
-  // Se for Caderno Único (com ou sem acento), vira apenas UNICO
   if (cadernoTexto === "CADERNO ÚNICO" || cadernoTexto === "CADERNO UNICO") {
     cadernoPart = "UNICO";
   } else {
-    // Caso seja outro caderno (ex: "Caderno Alfa"), remove a palavra "CADERNO" e limpa o resto
     var semCaderno = cadernoTexto.replace("CADERNO", "").trim();
     cadernoPart = normalizarTexto(semCaderno);
   }
   
-  // Junta tudo com um único underline entre as partes principais
   var idProva = ano + "_" + cursoPart + "_" + modalidadePart + "_" + cadernoPart;
-
-  // 3. Montagem da URL para a coluna M (Ver_Questão_Site)
-  var tipoUrl = String(tipo).trim();
-  if (tipoUrl.length > 0) {
-    // Formata para Capitalized (ex: "DISCURSIVA" vira "Discursiva")
-    tipoUrl = tipoUrl.charAt(0).toUpperCase() + tipoUrl.slice(1).toLowerCase();
-  }
-  var urlQuestao = "https://techsiprepare.github.io/#visualizar?prova=" + idProva + "&questao=" + String(questaoNum).trim() + "-" + tipoUrl;
 
   // Retorna o objeto com o ID para validação e a estrutura exata das colunas (A até G)
   return {
@@ -66,100 +55,39 @@ function criarLinhaDestino(rowData, timeZone) {
     idProva: idProva,
     questaoNum: String(questaoNum).trim(),
     tipo: String(tipo).trim().toUpperCase(),
-    urlQuestao: urlQuestao,
     dados: [idResposta, idProva, questaoNum, tipo, nomeCompleto, assunto, urlVideoOriginal]
   };
 }
 
 /**
- * Função interna para carregar os mapas de validação das abas Provas_Enade e Questoes_Enade.
+ * Processa a nova resposta vinda do formulário.
  */
-function obterMapasValidacao(ss) {
-  var sheetProvas = ss.getSheetByName("Provas_Enade");
-  var sheetQuestoes = ss.getSheetByName("Questoes_Enade");
-  
-  var provasSet = new Set();
-  var questoesSet = new Set();
-  
-  // Carrega Provas existentes (Coluna A)
-  if (sheetProvas) {
-    var lastRowP = sheetProvas.getLastRow();
-    if (lastRowP > 0) {
-      sheetProvas.getRange(1, 1, lastRowP, 1).getValues().forEach(function(row) {
-        if (row[0]) provasSet.add(String(row[0]).trim());
-      });
-    }
-  }
-  
-  // Carrega Questões existentes (Coluna A: ID_Prova, Coluna B: Num, Coluna C: Tipo)
-  if (sheetQuestoes) {
-    var lastRowQ = sheetQuestoes.getLastRow();
-    if (lastRowQ > 0) {
-      sheetQuestoes.getRange(1, 1, lastRowQ, 3).getValues().forEach(function(row) {
-        if (row[0] && row[1] && row[2]) {
-          var chaveQuestao = String(row[0]).trim() + "_" + String(row[1]).trim() + "_" + String(row[2]).trim().toUpperCase();
-          questoesSet.add(chaveQuestao);
-        }
-      });
-    }
-  }
-  
-  return { provas: provasSet, questoes: questoesSet };
-}
-
-/**
- * Função interna que replica a exata lógica da fórmula de validação fornecida.
- */
-function calcularStatusValidacao(idProva, questaoNum, tipo, mapas) {
-  if (!idProva) return "";
-  
-  // Verifica se a prova existe na aba Provas_Enade
-  if (!mapas.provas.has(idProva)) {
-    return "❌ Prova não existe: [" + idProva + "]";
-  }
-  
-  // Monta a chave combinada para checar na aba Questoes_Enade
-  var chaveBuscar = idProva + "_" + questaoNum + "_" + tipo;
-  if (!mapas.questoes.has(chaveBuscar)) {
-    return "⚠️ Qst não existe: [" + idProva + "_" + questaoNum + "_" + tipo + "]";
-  }
-  
-  return "✅ Válido (Prova e Questão existem)";
-}
-
 function processarNovaResposta(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheetForm = ss.getSheetByName("Form_Responses");
   var sheetGerenciamento = ss.getSheetByName("Gerenciamento_Respostas");
   
-  // Obtém a última linha inserida no formulário de respostas
   var lastRow = sheetForm.getLastRow();
   var rowData = sheetForm.getRange(lastRow, 1, 1, 16).getValues()[0];
   
-  // Processa e estrutura os dados da nova linha
   var resultado = criarLinhaDestino(rowData, ss.getSpreadsheetTimeZone());
   
-  // Obtém os mapas de validação atuais
-  var mapas = obterMapasValidacao(ss);
+  // Mapeamento reduzido: resultado.dados (A-G) + H("") -> Total: 8 colunas (A coluna I fica a cargo da ArrayFormula)
+  var linhaCompleta = resultado.dados.concat([""]);
   
-  // Calcula o status com base nas regras solicitadas
-  var statusValidacao = calcularStatusValidacao(resultado.idProva, resultado.questaoNum, resultado.tipo, mapas);
-  
-  // Mapeamento das colunas atualizado: 
-  // resultado.dados (A-G) + H("") + I(status) + J("") + K("") + L("") + M(urlQuestao)
-  var linhaCompleta = resultado.dados.concat(["", statusValidacao, "", "", "", resultado.urlQuestao]);
-  
-  // Encontra a próxima linha disponível na aba de gerenciamento e grava de uma vez (A-M)
-  var nextRow = sheetGerenciamento.getLastRow() + 1;
+  // Busca a próxima linha vazia real e insere os dados de A até H
+  var nextRow = obterProximaLinhaVazia(sheetGerenciamento, 1);
   sheetGerenciamento.getRange(nextRow, 1, 1, linhaCompleta.length).setValues([linhaCompleta]);
 }
 
+/**
+ * Varre o histórico do formulário e preenche dados retroativos ausentes no gerenciamento.
+ */
 function preencherRetroativo() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheetForm = ss.getSheetByName("Form_Responses");
   var sheetGerenciamento = ss.getSheetByName("Gerenciamento_Respostas");
   
-  // 1. Mapeia os IDs que JÁ EXISTEM no Gerenciamento usando um Set para busca ultra rápida
   var existingIds = new Set();
   var lastRowGere = sheetGerenciamento.getLastRow();
   if (lastRowGere > 1) {
@@ -168,7 +96,6 @@ function preencherRetroativo() {
     });
   }
   
-  // 2. Pega todos os dados históricos da aba Form_Responses
   var lastRowForm = sheetForm.getLastRow();
   if (lastRowForm < 2) {
     Logger.log("Nenhum dado encontrado na aba Form_Responses.");
@@ -179,43 +106,49 @@ function preencherRetroativo() {
   var rowsToAppend = [];
   var timeZone = ss.getSpreadsheetTimeZone();
   
-  // Carrega os mapas de validação para processamento em lote
-  var mapas = obterMapasValidacao(ss);
-  
-  // 3. Percorre cada linha histórica do formulário
   for (var i = 0; i < allFormData.length; i++) {
     var rowData = allFormData[i];
-    
-    // Ignora linhas sem timestamp
     if (!rowData[0]) continue;
     
-    // Processa a linha usando a função estruturada
     var resultado = criarLinhaDestino(rowData, timeZone);
-    
-    // Se o ID já existir no Set da aba Gerenciamento, pula (evita duplicados)
     if (existingIds.has(resultado.idResposta)) {
       continue;
     }
     
-    // Calcula a validação para o histórico
-    var statusValidacao = calcularStatusValidacao(resultado.idProva, resultado.questaoNum, resultado.tipo, mapas);
-    
-    // Mapeamento das colunas atualizado: 
-    // resultado.dados (A-G) + H("") + I(status) + J("") + K("") + L("") + M(urlQuestao)
-    var linhaCompleta = resultado.dados.concat(["", statusValidacao, "", "", "", resultado.urlQuestao]);
+    // Mapeamento reduzido: resultado.dados (A-G) + H("") -> Total: 8 colunas (A coluna I fica a cargo da ArrayFormula)
+    var linhaCompleta = resultado.dados.concat([""]);
     
     rowsToAppend.push(linhaCompleta);
   }
   
-  // 4. Grava os dados novos em lote (Batch Update) no final da planilha
   if (rowsToAppend.length > 0) {
-    var nextRow = sheetGerenciamento.getLastRow() + 1;
-    // O range agora considera 13 colunas (de A até M)
-    sheetGerenciamento.getRange(nextRow, 1, rowsToAppend.length, 13).setValues(rowsToAppend);
-    Logger.log(rowsToAppend.length + " respostas antigas foram importadas, validadas e atualizadas com links na coluna M com sucesso!");
+    // Busca a próxima linha vazia real na coluna A para iniciar o lote
+    var nextRow = obterProximaLinhaVazia(sheetGerenciamento, 1);
+    // Gravação limitada a 8 colunas de largura (A até H), respeitando a ArrayFormula em I
+    sheetGerenciamento.getRange(nextRow, 1, rowsToAppend.length, 8).setValues(rowsToAppend);
+    Logger.log(rowsToAppend.length + " respostas antigas foram importadas com sucesso!");
   } else {
     Logger.log("Tudo atualizado! Nenhuma resposta nova para importar retroativamente.");
   }
+}
+
+/**
+ * FUNÇÃO AUXILIAR: Encontra a próxima linha vazia real com base em uma coluna específica.
+ * Essencial para evitar que o script pule linhas caso colunas laterais possuam fórmulas estendidas.
+ */
+function obterProximaLinhaVazia(sheet, coluna) {
+  var col = coluna || 1; 
+  var lastRow = sheet.getLastRow();
+  if (lastRow === 0) return 1;
+  
+  var valores = sheet.getRange(1, col, lastRow, 1).getValues();
+  
+  for (var i = valores.length - 1; i >= 0; i--) {
+    if (valores[i][0] !== "") {
+      return i + 2; 
+    }
+  }
+  return 1; 
 }
 
 /**

@@ -30,7 +30,7 @@
 
 ### 2. Arquitetura do Google Planilhas
 
-> O banco de dados relacional operará em 5 abas distintas. As fórmulas apresentadas utilizam `ARRAYFORMULA`, o que significa que **você só precisa colar o código na linha 2** de cada coluna correspondente. A planilha calculará as linhas subsequentes automaticamente, à medida que novas respostas chegarem.
+> O banco de dados relacional operará em 5 abas distintas. Algumas fórmulas apresentadas utilizam `ARRAYFORMULA`, o que significa que **você só precisa colar o código na linha 2** de cada coluna correspondente. A planilha calculará as linhas subsequentes automaticamente, à medida que novas respostas chegarem.
 
 #### Aba 1: `Form_Responses` (Dados Brutos)
 
@@ -57,7 +57,7 @@ Esta aba é muito importante e servirá estritamente como *Data Lake*. Ela é ge
 
 #### Aba 2: `Gerenciamento_Respostas` (Hub de Triagem e Curadoria)
 
-> **Atualização de Arquitetura:** Para evitar o desalinhamento entre os dados importados e as entradas manuais (Status, Responsável, Link Oficial), esta aba **não utiliza mais fórmulas (`ARRAYFORMULA`)**. O preenchimento das colunas de A até I é feito de forma automatizada e definitiva (hardcoded) através de **Google Apps Script**, garantindo total integridade das linhas.
+> **Arquitetura:** O preenchimento das colunas de A até H é feito de forma automatizada e definitiva (hardcoded) através de **Google Apps Script**, garantindo total integridade das linhas. Algumas fórmulas apresentadas utilizam `ARRAYFORMULA` para evitar retrabalho.
 
 Este é o seu painel de controle operacional. É aqui que você assiste aos vídeos, aprova o conteúdo e insere o link final para publicação.
 
@@ -77,12 +77,20 @@ Assunto base da questão informada.
 Link bruto fornecido no formulário.
 * **H: `URL do Vídeo Oficial` (Input Manual)**
 Coluna vazia onde você irá colar o link do vídeo final (pós-edição/revisão/publicação). O script é programado para deixar essa célula limpa e pronta para sua inserção.
-* **I: `Pré-Curadoria` (Gerado via Script)**
+* **I: `Pré-Curadoria` (ArrayFormula Manual)**
 Verificação automática de consistência de dados. O script compara a resposta submetida com as abas `Provas_Enade` e `Questoes_Enade` e retorna:
 * `✅ Válido (Prova e Questão existem)`
 * `❌ Prova não existe: [...]`
 * `⚠️ Qst não existe: [...]`
 
+*Fórmula na célula I2:*
+```excel
+=ARRAYFORMULA(SE(A2:A=""; ""; 
+  SE(ÉERROS(CORRESP(ARRUMAR(B2:B); ARRUMAR(Provas_Enade!A:A); 0)); "❌ Prova não existe: [" & B2:B & "]";
+    SE(CONT.SE(ARRUMAR(Questoes_Enade!A:A) & "_" & ARRUMAR(Questoes_Enade!B:B) & "_" & MAIÚSCULA(ARRUMAR(Questoes_Enade!C:C)); ARRUMAR(B2:B) & "_" & ARRUMAR(C2:C) & "_" & MAIÚSCULA(ARRUMAR(D2:D))) = 0; "⚠️ Qst não existe: [" & B2:B & "_" & C2:C & "_" & D2:D & "]"; "✅ Válido (Prova e Questão existem)")
+  )
+))
+```
 
 * **J: `Status` (Input Manual)**
 Coluna vazia para se preencher com regras de validação de dados: "Aprovado", "Rejeitado" ou "Em Análise".
@@ -112,7 +120,13 @@ Para habilitar essa automação de inserção de dados, utilize o script [gerenc
 #### Aba 3: `Provas_Enade` (Metadados Raiz)
 Tabela mãe estruturada manualmente, mantida estática como catálogo das provas.
 
-*   **A:** `ID_Prova` (`Ano da Prova` + `Curso da Prova` + `Modalidade` + `Caderno da Prova`)
+*   **A: (ArrayFormula Manual)** `ID_Prova` (`Ano da Prova` + `Curso da Prova` + `Modalidade` + `Caderno da Prova`)
+
+*Fórmula na célula A2:*
+```excel
+=ARRAYFORMULA(SE(B2:B="";"";REGEXREPLACE(REGEXREPLACE(REGEXREPLACE(REGEXREPLACE(REGEXREPLACE(REGEXREPLACE(REGEXREPLACE(REGEXREPLACE(MAIÚSCULA(B2:B&"_"&C2:C&"_"&D2:D&"_"&SUBSTITUIR(MAIÚSCULA(E2:E);"CADERNO";""));"[ÁÀÂÃÄ]";"A");"[ÉÈÊË]";"E");"[ÍÌÎÏ]";"I");"[ÓÒÔÕÖ]";"O");"[ÚÙÛÜ]";"U");"[Ç]";"C");"[Ñ]";"N");"[^A-Z0-9_]";"")))
+```
+
 *   **B:** `Ano`
 *   **C:** `Area_Prova`
 *   **D:** `Modalidade`
