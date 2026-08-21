@@ -36,6 +36,7 @@
 | **Email Institucional** | Resposta curta | Validação de e-mail ativa. |
 | **Ticket** | Resposta curta | Código alfanumérico enviado ao aluno. Validado dinamicamente via Script. Permite apenas tickets cujo status na planilha esteja como "Devolvido para ajustes". |
 | **URL Atualizada** | Resposta curta | Validação: URL válida do novo vídeo. |
+| **Autorização Atualizada** | Upload de Arquivo | Validação: Apenas 1 arquivo PDF com no máximo 1MB de tamanho (opcional, se houver alteração). |
 | **Descrição** | Parágrafo | Motivo da alteração ou observações. |
 
 
@@ -47,7 +48,7 @@
 
 Deve conter instruções de uso e referências de links importantes.
 
-#### Aba 2: `Form_Responses` (Dados Brutos)
+#### Aba 2: `Envios` (Dados Brutos)
 
 Esta aba é muito importante e servirá estritamente como *Data Lake*. Ela é gerada e alimentada automaticamente pelo Google Forms. Não renomeie as colunas, não adicione colunas manuais e não altere a ordem.
 
@@ -79,82 +80,103 @@ Alimentada automaticamente pelo Formulário de Reenvio.
 * **C:** Email institucional
 * **D:** Ticket
 * **E:** URL Atualizada
-* **F:** Descrição
+* **F:** Autorização Atualizada
+* **G:** Descrição
 
 ---
 
 #### Aba 4: `Gerenciamento_Respostas` (Hub de Triagem e Curadoria)
 
-> **Arquitetura:** O preenchimento das colunas de A até H é feito de forma automatizada e definitiva (hardcoded) através de **Google Apps Script**, garantindo total integridade das linhas. Algumas fórmulas apresentadas utilizam `ARRAYFORMULA` para evitar retrabalho.
+> **Arquitetura:** O preenchimento das colunas de A até N (exceto as que utilizam fórmulas/inputs manuais) é feito de forma automatizada e definitiva (hardcoded) através de **Google Apps Script**, garantindo total integridade das linhas. Algumas fórmulas apresentadas utilizam `ARRAYFORMULA` para evitar retrabalho.
 
 Este é o seu painel de controle operacional. É aqui que você assiste aos vídeos, aprova o conteúdo e insere o link final para publicação.
 
-* **A: `ID_Resposta` (Gerado via Script)**
-Gera um ID único e imutável para a submissão, combinando o timestamp formatado com o RA do aluno (ex: `20210815_143000_1234567`).
-* **B: `Ticket` (Gerado via Script)**
-Gera um código opaco e seguro gerado via Hash (SHA-256 com chave secreta)
-* **C: `ID_Prova` (Gerado via Script)**
-Gera um ID único e imutável para a prova da questão, normalizando e combinando o `Ano da Prova` + `Curso da Prova` + `Modalidade` + `Caderno da Prova`.
-* **D: `Questao_Num` (Trazido via Script)**
-Número da questão preenchido no forms.
-* **E: `Tipo` (Trazido via Script)**
-Tipo da questão (Objetiva ou Discursiva).
-* **F: `Nome Completo` (Trazido via Script)**
+* **A: `Ticket` (Gerado via Script)**
+Gera um código opaco e seguro gerado via Hash (SHA-256 com chave secreta).
+* **B: `Data/Hora` (Trazido via Script)**
+Carimbo de data/hora da submissão principal.
+* **C: `Endereço de e-mail` (Trazido via Script)**
+Endereço de e-mail pessoal do aluno.
+* **D: `Email Institucional` (Trazido via Script)**
+Email institucional do aluno.
+* **E: `Nome Completo` (Trazido via Script)**
 Nome do aluno submetido no forms.
-* **G: `Assunto Principal` (Trazido via Script)**
+* **F: `Telefone (WhatsApp)` (Trazido via Script)**
+Telefone de contato (WhatsApp) do aluno.
+* **G: `RA` (Trazido via Script)**
+Registro Acadêmico do aluno.
+* **H: `Período` (Trazido via Script)**
+Período do aluno.
+* **I: `ID_Prova` (Gerado via Script)**
+Gera um ID único e imutável para a prova da questão, normalizando e combinando o `Ano da Prova` + `Curso da Prova` + `Modalidade` + `Caderno da Prova`.
+* **J: `Questao_Num` (Trazido via Script)**
+Número da questão preenchido no forms.
+* **K: `Tipo` (Trazido via Script)**
+Tipo da questão (Objetiva ou Discursiva).
+* **L: `Assunto Principal` (Trazido via Script)**
 Assunto base da questão informada.
-* **H: `URL do Vídeo Original` (Trazido via Script)**
+* **M: `URL do Vídeo Original` (Trazido via Script)**
 Link bruto fornecido no formulário.
-* **I: `URL Atualizada` (ArrayFormula Manual)**
+* **N: `Autorização` (Trazido via Script)**
+Link/Referência do arquivo de autorização enviado.
+* **O: `URL Atualizada` (ArrayFormula Manual)**
 Link bruto trazido da aba Reenvios (mais recente por Ticket)
 
-*Fórmula na célula I2:*
+*Fórmula na célula O2:*
 ```excel
-=ARRAYFORMULA(SE(B2:B=""; ""; PROCX(B2:B; Reenvios!D:D; Reenvios!E:E; ""; 0; -1)))
+=ARRAYFORMULA(SE(A2:A=""; ""; PROCX(A2:A; Reenvios!D:D; Reenvios!E:E; ""; 0; -1)))
 ```
 
-* **J: `URL do Vídeo Oficial` (Input Manual)**
+* **P: `Autorização Atualizada` (ArrayFormula Manual)**
+Link do arquivo de autorização atualizado trazido da aba Reenvios (mais recente por Ticket)
+
+*Fórmula na célula P2:*
+```excel
+=ARRAYFORMULA(SE(A2:A=""; ""; PROCX(A2:A; Reenvios!D:D; Reenvios!F:F; ""; 0; -1)))
+```
+
+* **Q: `URL do Vídeo Oficial` (Input Manual)**
 Coluna vazia onde você irá colar o link do vídeo final (pós-edição/revisão/publicação). O script é programado para deixar essa célula limpa e pronta para sua inserção.
-* **K: `Pré-Curadoria` (ArrayFormula Manual)**
+* **R: `Pré-Curadoria` (ArrayFormula Manual)**
 Verificação automática de consistência de dados. O script compara a resposta submetida com as abas `Provas_Enade` e `Questoes_Enade` e retorna:
 * `✅ Válido (Prova e Questão existem)`
 * `❌ Prova não existe: [...]`
 * `⚠️ Qst não existe: [...]`
 
-*Fórmula na célula K2:*
+*Fórmula na célula R2:*
 ```excel
-=ARRAYFORMULA(SE(A2:A=""; ""; 
-  SE(ÉERROS(CORRESP(ARRUMAR(C2:C); ARRUMAR(Provas_Enade!A:A); 0)); "❌ Prova não existe: [" & C2:C & "]";
-    SE(CONT.SE(ARRUMAR(Questoes_Enade!A:A) & "_" & ARRUMAR(Questoes_Enade!B:B) & "_" & MAIÚSCULA(ARRUMAR(Questoes_Enade!C:C)); ARRUMAR(C2:C) & "_" & ARRUMAR(D2:D) & "_" & MAIÚSCULA(ARRUMAR(E2:E))) = 0; "⚠️ Qst não existe: [" & C2:C & "_" & D2:D & "_" & E2:E & "]"; "✅ Válido (Prova e Questão existem)")
+=ARRAYFORMULA(SE(I2:I=""; ""; 
+  SE(ÉERROS(CORRESP(ARRUMAR(I2:I); ARRUMAR(Provas_Enade!A:A); 0)); "❌ Prova não existe: [" & I2:I & "]";
+    SE(CONT.SE(ARRUMAR(Questoes_Enade!A:A) & "_" & ARRUMAR(Questoes_Enade!B:B) & "_" & MAIÚSCULA(ARRUMAR(Questoes_Enade!C:C)); ARRUMAR(I2:I) & "_" & ARRUMAR(J2:J) & "_" & MAIÚSCULA(ARRUMAR(K2:K))) = 0; "⚠️ Qst não existe: [" & I2:I & "_" & J2:J & "_" & K2:K & "]"; "✅ Válido (Prova e Questão existem)")
   )
 ))
 ```
 
-* **L: `Status` (Input Manual)**
+* **S: `Status` (Input Manual)**
 Coluna vazia para se preencher com regras de validação de dados: "Aprovado", "Rejeitado" ou "Em Análise".
-* **M: `Motivo` (Input Manual)**
+* **T: `Motivo` (Input Manual)**
 Coluna vazia para se preencher com o motivo para justificar o status definido.
-* **N: `Responsável` (Input Manual)**
+* **U: `Responsável` (Input Manual)**
 Coluna vazia para se preencher com o nome do responsável pela análise da resposta.
-* **O: `Ver_Questão_Site` (ArrayFormula Manual)**
+* **V: `Ver_Questão_Site` (ArrayFormula Manual)**
 Link da questão no site para visualizar.
 
-*Fórmula na célula O2:*
+*Fórmula na célula V2:*
 ```excel
-=ARRAYFORMULA(SE(C2:C=""; ""; SE(K2:K="✅ Válido (Prova e Questão existem)"; HIPERLINK("https://techsiprepare.github.io/#visualizar?prova=" & C2:C & "&questao=" & D2:D & "-" & PRI.MAIÚSCULA(E2:E); "🌐 Ver questão"); "❌ Inexistente")))
+=ARRAYFORMULA(SE(I2:I=""; ""; SE(R2:R="✅ Válido (Prova e Questão existem)"; HIPERLINK("https://techsiprepare.github.io/#visualizar?prova=" & I2:I & "&questao=" & J2:J & "-" & PRI.MAIÚSCULA(K2:K); "🌐 Ver questão"); "❌ Inexistente")))
 ```
 
 ---
 
 #### 🚀 Implementação da Automação (Google Apps Script)
 
-Para habilitar a automação completa de inserção, geração de tickets e reanálise, utilize o código [apps-scripts.md](apps-scripts.md) nas **Extensões > Apps Script**. O ecossistema depende das seguintes rotinas e acionadores:
+Para habilitar a automação completa de inserção, geração de tickets e reanálise, utilize os códigos em [apps-scripts](apps-scripts) nas **Extensões > Apps Script**. O ecossistema depende das seguintes rotinas e acionadores:
 
 1. **Configuração de Chave Secreta (`.env`):**
 * Em **Configurações do projeto** (⚙️) > **Propriedades do script**, adicione a chave `TICKET_PEPPER_SECRET` com o valor secreto do seu projeto. Ela é usada pelo algoritmo SHA-256 para gerar os tickets dos alunos com segurança.
 
 2. **Gatilho (Trigger) para Submissão Principal:**
-* Crie um acionador para a função `processarNovaResposta(e)` com o evento **"Ao enviar formulário"** (vinculado ao formulário principal). Toda nova resposta será inserida na aba `Gerenciamento_Respostas` com seu ID único e seu Ticket já calculados.
+* Crie um acionador para a função `processarNovaResposta(e)` com o evento **"Ao enviar formulário"** (vinculado ao formulário principal). Toda nova resposta será inserida na aba `Gerenciamento_Respostas` com seu Ticket já calculado.
 
 3. **Gatilho (Trigger) para Formulário de Reenvio:**
 * Crie um acionador para a função `aoEnviarReenvio(e)` com o evento **"Ao enviar formulário"** (vinculado ao formulário de reenvio). Ao receber um Ticket válido com status *"Devolvido para ajustes"*, a função altera o status na `Gerenciamento_Respostas` para **"Pronto p/ Reanálise"** e executa automaticamente `atualizarValidacaoFormularioReenvio()` para remover esse Ticket da lista de permitidos no Formulário 2.
@@ -164,7 +186,7 @@ Para habilitar a automação completa de inserção, geração de tickets e rean
 * **Gatilho (Trigger):** Crie um acionador vinculado à planilha para o evento **"Ao alterar"** (*On change*). Isso garante que, quando um avaliador mudar manualmente o status de uma resposta para *"Devolvido para ajustes"*, o formulário de reenvio liberará a entrada daquele Ticket imediatamente.
 
 5. **Rotinas Retroativas e de Manutenção:**
-* **`preencherRetroativo()`:** Executada manualmente do editor para resgatar respostas antigas da `Form_Responses` que ainda não foram para a `Gerenciamento_Respostas` (possui proteção contra duplicidade).
+* **`preencherRetroativo()`:** Executada manualmente do editor para resgatar respostas antigas da `Envios` que ainda não foram para a `Gerenciamento_Respostas` (possui proteção contra duplicidade).
 
 ---
 
@@ -206,10 +228,10 @@ Esta aba detalha cada questão da prova. Ela deve ser completamente gerada pelo 
 =ARRAYFORMULA(
   SE(A2:A=""; ""; 
     CONT.SES(
-      Gerenciamento_Respostas!C:C; A2:A; 
-      Gerenciamento_Respostas!D:D; B2:B; 
-      Gerenciamento_Respostas!E:E; C2:C;
-      Gerenciamento_Respostas!L:L; "<>Rejeitado"
+      Gerenciamento_Respostas!I:I; A2:A; 
+      Gerenciamento_Respostas!J:J; B2:B; 
+      Gerenciamento_Respostas!K:K; C2:C;
+      Gerenciamento_Respostas!S:S; "<>Rejeitado"
     )
   )
 )
@@ -226,7 +248,7 @@ Ela espelha os dados do hub de gerenciamento, extraindo apenas as informações 
 Cole a fórmula abaixo **exclusivamente na célula A1**. Ela criará os cabeçalhos das colunas automaticamente e preencherá todas as linhas abaixo dela.
 
 ```excel
-=QUERY(Gerenciamento_Respostas!C:L; "SELECT C, D, E, F, G, J WHERE L = 'Aprovado' AND J IS NOT NULL LABEL C 'ID_Prova', D 'Questao_Num', E 'Tipo', F 'Nome_Aluno', G 'Assunto', J 'URL_Video_Oficial'")
+=QUERY(Gerenciamento_Respostas!A:S; "SELECT I, J, K, E, L, Q WHERE S = 'Aprovado' AND Q IS NOT NULL LABEL I 'ID_Prova', J 'Questao_Num', K 'Tipo', E 'Nome_Aluno', L 'Assunto', Q 'URL_Video_Oficial'")
 ```
 
 ---
