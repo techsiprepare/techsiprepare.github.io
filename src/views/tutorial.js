@@ -27,7 +27,7 @@ const ETAPAS_TUTORIAL = Object.freeze([
             <ul style="margin-bottom: 15px; padding-left: 20px;">
                 <li><strong>Imagem e voz:</strong> Grave a sua própria imagem no vídeo (pode ser em formato reduzido/picture-in-picture).</li>
                 <li><strong>Foco único:</strong> Cada arquivo de vídeo deve conter a resolução de apenas 1 questão.</li>
-                <li><strong>Duração:</strong> De 5 a 15 minutos para questões objetivas e de 8 a 15 minutos para discursivas.</li>
+                <li><strong>Duração:</strong> De 3 a 15 minutos para questões objetivas e de 5 a 15 minutos para discursivas.</li>
                 <li><strong>Carga Horária:</strong> Cada vídeo validado contabilizará 12 horas de Carga Horária para fins de Curricularização da Extensão.</li>
             </ul>
             <p>Realize o upload do seu vídeo, em sua conta, no Google Drive e compartilhe o link. Subiremos nos canais oficiais caso a resolução seja aprovada.</p>
