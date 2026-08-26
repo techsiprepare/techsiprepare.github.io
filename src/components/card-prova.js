@@ -40,7 +40,7 @@ export function cardProva({
             </div>
             <div class="card-content-wrapper">
                 <h3>${curso} (${ano})</h3>
-                <p class="meta">${modalidade} • Caderno ${caderno}</p>
+                <p class="meta">${modalidade} • ${String(caderno).toLowerCase().includes('caderno') ? caderno : `Caderno ${caderno}`}</p>
                 <div class="prova-stats" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
                     <span class="badge" style="${badgeStyle}" title="Questões Objetivas Disponíveis">
                         <i data-lucide="list-todo"></i> ${qtdObjetivasAtivas}
