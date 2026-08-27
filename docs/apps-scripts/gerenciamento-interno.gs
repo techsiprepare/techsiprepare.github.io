@@ -26,11 +26,21 @@ function abrirAplicacao() {
 }
 
 /**
+ * Função executada no servidor para recuperar a URL. 
+ * Se houver conflito de sessão/permissão, o Apps Script lançará uma exceção aqui.
+ */
+function obterUrlAplicacao() {
+  const url = PropertiesService.getScriptProperties().getProperty(PROPERTY_KEY);
+  if (!url) {
+    throw new Error('A URL do sistema não foi configurada nas propriedades do script.');
+  }
+  return url;
+}
+
+/**
  * Exibe o modal explicativo e orientações de acesso.
  */
 function exibirModalInstrucoes() {
-  const urlAplicacao = PropertiesService.getScriptProperties().getProperty(PROPERTY_KEY) || '';
-
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -146,6 +156,28 @@ function exibirModalInstrucoes() {
           }
           .list-box li:last-child {
             margin-bottom: 0;
+          }
+
+          /* Estilo para exibição do erro capturado */
+          .access-denied-box {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 12px;
+          }
+
+          .access-denied-title {
+            color: #991b1b;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+          }
+
+          .access-denied-text {
+            color: #7f1d1d;
+            font-size: 13px;
+            line-height: 1.5;
           }
 
           /* Rodapé com botões */
@@ -267,12 +299,12 @@ function exibirModalInstrucoes() {
 
             <!-- STEP 3 -->
             <div class="step" id="step-3">
-              <div class="step-title">Conflito de Múltiplas Contas</div>
-              <div class="step-description">
+              <div class="step-title" id="step3-title">Conflito de Múltiplas Contas</div>
+              <div class="step-description" id="step3-content">
                 O navegador pode tentar abrir o sistema utilizando a sua conta padrão do Google, 
                 o que resultará em erro de permissão.
-                
                 <div class="list-box">
+                  Tente uma das seguintes abordagens:
                   <ul>
                     <li>Utilizar <strong>Perfis do Chrome distintos</strong> (um específico para a conta do projeto de extensão).</li>
                     <li>Abrir a planilha em uma <strong>Janela Anônima</strong>, fazendo login apenas com a conta do projeto de extensão.</li>
@@ -301,7 +333,7 @@ function exibirModalInstrucoes() {
         </div>
 
         <script>
-          const urlTarget = "${urlAplicacao}";
+          let urlTarget = "";
           let currentStep = 1;
           const totalSteps = 3;
 
@@ -339,12 +371,36 @@ function exibirModalInstrucoes() {
             }
           }
 
-          function executarAberturaSistema() {
-            if (!urlTarget) {
-              document.getElementById('errorMsg').style.display = 'block';
-              return;
-            }
+          function tratarExcecaoAcesso(error) {
+            const btnOpen = document.getElementById('btn-open');
+            const btnText = document.getElementById('btnText');
+            const btnBack = document.getElementById('btn-back');
+            
+            // Esconde o botão de voltar após a falha de permissão
+            btnBack.style.display = 'none';
 
+            // Desabilita o botão de abertura
+            btnOpen.disabled = true;
+            btnText.innerText = 'Acesso Bloqueado';
+
+            // Altera dinamicamente o conteúdo do Step 3 para exibir o alerta de Acesso Negado
+            document.getElementById('step3-content').innerHTML = \`
+              <div class="access-denied-box">
+                <div class="access-denied-title">Acesso Negado / Conflito de Contas</div>
+                <div class="access-denied-text">
+                  Não foi possível validar as credenciais do sistema devido a uma falha de permissão.
+                  <br><br>
+                  <strong>Como resolver:</strong>
+                  <ul style="margin-top: 6px; padding-left: 18px;">
+                    <li>Abra uma <strong>Janela Anônima</strong> ou um <strong>Perfil Isolado do Chrome</strong>.</li>
+                    <li>Faça login exclusivamente com a conta do projeto de extensão e tente novamente.</li>
+                  </ul>
+                </div>
+              </div>
+            \`;
+          }
+
+          function executarAberturaSistema() {
             const btn = document.getElementById('btn-open');
             const btnBack = document.getElementById('btn-back');
             const spinner = document.getElementById('spinner');
@@ -353,22 +409,39 @@ function exibirModalInstrucoes() {
             btn.disabled = true;
             btnBack.disabled = true;
             spinner.style.display = 'inline-block';
-            btnText.innerText = 'Redirecionando...';
+            btnText.innerText = 'Validando...';
 
-            setTimeout(function() {
-              window.open(urlTarget, "_blank");
-              google.script.host.close();
-            }, 600);
+            // Executa a função no servidor e trata exceções capturadas pelo withFailureHandler
+            google.script.run
+              .withSuccessHandler(function(url) {
+                if (!url) {
+                  document.getElementById('errorMsg').style.display = 'block';
+                  btn.disabled = false;
+                  btnBack.disabled = false;
+                  spinner.style.display = 'none';
+                  btnText.innerText = 'Abrir Sistema';
+                  return;
+                }
+                btnText.innerText = 'Redirecionando...';
+                setTimeout(function() {
+                  window.open(url, "_blank");
+                  google.script.host.close();
+                }, 600);
+              })
+              .withFailureHandler(function(error) {
+                spinner.style.display = 'none';
+                tratarExcecaoAcesso(error);
+              })
+              .obterUrlAplicacao();
           }
         </script>
       </body>
     </html>
   `;
 
-  // Tamanho levemente ajustado para comportar o layout mais limpo e organizado
   const htmlOutput = HtmlService.createHtmlOutput(htmlContent)
     .setWidth(520)
-    .setHeight(400);
+    .setHeight(420);
 
   SpreadsheetApp.getUi().showModalDialog(htmlOutput, ' ');
 }
