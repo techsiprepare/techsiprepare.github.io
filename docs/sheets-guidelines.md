@@ -239,7 +239,7 @@ Esta aba detalha cada questão da prova. Ela deve ser completamente gerada pelo 
 
 ---
 
-#### Aba 7: `Respostas_Aprovadas`
+#### Aba 7: `Aprovadas&Publicadas`
 Ninguém editará esta aba; ela se auto-constrói utilizando uma instrução do tipo SQL via Google Query Language. 
 
 Ela espelha os dados do hub de gerenciamento, extraindo apenas as informações estritamente necessárias, e **somente** se a resposta passou pela curadoria e possui um link oficial inserido.
@@ -277,4 +277,4 @@ Quando você testar o ecossistema, o comportamento esperado e as etapas do fluxo
 4. **Reanálise & Publicação:**
 * O avaliador revisa a nova URL trazida para a aba de gerenciamento.
 * Se aprovado, altera o status para **"Aprovado"** e insere o link final na coluna `URL do Vídeo Oficial`.
-* A aba `Respostas_Aprovadas` detecta imediatamente a aprovação e renderiza automaticamente apenas as informações consolidadas da resposta.
+* A aba `Aprovadas&Publicadas` detecta imediatamente a aprovação e renderiza automaticamente apenas as informações consolidadas da resposta.
